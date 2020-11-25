@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:flutter/services.dart'; //Vibration 기능 사용을 위해 필요
+import 'dart:io'; // sleep method를 사용하기위해 필
 
 
 class ChatPage extends StatefulWidget {
@@ -13,6 +16,7 @@ class ChatPage extends StatefulWidget {
   final String groupId;
   final String userName;
   final String groupName;
+
 
 
   ChatPage({
@@ -35,6 +39,15 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   FirebaseUser _user;
+
+  patternVibrate(){
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(microseconds: 200),
+    );
+  }
   
 
   Widget _chatMessages(){
@@ -146,6 +159,7 @@ class _ChatPageState extends State<ChatPage> {
         //사용자들이 그룹채팅창에서 아무데나 터치해도 TextEditor이 내려갈수있게?사라질수있게??하기위해 Focus Out시키는 코드를 삽입
         FocusScopeNode currentFocus = FocusScope.of(context); //현재 앱의 focus를 어디에 두고있는지 정보를 저장하고있는 context를 가져와서 currentFocus에 저장
         //Focus가 현재 잡혀있다면(아래 코드는 포커스관련 오류방지를위해 반드시 작성해주어야함)
+        showToast("Hello");
         if(!currentFocus.hasPrimaryFocus){
           currentFocus.unfocus();
         }

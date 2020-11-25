@@ -231,7 +231,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
             child: StreamBuilder(
 
 
-                stream: DatabaseService(uid: uid).userCollection.document(HelperFunctions.sharedPreferenceUserNameKey).snapshots(),
+                stream: DatabaseService(uid: uid,userName:_userName).userCollection.document(_userName).snapshots(),
                 builder: (context, snapshot) {
 
                   List<Widget> children;

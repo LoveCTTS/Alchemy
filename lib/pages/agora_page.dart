@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
@@ -395,6 +396,7 @@ class _AgoraPageState extends State<AgoraPage> {
                           padding: EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () async{
+
                               _popupMakeRoom(context);
                             },
                             child: Center(child: Text("방 만들기",style: TextStyle(fontFamily: "RobotoMono")))

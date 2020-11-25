@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:linkproto/widgets/mikemessage_tile.dart';
@@ -17,6 +19,7 @@ class DatabaseService {
   final CollectionReference userCollection = Firestore.instance.collection('users');
   final CollectionReference groupCollection = Firestore.instance.collection('groups');
   final CollectionReference mikeMessageCollection = Firestore.instance.collection('mikeMessage');
+
 
   // 사용자의 데이터를 업데이트
   Future updateUserData(String fullName, String email, String password) async {
@@ -203,6 +206,28 @@ class DatabaseService {
     }
     else {
       //print('ne');
+      return false;
+    }
+  }
+  Future<bool> isSecretRoom(String groupId) async {
+
+    DocumentReference groupDocRef = groupCollection.document(groupId);
+    DocumentSnapshot groupDocSnapshot = await groupDocRef.get();
+
+    if(groupDocSnapshot.data.containsKey("roomPassword")){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  Future<bool> isSameRoomPassword(String groupId,String password) async {
+
+    DocumentReference groupDocRef = groupCollection.document(groupId);
+    DocumentSnapshot groupDocSnapshot = await groupDocRef.get();
+
+    if(groupDocSnapshot.data.containsValue(password)){
+      return true;
+    }else if(!groupDocSnapshot.data.containsValue(password)){
       return false;
     }
   }
