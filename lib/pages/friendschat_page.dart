@@ -112,6 +112,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
       //메세지 전송후 messageEditingController을 다음 메세지를 입력할수잇도록 ""로 비워줌
       setState(() {
         messageEditingController.text = "";
+
       });
     }
   }
@@ -159,6 +160,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
                     itemBuilder: (context,index){
                       int reqIndex=friendRequestList.length-index-1;
                       return FriendRequestTile(
+                        receiverName: _userName,
                         senderName: friendRequestList[reqIndex].toString(),
                       );
 

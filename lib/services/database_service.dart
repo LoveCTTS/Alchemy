@@ -68,6 +68,7 @@ class DatabaseService {
       'recentMessage': '',
       'recentMessageSender': '',
       'createdTime': FieldValue.serverTimestamp(),
+
     });
     //Firestore 에 groups는 위와 같은 형식으로 데이터 저장 틀이 만들어져있기때문에 반드시 위와같은 json형식을 유지해야만한다.
     //예를 들어서 데이터중간에 'groupdId': '', 대신에 'GroupID' : '', 로 키네임을 바꾼다던가,
@@ -83,6 +84,48 @@ class DatabaseService {
     return await userDocRef.updateData({
       'groups': FieldValue.arrayUnion([groupDocRef.documentID + '_' + groupName]) //documentID_그룹이름 형태로 groups에 저장됨
     });
+  }
+  Future createSecretGroup(String userName, String groupName,String roomPassword) async {
+    //DocumentReferenc형의 groupDocRef변수에 데이터를 json형식으로 묶어서 인자로 보내는 groupCollection.add의 결과값을 저장
+    DocumentReference groupDocRef = await groupCollection.add({
+      'groupName': groupName,
+      'groupIcon': '',
+      'admin': userName,
+      'members': [],
+      //'messages': ,
+      'groupId': '',
+      'recentMessage': '',
+      'recentMessageSender': '',
+      'createdTime': FieldValue.serverTimestamp(),
+      'roomPassword': roomPassword,
+
+    });
+    //Firestore 에 groups는 위와 같은 형식으로 데이터 저장 틀이 만들어져있기때문에 반드시 위와같은 json형식을 유지해야만한다.
+    //예를 들어서 데이터중간에 'groupdId': '', 대신에 'GroupID' : '', 로 키네임을 바꾼다던가,
+    // 'groupdId': []와 같이 value부분의 데이터형이 문자열이아니고, 다른 자료형으로 바꾸면 안된다.
+
+    //groups의 members,groupID 데이터를 업데이트
+    await groupDocRef.updateData({
+      'members': FieldValue.arrayUnion([uid + '_' + userName]), //uid_username과같은 형식으로 members에 저장됨
+      'groupId': groupDocRef.documentID //documentID는 랜덤값으로 생성되며 groupID에 저장됨
+    });
+    //users의 groups 데이터를 업데이트
+    DocumentReference userDocRef = userCollection.document(userName);
+    return await userDocRef.updateData({
+      'groups': FieldValue.arrayUnion([groupDocRef.documentID + '_' + groupName]) //documentID_그룹이름 형태로 groups에 저장됨
+    });
+  }
+
+
+   rejectFriendRequest(senderName) async{
+
+      await userCollection.document(userName).updateData({'request': FieldValue.arrayRemove([senderName])});
+  }
+
+   permitFriendRequest(senderName) async {
+      await userCollection.document(userName).updateData({'friends':FieldValue.arrayUnion([senderName])});
+     await userCollection.document(userName).updateData({'request': FieldValue.arrayRemove([senderName])});
+
   }
 
 

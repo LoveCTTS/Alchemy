@@ -8,7 +8,6 @@ import '../widgets/group_tile.dart';
 import 'package:custom_switch/custom_switch.dart';
 import '../widgets/mikemessage_tile.dart';
 
-
 class AgoraPage extends StatefulWidget {
   @override
   _AgoraPageState createState() => _AgoraPageState();
@@ -23,8 +22,11 @@ class _AgoraPageState extends State<AgoraPage> {
   String _email = '';
   Stream _groups;
   int changeSkin=0;
-  bool isSwitched=false;
   String mikeMessageInMikePopup;
+  String roomPassword;
+  StateSetter _setState;
+  bool isSwitched=false;
+
 
 
   // initState
@@ -110,22 +112,29 @@ class _AgoraPageState extends State<AgoraPage> {
 
         await DatabaseService(uid: _user.uid).addMikeMessage(_userName, mikeMessageInMikePopup);
           });
-    Widget cancelButton = FlatButton(
+    Widget closeButton = FlatButton(
         minWidth: 80,
-        child: Text("Cancel"),
+        child: Text("Close"),
         onPressed:  () async {
           Navigator.of(context).pop();
         });
 
 
-    AlertDialog alert = AlertDialog(
+    AlertDialog mike = AlertDialog(
           title: Text("확성기"),
           content: Container(
               width: 250,
               height: 300,
               child:ListView(children: [
-                StreamBuilder(
-                    stream: DatabaseService().mikeMessageCollection.orderBy('createdTime').snapshots(),
+                Container(
+                  height:200,
+                    decoration: BoxDecoration(
+
+                      border: Border.all(color: Colors.black,
+                      width:4),
+                    ),
+                    child:StreamBuilder(
+                    stream: DatabaseService(uid:_user.uid,userName: _userName).mikeMessageCollection.orderBy('createdTime').snapshots(),
                     builder: (context, snapshot) {
                       List<Widget> children;
                       if(snapshot.hasError){
@@ -145,7 +154,7 @@ class _AgoraPageState extends State<AgoraPage> {
                       } else {
                       List mikeMessageList = snapshot.data.documents.map((e){return e.data;}).toList();
                       return ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
-                          itemCount: 4, //일단 확성기에 4개만 보이도록 하였음.(입력칸 없어지는 문제때문에)
+                          itemCount: mikeMessageList.length, //일단 확성기에 4개만 보이도록 하였음.(입력칸 없어지는 문제때문에)
                           shrinkWrap: true,
                           itemBuilder: (context,index){
                             int reqIndex=mikeMessageList.length-index-1;
@@ -157,8 +166,9 @@ class _AgoraPageState extends State<AgoraPage> {
                     }
                 );
           }
-        }),
+        })),
 
+                SizedBox(height:40),
                 Container(
                   width:50,
                     child: TextField(
@@ -176,7 +186,7 @@ class _AgoraPageState extends State<AgoraPage> {
           )) ,
 
           actions: <Widget>[
-            cancelButton,
+            closeButton,
             sendButton
 
           ]
@@ -185,90 +195,120 @@ class _AgoraPageState extends State<AgoraPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return mike;
       },
     );
   }
 
-  void _popupDialog(BuildContext context) {
-
-    Widget passwdLabel = SizedBox(
-        width:70,
-        child:Text("password"));
-    Widget switchButton = SizedBox(
-        width: 80,
-        height: 25,
-        child:CustomSwitch(
-          activeColor: Colors.pinkAccent,
-          value: isSwitched,
-          onChanged: (isOn) {
-            print("VALUE : $isOn");
-            setState(() {
-              isSwitched = isOn;
-            });
-          },
-        )
-    );
-
-    Widget cancelButton = FlatButton(
-      minWidth: 80,
-      child: Text("Cancel"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    Widget createButton = FlatButton(
-      minWidth: 80,
-      child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-          await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-          });
-          Navigator.of(context).pop();
-        }
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-        title: Text("Create a group"),
-        content: TextField(
-            onChanged: (val) {
-              _groupName = val;
-            },
-            style: TextStyle(
-                fontSize: 15.0,
-                height: 2.0,
-                color: Colors.black
-            )
-        ),
-        actions: <Widget>[
-          Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    passwdLabel,switchButton
-                  ],
-
-                ),
-                SizedBox(height:20),
-                Row(
-                  children: <Widget>[
-                    cancelButton,createButton
-                  ],
-                )
-              ]
-          )
-        ]
-    );
+  void _popupMakeRoom(BuildContext context) {
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return Padding(
+            padding: EdgeInsets.only(top:250,bottom:250),
+            child:AlertDialog(
+                title: Text("Create a group"),
+                content: StatefulBuilder(
+                    builder: (context,setState){
+                      _setState = setState;
+
+                      return Column(
+                          children:[
+                            SizedBox(
+                              height:50,
+                                child:TextField(
+                              cursorHeight: 30,
+                                onChanged: (val) {
+                                  _groupName = val;
+                                },
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    height: 2.0,
+                                    color: Colors.black
+                                ),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "RoomName"
+                              )
+                            )),
+                            SizedBox(height:20),
+                            Row(
+                                children:[
+                                  SizedBox(
+                                      width:80,
+                                      child:Text("password")),
+                                  SizedBox(
+                                      width: 80,
+                                      height: 25,
+                                      child: Switch(
+                                          activeColor: Colors.pinkAccent,
+                                          value: isSwitched,
+                                          onChanged: (value) {
+                                            _setState(() {
+                                              isSwitched = value;
+                                              print(isSwitched);
+                                            }
+                                            );
+                                          }
+                                      )
+                                  ),
+                                  SizedBox(
+                                      width:100,height:30,
+                                      child:TextField(
+                                        enabled: isSwitched==false?false:true, //스위치 false이면 비밀번호 입력못하고, true면 비밀번호 입력가능
+                                          onChanged: (val) {
+                                            roomPassword = val;
+                                          },
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: "Password",
+                                          ),
+                                          style: TextStyle(
+                                              fontSize: 15.0,
+                                              height: 2.0,
+                                              color: Colors.black
+                                          )
+                                      ))
+                                ]),
+
+                            SizedBox(height:50),
+                            Row( children: [
+                              FlatButton(
+                                minWidth: 80,
+                                child: Text("Cancel",style:TextStyle(fontSize:20,color:Colors.black)),
+                                onPressed:  () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              SizedBox(width:80),
+                              FlatButton(
+                                minWidth: 80,
+                                child: Text("Create",style:TextStyle(fontSize:20,color:Colors.black)),
+                                onPressed:  () async {
+                                  if(_groupName != null && roomPassword==null) {
+                                    await HelperFunctions.getUserNameSharedPreference().then((val) {
+                                      DatabaseService(uid: _user.uid).createGroup(val, _groupName);
+                                      Navigator.of(context).pop();
+                                    });
+
+                                  }else if(_groupName != null && roomPassword!=null){
+                                    await HelperFunctions.getUserNameSharedPreference().then((val){
+                                    DatabaseService(uid:_user.uid).createSecretGroup(val,_groupName,roomPassword);
+                                    Navigator.of(context).pop();
+                                  });
+                                }}
+                              )]
+                            )
+                          ]);
+                    }
+                )
+            ));
+
       },
     );
+
+
   }
 
   // Agora Page 메인 위젯 디자인 코드
@@ -355,7 +395,7 @@ class _AgoraPageState extends State<AgoraPage> {
                           padding: EdgeInsets.all(10.0),
                           child: GestureDetector(
                             onTap: () async{
-                              _popupDialog(context);
+                              _popupMakeRoom(context);
                             },
                             child: Center(child: Text("방 만들기",style: TextStyle(fontFamily: "RobotoMono")))
 
