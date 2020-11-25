@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "978115399515",
+    "firebase_url": "https://link-3130d.firebaseio.com",
+    "project_id": "link-3130d",
+    "storage_bucket": "link-3130d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978115399515:android:e09bd2f5935000c3d2d47e",
+        "android_client_info": {
+          "package_name": "com.example.linkproto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978115399515-5alfiflkv3knkk6s7pr6bqhtqsu7qt49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnVaGezDmq9PfbAcTWkk5oLHdLaE7Pl64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978115399515-5alfiflkv3knkk6s7pr6bqhtqsu7qt49.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
