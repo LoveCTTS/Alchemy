@@ -231,6 +231,17 @@ class DatabaseService {
       return false;
     }
   }
+  Future<bool> hasFriendRequest(String senderName) async {
+
+    DocumentReference userDocRef = userCollection.document(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    if(userDocSnapshot.data.containsValue(senderName)){
+      return true;
+    }else if(!userDocSnapshot.data.containsValue(senderName)){
+      return false;
+    }
+  }
 
   // 특정 사용자의 데이터를 얻어오기
   Future getUserData(String email) async {

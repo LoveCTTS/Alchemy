@@ -12,25 +12,25 @@ import 'group_page.dart';
 import 'test_page.dart';
 import 'agora_page.dart';
 import 'friendschat_page.dart';
+import 'profile_page.dart';
 
 
 class HomePage extends StatefulWidget {
   @override
-  _AgoraPageState createState() => _AgoraPageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _AgoraPageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> {
 
   int _currentIndex=0; //하단 바 터치시 이동하기위한 정수형 Index변수 생성
-  final List _children = [TestPage(),FriendsChatPage(),AgoraPage(),GroupPage(),TestPage()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
+  final List _children = [TestPage(),FriendsChatPage(),AgoraPage(),GroupPage(),ProfilePage()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
   //변경이 되면 안되기때문에 final 키워드 사용(Constant랑 같은 의미)
-
 
   @override
   void initState() {
     super.initState();
-  }
 
+  }
 
   // Building the HomePage widget
   @override
@@ -49,6 +49,7 @@ class _AgoraPageState extends State<HomePage> {
                 _currentIndex = index; //현재 인덱스값을 터치한 아이콘의 index로 변경
               });
             },
+
             backgroundColor: Color(0xffe6e6fa),
             selectedItemColor: Color(0xff8b008b),
             unselectedItemColor: Color(0xff483d8b),
@@ -77,6 +78,5 @@ class _AgoraPageState extends State<HomePage> {
 
               )
             ]));
-
   }
 }

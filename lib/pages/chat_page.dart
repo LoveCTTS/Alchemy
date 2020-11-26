@@ -6,8 +6,6 @@ import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:flutter/services.dart'; //Vibration 기능 사용을 위해 필요
-import 'dart:io'; // sleep method를 사용하기위해 필
 
 
 class ChatPage extends StatefulWidget {
@@ -40,15 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   FirebaseUser _user;
 
-  patternVibrate(){
 
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(microseconds: 200),
-    );
-  }
-  
 
   Widget _chatMessages(){
     return Container(

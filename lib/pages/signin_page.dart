@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../helper/helper_functions.dart';
-import 'Home_page.dart';
+import 'home_page.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
 import '../shared/constants.dart';
@@ -81,11 +81,13 @@ class _SignInPageState extends State<SignInPage> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0), //horizontal이 커질수록 양옆으로 폭 조절, vertical은 위아래로 폭 조절
             children: <Widget>[
-              Column( //세로로 위젯을 배치하기위해 Column사용
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Alchemy", style: TextStyle(color: Colors.black, fontSize: 100.0, fontFamily: 'Satisfy')),//앱 메인 제목
+                  FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text("Alchemy", style: TextStyle(color: Colors.black, fontSize: 100, fontFamily: 'Satisfy'))),//앱 메인 제목(FittedBox를 통해 기기에 따라 유연하게 적용)
                 
                   SizedBox(height: 30.0), //위젯사이 높낮이 조절을위해 SizeBox 사용
                 

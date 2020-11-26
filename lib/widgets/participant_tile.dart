@@ -6,6 +6,7 @@ import '../pages/chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../pages/agora_page.dart';
+import 'package:vibration/vibration.dart';
 
 
 class ParticipantTile extends StatelessWidget { //그룹 타일도 한번 실행후 상태 변화가 없기때문에 StatelessWidget 사용
@@ -33,6 +34,15 @@ class ParticipantTile extends StatelessWidget { //그룹 타일도 한번 실행
                       _user=await FirebaseAuth.instance.currentUser();
 
                       DatabaseService(uid:_user.uid).updateRequest(participantName,senderName);
+                      if(await Vibration.hasVibrator() && !await Vibration.hasAmplitudeControl()){
+                        (Theme.of(context).platform == TargetPlatform.android)? Vibration.vibrate(
+
+                            duration: 3000,
+                            pattern: [100,50,200,30,1000,2000]
+                        ): Vibration.vibrate();
+                      }else{
+                          print("${Theme.of(context).platform}: vibration Null");
+                          }
                     },
                         child:Text("친구 요청"))
                   ]

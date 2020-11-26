@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:linkproto/pages/signin_page.dart';
 import 'helper/helper_functions.dart';
 import 'pages/authenticate_page.dart';
-import 'pages/Home_page.dart';
+import 'pages/home_page.dart';
 import 'pages/test_page.dart';
 
 //메인에서 runApp을 통해 MyApp 클래스 실행

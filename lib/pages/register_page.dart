@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../helper/helper_functions.dart';
-import '../pages/Home_page.dart';
+import '../pages/home_page.dart';
 import '../services/auth_service.dart';
 import '../shared/constants.dart';
 import '../shared/loading.dart';
