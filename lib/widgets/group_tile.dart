@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import '../pages/chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:get/get.dart';
 
 
 class GroupTile extends StatelessWidget {
