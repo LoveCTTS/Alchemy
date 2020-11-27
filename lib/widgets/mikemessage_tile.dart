@@ -47,7 +47,7 @@ class MikeMessageTile extends StatelessWidget {
                 child: Container(
                     child: Align(
                         alignment: Alignment.center,
-                        child: Text("$senderName : $mikeMessage", style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Color(0xff483d8b),
+                        child: Text("$senderName : $mikeMessage", style:TextStyle(fontWeight: FontWeight.bold,fontSize:10,color: Color(0xff483d8b),
                             fontFamily: "RobotoMono-italic"))),
                     decoration: kInnerDecoration
                 ),

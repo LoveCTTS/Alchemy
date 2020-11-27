@@ -21,6 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
+
   // text field state
   String fullName = '';
   String email = '';

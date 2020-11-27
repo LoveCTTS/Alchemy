@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:linkproto/services/auth_service.dart';
+
+import 'authenticate_page.dart';
+import 'group_page.dart';
 
 
 
@@ -14,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
+  final AuthService _auth = AuthService();
   File _image;
   FirebaseAuth _firebaseAuth =FirebaseAuth.instance;
   FirebaseUser _user;
@@ -113,7 +118,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 23.0),
             ListTile(
-              onTap: () {},
+              onTap: () {
+
+              },
               selected: true,
               contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
               leading: Icon(Icons.group),
@@ -129,6 +136,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             ListTile(
               onTap: () async {
+
+                await _auth.signOut();
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
               },
               contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
               leading: Icon(Icons.exit_to_app, color: Colors.red),
