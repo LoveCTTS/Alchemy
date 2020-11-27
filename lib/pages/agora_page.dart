@@ -205,9 +205,7 @@ class _AgoraPageState extends State<AgoraPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-            padding: EdgeInsets.only(top:250,bottom:250),
-            child:AlertDialog(
+        return AlertDialog(
                 title: Text("Create a group"),
                 content: StatefulBuilder(
                     builder: (context,setState){
@@ -239,7 +237,7 @@ class _AgoraPageState extends State<AgoraPage> {
                                       width:80,
                                       child:Text("password")),
                                   SizedBox(
-                                      width: 80,
+                                      width: 100,
                                       height: 25,
                                       child: Switch(
                                           activeColor: Colors.pinkAccent,
@@ -253,57 +251,57 @@ class _AgoraPageState extends State<AgoraPage> {
                                           }
                                       )
                                   ),
-                                  SizedBox(
-                                      width:100,height:30,
-                                      child:TextField(
-                                        enabled: isSwitched==false?false:true, //스위치 false이면 비밀번호 입력못하고, true면 비밀번호 입력가능
-                                          onChanged: (val) {
-                                            roomPassword = val;
-                                          },
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: "Password",
-                                          ),
-                                          style: TextStyle(
-                                              fontSize: 15.0,
-                                              height: 2.0,
-                                              color: Colors.black
-                                          )
-                                      ))
+
                                 ]),
-
-                            SizedBox(height:50),
-                            Row( children: [
-                              FlatButton(
-                                minWidth: 80,
-                                child: Text("Cancel",style:TextStyle(fontSize:20,color:Colors.black)),
-                                onPressed:  () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              SizedBox(width:80),
-                              FlatButton(
-                                minWidth: 80,
-                                child: Text("Create",style:TextStyle(fontSize:20,color:Colors.black)),
-                                onPressed:  () async {
-                                  if(_groupName != null && roomPassword==null) {
-                                    await HelperFunctions.getUserNameSharedPreference().then((val) {
-                                      DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-                                      Navigator.of(context).pop();
-                                    });
-
-                                  }else if(_groupName != null && roomPassword!=null){
-                                    await HelperFunctions.getUserNameSharedPreference().then((val){
-                                    DatabaseService(uid:_user.uid).createSecretGroup(val,_groupName,roomPassword);
-                                    Navigator.of(context).pop();
-                                  });
-                                }}
-                              )]
-                            )
+                            SizedBox(height:20),
+                            SizedBox(
+                                width:250,height:30,
+                                child:TextField(
+                                    enabled: isSwitched==false?false:true, //스위치 false이면 비밀번호 입력못하고, true면 비밀번호 입력가능
+                                    onChanged: (val) {
+                                      roomPassword = val;
+                                    },
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Password",
+                                    ),
+                                    style: TextStyle(
+                                        fontSize: 15.0,
+                                        height: 2.0,
+                                        color: Colors.black
+                                    )
+                                )),
                           ]);
                     }
+                ),
+              actions: [
+
+                FlatButton(
+
+                  child: Text("Cancel",style:TextStyle(fontSize:20,color:Colors.red)),
+                  onPressed:  () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+
+                    child: Text("Create",style:TextStyle(fontSize:20,color:Colors.blue)),
+                    onPressed:  () async {
+                      if(_groupName != null && roomPassword==null) {
+                        await HelperFunctions.getUserNameSharedPreference().then((val) {
+                          DatabaseService(uid: _user.uid).createGroup(val, _groupName);
+                          Navigator.of(context).pop();
+                        });
+
+                      }else if(_groupName != null && roomPassword!=null){
+                        await HelperFunctions.getUserNameSharedPreference().then((val){
+                          DatabaseService(uid:_user.uid).createSecretGroup(val,_groupName,roomPassword);
+                          Navigator.of(context).pop();
+                        });
+                      }}
                 )
-            ));
+              ],
+            );
 
       },
     );
@@ -316,6 +314,7 @@ class _AgoraPageState extends State<AgoraPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+
 
           //앱 상단바의 위아래 높낮이 조절을위해 PreferredSize 를 사용하여야하고, 이를 상단바에만 적용하기위해서 SafeZone(그냥 직접 만든 것)을 사용
             appBar: PreferredSize(
