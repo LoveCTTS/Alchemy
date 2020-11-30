@@ -198,7 +198,8 @@ class _ChatPageState extends State<ChatPage> {
                         int reqIndex=result.length-index-1;
                         return ParticipantTile(
                             senderName : widget.userName,
-                            participantName: _destructureName(result[reqIndex].toString())
+                            participantName: _destructureName(result[reqIndex].toString()),
+                            groupId: widget.groupId,
                         );
                       }
                   );

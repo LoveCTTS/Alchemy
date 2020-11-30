@@ -16,13 +16,13 @@ class MikeMessageTile extends StatelessWidget {
   MikeMessageTile({this.senderName,this.mikeMessage});
 
   final kInnerDecoration = BoxDecoration(
-    color: Color(0xfffffafa),
+    color: Colors.white, //수정
     border: Border.all(color: Colors.white),
     borderRadius: BorderRadius.circular(32),
   );
 
   final kGradientBoxDecoration = BoxDecoration(
-    gradient: LinearGradient(colors: [Color(0xff000080),Color(0xff4b0082)]),
+    gradient: LinearGradient(colors: [Colors.white,Colors.white]), //수정
     border: Border.all(
       color: Colors.white,
     ),

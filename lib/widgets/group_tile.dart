@@ -45,114 +45,116 @@ class GroupTile extends StatelessWidget {
             label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
-  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,   //수정완료 - 아고라페이지 방 버튼 왼쪽 정렬
         children: <Widget>[
-          Container(
-          width: 350, height: 70.0, //decoration: kGradientBoxDecoration,
-          padding: EdgeInsets.all(0.5), //Gradient Border size 조절
-            child: GestureDetector(
-            onTap: () async {
-              _user = await FirebaseAuth.instance.currentUser();
-              isSecretRoom = await DatabaseService().isSecretRoom(groupId);
-              if(isSecretRoom){
+          GestureDetector(
 
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Padding(
-                          padding: EdgeInsets.only(top:250,bottom:250),
-                          child:AlertDialog(
-                              title: Text("암호") ,
-                              content:Column(
-                                        children:[
-                                          SizedBox(height:50),
-                                          SizedBox(
-                                              height:50,
-                                              child:TextField(
-                                                  cursorHeight: 30,
-                                                  onChanged: (val) {
-                                                    roomPassword=val;
-                                                  },
-                                                  style: TextStyle(
-                                                      fontSize: 15.0,
-                                                      height: 2.0,
-                                                      color: Colors.black
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                      border: OutlineInputBorder(),
-                                                      labelText: "Input Room Password"
-                                                  )
-                                              )),
+        onTap: () async {
+      _user = await FirebaseAuth.instance.currentUser();
+      isSecretRoom = await DatabaseService().isSecretRoom(groupId);
+      if(isSecretRoom){
 
-                                          SizedBox(height:50),
-                                          Row( children: [
-                                            FlatButton(
-                                              minWidth: 80,
-                                              child: Text("닫기",style:TextStyle(fontSize:20,color:Colors.black)),
-                                              onPressed:  () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            SizedBox(width:80),
-                                            FlatButton(
-                                                minWidth: 80,
-                                                child: Text("입장하기",style:TextStyle(fontSize:20,color:Colors.black)),
-                                                onPressed:  () async {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Padding(
+                padding: EdgeInsets.only(top:250,bottom:250),
+                child:AlertDialog(
+                    title: Text("암호") ,
+                    content:Column(
+                        children:[
+                          SizedBox(height:50),
+                          SizedBox(
+                              height:50,
+                              child:TextField(
+                                  cursorHeight: 30,
+                                  onChanged: (val) {
+                                    roomPassword=val;
+                                  },
+                                  style: TextStyle(
+                                      fontSize: 15.0,
+                                      height: 2.0,
+                                      color: Colors.black
+                                  ),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Input Room Password"
+                                  )
+                              )),
 
-                                                  isSameRoomPassword = await DatabaseService().isSameRoomPassword(groupId, roomPassword);
-                                                  if(isSameRoomPassword){
-                                                    await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
-                                                        groupId, groupName, userName);
-                                                    //채팅방으로 가기
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                                        ChatPage(groupId: groupId,
-                                                          userName: userName,
-                                                          groupName: groupName,)));
-                                                  }else{
-                                                    Navigator.of(context).pop();
-                                                    // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
-                                                  }
+                          SizedBox(height:50),
+                          Row( children: [
+                            FlatButton(
+                              minWidth: 80,
+                              child: Text("닫기",style:TextStyle(fontSize:20,color:Colors.black)),
+                              onPressed:  () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            SizedBox(width:80),
+                            FlatButton(
+                                minWidth: 80,
+                                child: Text("입장하기",style:TextStyle(fontSize:20,color:Colors.black)),
+                                onPressed:  () async {
 
-                                                }
-                                            )]
-                                          )
-                                        ])
-                          ));
+                                  isSameRoomPassword = await DatabaseService().isSameRoomPassword(groupId, roomPassword);
+                                  if(isSameRoomPassword){
+                                    await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
+                                        groupId, groupName, userName);
+                                    //채팅방으로 가기
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                        ChatPage(groupId: groupId,
+                                          userName: userName,
+                                          groupName: groupName,)));
+                                  }else{
+                                    Navigator.of(context).pop();
+                                    // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
+                                  }
 
-                    },
-                  );
+                                }
+                            )]
+                          )
+                        ])
+                ));
+
+          },
+        );
 
 
-              }else{
-                await DatabaseService(uid: _user.uid,userName:userName).JoiningGroupAtTouch(
-                    groupId, groupName, userName);
-                //채팅방으로 가기
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                    ChatPage(groupId: groupId,
-                      userName: userName,
-                      groupName: groupName,)));
-              }
+      }else{
+        await DatabaseService(uid: _user.uid,userName:userName).JoiningGroupAtTouch(
+            groupId, groupName, userName);
+        //채팅방으로 가기
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+            ChatPage(groupId: groupId,
+              userName: userName,
+              groupName: groupName,)));
+      }
 
-            },
-              child: Padding(
-              padding: const EdgeInsets.all(0),
-                child: Container(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.black/*Color(0xff483d8b)*/,
-                      fontFamily: "RobotoMono-italic"))),
-                    //decoration: kInnerDecoration
-                ),
-              ),
-
+    },
+            child:Container(
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    height: 70.0, //decoration: kGradientBoxDecoration,
+                    padding: EdgeInsets.all(0.5), //Gradient Border size 조절
+                        child: Padding(
+                        padding: const EdgeInsets.all(0),
+                          child: Container(
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.black/*Color(0xff483d8b)*/,
+                                fontFamily: "RobotoMono-italic"))),
+                              //decoration: kInnerDecoration
+                          ),
+                        ),
           ),
-        ),SizedBox(height:10)]
+        )]
     );
   }
 }

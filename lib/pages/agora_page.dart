@@ -158,10 +158,12 @@ class _AgoraPageState extends State<AgoraPage> {
                           shrinkWrap: true,
                           itemBuilder: (context,index){
                             int reqIndex=mikeMessageList.length-index-1;
-                            return MikeMessageTile(
+                            return Align(
+                                alignment: Alignment.centerLeft,                            //추후 왼쪽정렬 수정 필요
+                                child: MikeMessageTile(
                               senderName: mikeMessageList[reqIndex]["sender"].toString(),
                               mikeMessage: mikeMessageList[reqIndex]["mikeMessage"].toString(),
-                            );
+                            ));
 
                     }
                 );
@@ -173,8 +175,11 @@ class _AgoraPageState extends State<AgoraPage> {
                   width:50,
                     child: TextField(
               onChanged: (val) {
-                mikeMessageInMikePopup=val;
+                if (val.length<45) {
+                  mikeMessageInMikePopup = val;
+                }
               },
+                        decoration: InputDecoration(labelText: "45자 이내로 작성해주세요"),
               style: TextStyle(
                   fontSize: 15.0,
                   height: 2.0,
@@ -420,7 +425,7 @@ class _AgoraPageState extends State<AgoraPage> {
             children: [
               Container(
                   width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
-                  height: 30,
+                  height: MediaQuery.of(context).size.height-870,
                   color: Colors.deepPurple,
                   child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
                     onTap: (){

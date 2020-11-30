@@ -9,13 +9,35 @@ import '../pages/agora_page.dart';
 import 'package:vibration/vibration.dart';
 
 
-class ParticipantTile extends StatelessWidget { //그룹 타일도 한번 실행후 상태 변화가 없기때문에 StatelessWidget 사용
+class ParticipantTile extends StatefulWidget {//그룹 타일도 한번 실행후 상태 변화가 없기때문에 StatelessWidget 사용
 
   final String senderName;
   final String participantName;
+  final String groupId;
+
+  ParticipantTile({this.senderName,this.participantName,this.groupId});
+  @override
+  _ParticipantTileState createState() => _ParticipantTileState();
+}
+
+class _ParticipantTileState extends State<ParticipantTile> {
+
+
+  bool isChief=false;
   FirebaseUser _user ;
 
-  ParticipantTile({this.senderName,this.participantName});
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    DatabaseService().isChief(widget.participantName, widget.groupId).then((value){
+      isChief=value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +55,7 @@ class ParticipantTile extends StatelessWidget { //그룹 타일도 한번 실행
                         onPressed: ()async{
                       _user=await FirebaseAuth.instance.currentUser();
 
-                      DatabaseService(uid:_user.uid).updateRequest(participantName,senderName);
+                      DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);
                       if(await Vibration.hasVibrator() && !await Vibration.hasAmplitudeControl()){
                         (Theme.of(context).platform == TargetPlatform.android)? Vibration.vibrate(
 
@@ -54,9 +76,9 @@ class ParticipantTile extends StatelessWidget { //그룹 타일도 한번 실행
             height:65.0,
             child: Card( //ListTile을 조금 더 쉽게 나은 디자인을하기 위한 Card
                 child: ListTile(
-                    title: Text(participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold))
+                    title: Text(widget.participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold))
                 ),
-                color: Colors.purple,
+                color:  isChief ?Colors.blue:Colors.purple,
                 margin: EdgeInsets.symmetric(vertical:10.0, horizontal: 20.0),
                 shape: RoundedRectangleBorder(
                     side: BorderSide(color: Colors.white, width: 2),
