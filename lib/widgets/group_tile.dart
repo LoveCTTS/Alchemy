@@ -54,7 +54,7 @@ class GroupTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-          width: 350, height: 50.0, decoration: kGradientBoxDecoration,
+          width: 350, height: 70.0, //decoration: kGradientBoxDecoration,
           padding: EdgeInsets.all(0.5), //Gradient Border size 조절
             child: GestureDetector(
             onTap: () async {
@@ -68,10 +68,10 @@ class GroupTile extends StatelessWidget {
                       return Padding(
                           padding: EdgeInsets.only(top:250,bottom:250),
                           child:AlertDialog(
-                              title: Text("비밀 방") ,
+                              title: Text("암호") ,
                               content:Column(
                                         children:[
-                                          SizedBox(height:30),
+                                          SizedBox(height:50),
                                           SizedBox(
                                               height:50,
                                               child:TextField(
@@ -141,13 +141,13 @@ class GroupTile extends StatelessWidget {
 
             },
               child: Padding(
-              padding: const EdgeInsets.all(3.0),
+              padding: const EdgeInsets.all(0),
                 child: Container(
                   child: Align(
-                      alignment: Alignment.center,
-                      child: Text(groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Color(0xff483d8b),
+                      alignment: Alignment.centerLeft,
+                      child: Text(groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.black/*Color(0xff483d8b)*/,
                       fontFamily: "RobotoMono-italic"))),
-                    decoration: kInnerDecoration
+                    //decoration: kInnerDecoration
                 ),
               ),
 

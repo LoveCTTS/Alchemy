@@ -406,8 +406,8 @@ class _AgoraPageState extends State<AgoraPage> {
                             //borderRadius: BorderRadius.circular(0),
                             gradient: LinearGradient(
                               colors: <Color>[
-                                Colors.black,
-                                Colors.grey,
+                                Colors.deepPurple,
+                                Colors.purple[300],
                               ],
                             ),
                           ),

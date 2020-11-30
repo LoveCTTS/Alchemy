@@ -30,24 +30,24 @@ class MessageTile extends StatelessWidget { //MessageTile은 고정되어있기�
           padding: EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
           decoration: BoxDecoration(
           borderRadius: sentByMe ? BorderRadius.only(
-            topLeft: Radius.circular(23),
-            topRight: Radius.circular(23),
-            bottomLeft: Radius.circular(23)
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+            bottomLeft: Radius.circular(10)
           )
           :
           BorderRadius.only(
-            topLeft: Radius.circular(23),
-            topRight: Radius.circular(23),
-            bottomRight: Radius.circular(23)
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+            bottomRight: Radius.circular(10)
           ),
-          color: sentByMe ? Colors.purple : Colors.grey[700],
+          color: sentByMe ? Colors.purple[200] : Colors.grey[400],
         ),
             child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 10.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
               SizedBox(height: 7.0),
-              Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),
+              Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.black)),
               Text(time, textAlign: TextAlign.start, style: TextStyle(fontSize: 10.0, color: Colors.black))
 
           ],
