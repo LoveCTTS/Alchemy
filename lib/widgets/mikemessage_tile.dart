@@ -11,23 +11,8 @@ class MikeMessageTile extends StatelessWidget {
 
   final String senderName;
   final String mikeMessage;
-  FirebaseUser _user;
 
   MikeMessageTile({this.senderName,this.mikeMessage});
-
-  final kInnerDecoration = BoxDecoration(
-    color: Colors.white, //수정
-    border: Border.all(color: Colors.white),
-    borderRadius: BorderRadius.circular(32),
-  );
-
-  final kGradientBoxDecoration = BoxDecoration(
-    gradient: LinearGradient(colors: [Colors.white,Colors.white]), //수정
-    border: Border.all(
-      color: Colors.white,
-    ),
-    borderRadius: BorderRadius.circular(32),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +21,7 @@ class MikeMessageTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: 200, height: 50.0, decoration: kGradientBoxDecoration,
+            width: 200, height: 60.0,
             padding: EdgeInsets.all(0.5), //Gradient Border size 조절
             child: GestureDetector(
               onTap: () async {
@@ -46,15 +31,14 @@ class MikeMessageTile extends StatelessWidget {
                 padding: const EdgeInsets.all(3.0),
                 child: Container(
                     child: Align(
-                        alignment: Alignment.center,
+                        alignment: Alignment.centerLeft,
                         child: Text("$senderName : $mikeMessage", style:TextStyle(fontWeight: FontWeight.bold,fontSize:10,color: Color(0xff483d8b),
                             fontFamily: "RobotoMono-italic"))),
-                    decoration: kInnerDecoration
                 ),
               ),
 
             ),
-          ),SizedBox(height:10)]
+          )]
     );
   }
 }

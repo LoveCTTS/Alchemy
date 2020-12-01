@@ -124,10 +124,10 @@ class _AgoraPageState extends State<AgoraPage> {
           title: Text("확성기"),
           content: Container(
               width: 250,
-              height: 300,
+              height: 250,
               child:ListView(children: [
                 Container(
-                  height:200,
+                  height:150,
                     decoration: BoxDecoration(
 
                       border: Border.all(color: Colors.black,
@@ -158,19 +158,16 @@ class _AgoraPageState extends State<AgoraPage> {
                           shrinkWrap: true,
                           itemBuilder: (context,index){
                             int reqIndex=mikeMessageList.length-index-1;
-                            return Align(
-                                alignment: Alignment.centerLeft,                            //추후 왼쪽정렬 수정 필요
-                                child: MikeMessageTile(
+                            return MikeMessageTile(
                               senderName: mikeMessageList[reqIndex]["sender"].toString(),
                               mikeMessage: mikeMessageList[reqIndex]["mikeMessage"].toString(),
-                            ));
+                            );
 
                     }
                 );
           }
         })),
 
-                SizedBox(height:40),
                 Container(
                   width:50,
                     child: TextField(
@@ -181,8 +178,8 @@ class _AgoraPageState extends State<AgoraPage> {
               },
                         decoration: InputDecoration(labelText: "45자 이내로 작성해주세요"),
               style: TextStyle(
-                  fontSize: 15.0,
-                  height: 2.0,
+                  fontSize: 10.0,
+                  height: 3.0,
                   color: Colors.black
               )
           )),
@@ -425,7 +422,7 @@ class _AgoraPageState extends State<AgoraPage> {
             children: [
               Container(
                   width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
-                  height: MediaQuery.of(context).size.height-870,
+                  height: 30,
                   color: Colors.deepPurple,
                   child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
                     onTap: (){

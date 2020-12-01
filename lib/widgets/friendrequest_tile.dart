@@ -38,6 +38,7 @@ class FriendRequestTile extends StatelessWidget { //그룹 타일도 한번 실�
                         onPressed: ()async{
 
                           DatabaseService(userName: receiverName).permitFriendRequest(senderName);
+                          DatabaseService(userName: receiverName).createFriendsChatGroup(receiverName, senderName);
                           Navigator.of(context).pop();
                         },
                         child:Text("수락"))
@@ -49,14 +50,6 @@ class FriendRequestTile extends StatelessWidget { //그룹 타일도 한번 실�
         child:Container( //Card size 조절하기위한 SizedBox
             height:70.0,
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-
-              border:Border.all(
-
-                color:Colors.black,
-                width:4,
-              )
-            ),
             child: Card( //ListTile을 조금 더 쉽게 나은 디자인을하기 위한 Card
                 child: ListTile(
                     title: Center(child:Text(senderName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold)))
