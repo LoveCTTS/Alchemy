@@ -17,7 +17,6 @@ class FriendsListPage extends StatefulWidget {
 class _FriendsListPageState extends State<FriendsListPage> {
 
   FirebaseUser _user;
-  String uid;
   String _userName = '';
   Stream<QuerySnapshot> _chats; //QuerySnapshot 데이터가 여러개인 Stream형태 _chat변수
   TextEditingController messageEditingController = new TextEditingController();
@@ -164,13 +163,29 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     } else {
                       var friendList = snapshot.data["friends"];
                       return StreamBuilder(
-                          stream: DatabaseService(userName: _userName)
-                              .friendsChatCollection.snapshots(),
+                          stream: DatabaseService(uid:_user.uid,userName: _userName).friendsChatCollection.snapshots(),
                           builder: (context, snapshot) {
-                            var allFriendGroups = snapshot.data.documents.map((
-                                e) {
-                              return e.data;
-                            }).toList();
+
+                            List<Widget> children;
+                            if(snapshot.hasError){
+
+                              children = <Widget>[
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 60,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Text('Error: ${snapshot.error}'),
+                                )
+                              ];
+                            }
+                            if(!snapshot.hasData) {
+                              return CircularProgressIndicator();
+
+                            }else{
+                              List allFriendGroups = snapshot.data.documents.map((e) {return e.data;}).toList();
                             return ListView.builder(
                                 itemCount: friendList.length,
                                 shrinkWrap: true,
@@ -182,6 +197,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                   );
                                 }
                             );
+                            }
                           });
                     }
                   }
