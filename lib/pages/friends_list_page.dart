@@ -33,8 +33,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
 
   getUserInfo() async{
-    _userName = await HelperFunctions.getUserNameSharedPreference();
+
     _user = await FirebaseAuth.instance.currentUser();
+    await HelperFunctions.getUserNameSharedPreference().then((value) {
+      setState(() {
+        _userName = value;
+      });
+    });
+
+
   }
 
   void _popupFriendRequest(BuildContext context) {
