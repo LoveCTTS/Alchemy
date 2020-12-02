@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/services/auth_service.dart';
 
 import 'authenticate_page.dart';
@@ -26,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String _profileImageURL = "";
   final picker = ImagePicker();
   bool _hasNetworkImage=false;
+  String _userName='';
 
   @override
   void initState(){
@@ -38,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _prepareService() async{
     _user=await _firebaseAuth.currentUser();
     _hasNetworkImage = await hasNetworkImage();
+    _userName=await HelperFunctions.getUserNameSharedPreference();
   }
 
   void _uploadImageToStorage(ImageSource source) async {
@@ -51,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
     StorageReference storageReference =
-    _firebaseStorage.ref().child("test/${_user.uid}");
+    _firebaseStorage.ref().child("users/${_user.uid}");
 
     // 파일 업로드
     StorageUploadTask storageUploadTask = storageReference.putFile(_image);
@@ -70,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
    hasNetworkImage() async{
 
     StorageReference storageReference =
-    _firebaseStorage.ref().child("test/${_user.uid}");
+    _firebaseStorage.ref().child("users/${_user.uid}");
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;

@@ -164,6 +164,8 @@ class DatabaseService {
         {'friends': FieldValue.arrayUnion([senderName])});
     await userCollection.document(userName).updateData(
         {'request': FieldValue.arrayRemove([senderName])});
+    await userCollection.document(senderName).updateData(
+      {'friends' : FieldValue.arrayUnion([userName])});
   }
 
 
