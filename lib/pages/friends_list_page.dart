@@ -18,10 +18,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   FirebaseUser _user;
   String _userName = '';
-  Stream<QuerySnapshot> _chats; //QuerySnapshot 데이터가 여러개인 Stream형태 _chat변수
-  TextEditingController messageEditingController = new TextEditingController();
-
-
+  TextEditingController messageEditingController = TextEditingController();
 
 
   //TextEditingController형의 인스턴스를 저장하는 변수 messageEditingController 생성
@@ -35,13 +32,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
   getUserInfo() async{
 
     _user = await FirebaseAuth.instance.currentUser();
+
     await HelperFunctions.getUserNameSharedPreference().then((value) {
       setState(() {
         _userName = value;
       });
     });
-
-
   }
 
   void _popupFriendRequest(BuildContext context) {
@@ -115,7 +111,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+        backgroundColor: Colors.black,
         appBar: AppBar(
             title: Text("친구 목록", style: TextStyle(color: Colors.white)),
             backgroundColor: Colors.black87,
@@ -146,73 +142,72 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ]
 
         ),
-        body:Container(
-            width: MediaQuery.of(context).size.width,
-              child: StreamBuilder(
-                  stream: DatabaseService().userCollection.document(_userName).snapshots(),
-                  builder: (context, snapshot) {
-                    List<Widget> children;
-                    if (snapshot.hasError) {
-                      children = <Widget>[
-                        Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 60,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Text('Error: ${snapshot.error}'),
-                        )
-                      ];
-                    }
-                    if (!snapshot.hasData) {
-                      return CircularProgressIndicator();
-                    } else {
-                      var friendList = snapshot.data["friends"];
-                      return StreamBuilder(
-                          stream: DatabaseService(uid:_user.uid,userName: _userName).friendsChatCollection.snapshots(),
-                          builder: (context, snapshot) {
+        body: StreamBuilder(
+            stream: DatabaseService(uid:_user.uid).userCollection.document(_userName).snapshots(),
+            builder: (context, snapshot) {
+              List<Widget> children;
+              if (snapshot.hasError) {
+                children = <Widget>[
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 60,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text('Error: ${snapshot.error}'),
+                  )
+                ];
+              }
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              } else {
+                var friendList = snapshot.data["friends"];
+                return StreamBuilder(
+                    stream: DatabaseService(uid:_user.uid,userName: _userName).friendsChatCollection.snapshots(),
+                    builder: (context, snapshot) {
 
-                            List<Widget> children;
-                            if(snapshot.hasError){
+                      List<Widget> children;
+                      if(snapshot.hasError){
 
-                              children = <Widget>[
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 60,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16),
-                                  child: Text('Error: ${snapshot.error}'),
-                                )
-                              ];
+                        children = <Widget>[
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 60,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Text('Error: ${snapshot.error}'),
+                          )
+                        ];
+                      }
+                      if(!snapshot.hasData) {
+                        return CircularProgressIndicator();
+
+                      }else{
+                        List allFriendGroups = snapshot.data.documents.map((e) {return e.data;}).toList();
+                        return ListView.builder(
+                            itemCount: friendList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              int reqIndex = friendList.length - index - 1;
+                              return FriendTile(
+                                groupId: allFriendGroups[reqIndex]["groupId"],
+                                friendName: friendList[reqIndex],
+                              );
                             }
-                            if(!snapshot.hasData) {
-                              return CircularProgressIndicator();
+                        );
+                      }
+                    });
+              }
+            }
+        ),
 
-                            }else{
-                              List allFriendGroups = snapshot.data.documents.map((e) {return e.data;}).toList();
-                            return ListView.builder(
-                                itemCount: friendList.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  int reqIndex = friendList.length - index - 1;
-                                  return FriendTile(
-                                    groupId: allFriendGroups[reqIndex]["groupId"],
-                                    friendName: friendList[reqIndex],
-                                  );
-                                }
-                            );
-                            }
-                          });
-                    }
-                  }
-              ),
-            )
-        );
+    );
   }
 }
+
 
 
 

@@ -4,6 +4,7 @@ import 'helper/helper_functions.dart';
 import 'pages/authenticate_page.dart';
 import 'pages/home_page.dart';
 import 'pages/test_page.dart';
+import 'routes/routes.dart';
 
 //메인에서 runApp을 통해 MyApp 클래스 실행
 void main() => runApp(MyApp());
@@ -49,10 +50,9 @@ class _MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Raleway'), //MaterialAPP에 속하는 위젯 모두를 기본적으로 Dark Theme로 설정
       darkTheme: ThemeData.dark(), // 앱이 DarkMode일때 적용되는 테마 값을 dark로 설정
-      //home: _isLoggedIn != null ? _isLoggedIn ? AgoraPage() : AuthenticatePage() : Center(child: CircularProgressIndicator()),
-      home: _isLoggedIn ? HomePage() : AuthenticatePage(), // 기본적으로 로그인되었다면 HomePage를 기본 루트로 설정하고, 로그인 실패시 AuthenticaePage로 설정
 
-      //home: HomePage(),
+      initialRoute: _isLoggedIn? '/home' : '/auth', // 기본적으로 로그인되었다면 HomePage를 기본 루트로 설정하고, 로그인 실패시 AuthenticaePage로 설정
+      routes: routes,
     );
   }
 }

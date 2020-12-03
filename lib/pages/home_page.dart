@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int _currentIndex=0; //하단 바 터치시 이동하기위한 정수형 Index변수 생성
+  int _currentIndex=2; //하단 바 터치시 이동하기위한 정수형 Index변수 생성
   final List _children = [TestPage(),FriendsListPage(),AgoraPage(),GroupPage(),ProfilePage()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
   //변경이 되면 안되기때문에 final 키워드 사용(Constant랑 같은 의미)
 

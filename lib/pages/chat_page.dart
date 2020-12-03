@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:linkproto/pages/agora_page.dart';
 import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
+import '../routes/routes.dart';
 
 
 class ChatPage extends StatefulWidget {
@@ -207,7 +209,16 @@ class _ChatPageState extends State<ChatPage> {
                     }
                 ),
               ),
-
+              Align(
+                alignment: Alignment.bottomLeft,
+                  child:IconButton(
+                      icon: Icon(Icons.input,size:40, color: Colors.white),
+                    onPressed: (){
+                      Navigator.of(context).pop();//home페이지까지 이동
+                      Navigator.of(context).pop();
+                    }
+                    ),
+                  )
             ]
     )
       )

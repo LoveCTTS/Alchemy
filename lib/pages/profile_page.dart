@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/다운로드.png")
+                      image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/download.png")
 
                     ),
                   ),

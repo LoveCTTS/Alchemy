@@ -87,17 +87,28 @@ class _AgoraPageState extends State<AgoraPage> {
 
         } else {
           List allGroups = snapshot.data.documents.map((e){return e.data;}).toList();
-          return ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
-              itemCount: allGroups.length,
+          return SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: Column(
+              children: [
+            ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
+              physics: NeverScrollableScrollPhysics(),
+                itemCount: allGroups.length,
               shrinkWrap: true, // 스크롤 뷰의 범위를 보고있는 내용에따라 결정해야하는지 여부(별로 중요하지않음)
               itemBuilder: (context,index){
                 int reqIndex=allGroups.length-index-1;
+
                 return GroupTile(
                     userName: _userName, //특정 유저의 풀네임을 userName에 저장
                     groupId: allGroups[reqIndex]["groupId"].toString(),
                     groupName: allGroups[reqIndex]["groupName"].toString()
                 );
-              });
+              }
+              )
+              ]
+          )
+          )
+          ;
           }
       });
   }

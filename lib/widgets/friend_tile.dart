@@ -84,7 +84,7 @@ class _FriendTileState extends State<FriendTile>{
             },
               child:Container(
                 width: MediaQuery.of(context).size.width,
-                height:50, color: Colors.grey,
+                height:50, color: Colors.blue,
                 padding: EdgeInsets.all(0.5),
                 child: Align(
                   alignment: Alignment.centerLeft,

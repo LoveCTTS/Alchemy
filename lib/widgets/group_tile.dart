@@ -62,21 +62,6 @@ class GroupTileState extends State<GroupTile>{
   }
 
 
-
-  final kInnerDecoration = BoxDecoration(
-    color: Color(0xfffffafa),
-    border: Border.all(color: Colors.white),
-    borderRadius: BorderRadius.circular(32),
-  );
-
-  final kGradientBoxDecoration = BoxDecoration(
-    gradient: LinearGradient(colors: [Color(0xff000080),Color(0xff4b0082)]),
-    border: Border.all(
-      color: Colors.white,
-    ),
-    borderRadius: BorderRadius.circular(32),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -167,7 +152,7 @@ class GroupTileState extends State<GroupTile>{
 
     },
             child:Container(
-                    color: Colors.white,
+                    color: Colors.blue,
                     width: MediaQuery.of(context).size.width,
                     height: 70.0,
                     child: Row(
@@ -178,13 +163,44 @@ class GroupTileState extends State<GroupTile>{
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/다운로드.png"),
-
+                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/download.png"),
                           ),
                         ),
                       ),
                       Text(widget.groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.black/*Color(0xff483d8b)*/,
-                          fontFamily: "RobotoMono-italic"))
+                          fontFamily: "RobotoMono-italic")),
+                          SizedBox(width:10),
+                          StreamBuilder(
+                            stream: DatabaseService().groupCollection.document(widget.groupId).snapshots(),
+                            builder: (context,snapshot){
+
+                              List<Widget> children;
+                              if(snapshot.hasError){
+
+                                children = <Widget>[
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 60,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text('Error: ${snapshot.error}'),
+                                  )
+                                ];
+                              }
+                              if(!snapshot.hasData){
+
+                                return CircularProgressIndicator();
+                              }else{
+
+                                String memberCount = snapshot.data["members"].length.toString();
+                                return Text(memberCount);
+                              }
+
+                            }
+                          )
+
 
 
                       ])
