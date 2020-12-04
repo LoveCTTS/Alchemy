@@ -38,8 +38,30 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   FirebaseUser _user;
+  bool isDeleted=false;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserID();
+    _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
+    _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
 
 
+    //DB로 부터 groupID를 통해 특정 그룹의 채팅정보를 반환받아서 val 매개변수에저장한후 Stream<QuerySnapshot>형태의 _chat변수에 저장함으로써,
+    // 여태까지 그룹채팅방에 쓰여진 모든 채팅을 볼 수있음.
+    //참고로 QuerySnapshot은 firebase에서 만들어진 클래스이고, Query의 결과가 저장되어있음.
+    DatabaseService().getChats(widget.groupId).then((val) {
+      // print(val);
+      setState(() {
+        _chats = val;
+      });
+    });
+  }
+  getUserID() async{
+    _user = await FirebaseAuth.instance.currentUser();
+
+  }
 
   Widget _chatMessages(){
     return Container(
@@ -61,14 +83,14 @@ class _ChatPageState extends State<ChatPage> {
             //format에는 화면에 시간을 어떤양식으로 보여줄지를 설정할 수 있음
             var format = new DateFormat.Md().add_jm();
             //DateString은 DateTime.fromMillisecondSinceEpoch함수를 통해 millisecond값을 DateTime형태로 바꿔주고, format함수를통해 보기좋은 시간형태로 바뀐 문자열 형태를 저장
-            var DateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data["time"]));
+            var dateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data["time"]));
 
-            //메세지 말풍선
+
             return MessageTile(
               message: snapshot.data.documents[index].data["message"],
               sender: snapshot.data.documents[index].data["sender"],
               sentByMe: widget.userName == snapshot.data.documents[index].data["sender"],
-              time: DateString,
+              time: dateString,
             );
           }
         )
@@ -117,29 +139,6 @@ class _ChatPageState extends State<ChatPage> {
     }
 
   }
-
-  getUserID() async{ FirebaseUser _user = await FirebaseAuth.instance.currentUser();}
-
-  @override
-  void initState() {
-    super.initState();
-    getUserID();
-    _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
-    _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
-
-
-    //DB로 부터 groupID를 통해 특정 그룹의 채팅정보를 반환받아서 val 매개변수에저장한후 Stream<QuerySnapshot>형태의 _chat변수에 저장함으로써,
-    // 여태까지 그룹채팅방에 쓰여진 모든 채팅을 볼 수있음.
-    //참고로 QuerySnapshot은 firebase에서 만들어진 클래스이고, Query의 결과가 저장되어있음.
-    DatabaseService().getChats(widget.groupId).then((val) {
-      // print(val);
-      setState(() {
-        _chats = val;
-      });
-    });
-  }
-
-
 
   //채팅 페이지 디자인 관련 코드인데, 직접 실시간으로 조절하면서 디자인하면되니 설명은 생략함.
   @override
@@ -213,9 +212,18 @@ class _ChatPageState extends State<ChatPage> {
                 alignment: Alignment.bottomLeft,
                   child:IconButton(
                       icon: Icon(Icons.input,size:40, color: Colors.white),
-                    onPressed: (){
-                      Navigator.of(context).pop();//home페이지까지 이동
+                    onPressed: () async{
+
+
+                      await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName);
+                      setState(() {
+                        isDeleted=true;
+                      });
                       Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+
+
+
                     }
                     ),
                   )

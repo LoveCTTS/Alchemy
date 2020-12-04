@@ -152,7 +152,7 @@ class GroupTileState extends State<GroupTile>{
 
     },
             child:Container(
-                    color: Colors.blue,
+                    color: Colors.white,
                     width: MediaQuery.of(context).size.width,
                     height: 70.0,
                     child: Row(

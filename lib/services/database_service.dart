@@ -16,10 +16,14 @@ class DatabaseService {
   });
 
   // Collection reference클래스를 사용해서 CloudStore에 생성되어있는 users, groups에 접근하기 위해 선언
-  final CollectionReference userCollection = Firestore.instance.collection('users');
-  final CollectionReference groupCollection = Firestore.instance.collection('groups');
-  final CollectionReference mikeMessageCollection = Firestore.instance.collection('mikeMessage');
-  final CollectionReference friendsChatCollection = Firestore.instance.collection('friendsChatGroup');
+  final CollectionReference userCollection = Firestore.instance.collection(
+      'users');
+  final CollectionReference groupCollection = Firestore.instance.collection(
+      'groups');
+  final CollectionReference mikeMessageCollection = Firestore.instance
+      .collection('mikeMessage');
+  final CollectionReference friendsChatCollection = Firestore.instance
+      .collection('friendsChatGroup');
 
 
   // 사용자의 데이터를 업데이트
@@ -132,7 +136,8 @@ class DatabaseService {
       //documentID_그룹이름 형태로 groups에 저장됨
     });
   }
-  Future createFriendsChatGroup(String userName,String friendName) async {
+
+  Future createFriendsChatGroup(String userName, String friendName) async {
     //DocumentReferenc형의 groupDocRef변수에 데이터를 json형식으로 묶어서 인자로 보내는 groupCollection.add의 결과값을 저장
     DocumentReference friendsChatGroupDocRef = await friendsChatCollection.add({
       'members': [],
@@ -145,12 +150,10 @@ class DatabaseService {
     await friendsChatGroupDocRef.updateData({
       'members': FieldValue.arrayUnion([userName]),
       'groupId': friendsChatGroupDocRef.documentID
-
     });
     await friendsChatGroupDocRef.updateData({
       'members': FieldValue.arrayUnion([friendName]),
     });
-
   }
 
 
@@ -165,7 +168,7 @@ class DatabaseService {
     await userCollection.document(userName).updateData(
         {'request': FieldValue.arrayRemove([senderName])});
     await userCollection.document(senderName).updateData(
-      {'friends' : FieldValue.arrayUnion([userName])});
+        {'friends': FieldValue.arrayUnion([userName])});
   }
 
 
@@ -211,10 +214,14 @@ class DatabaseService {
   }
 
 
-  Future JoiningGroupAtTouch(String groupId, String groupName, String userName) async {
-    DocumentReference userDocRef = userCollection.document(userName); //특정 userName으로 명칭된 document의 주소를 userDocRef에 저장
-    DocumentSnapshot userDocSnapshot = await userDocRef.get(); //특정 uid로 명칭된 document내에 저장된 데이터들을 얻어와서 userDocSnapshot에 저장
-    DocumentReference groupDocRef = groupCollection.document(groupId); //특정 groupId로 명칭된 document 주소를 groupDocRef에 저장
+  Future JoiningGroupAtTouch(String groupId, String groupName,
+      String userName) async {
+    DocumentReference userDocRef = userCollection.document(
+        userName); //특정 userName으로 명칭된 document의 주소를 userDocRef에 저장
+    DocumentSnapshot userDocSnapshot = await userDocRef
+        .get(); //특정 uid로 명칭된 document내에 저장된 데이터들을 얻어와서 userDocSnapshot에 저장
+    DocumentReference groupDocRef = groupCollection.document(
+        groupId); //특정 groupId로 명칭된 document 주소를 groupDocRef에 저장
 
     List<dynamic> groups = await userDocSnapshot.data['groups'];
     //특정 유저의 데이터에서 groups라는 키를 통해 groups에 저장된 모든 값들을 배열 형태로 저장
@@ -313,15 +320,21 @@ class DatabaseService {
       'recentMessageTime': chatMessageData['time'].toString(),
     }); //
   }
+
   sendMessageInFriendChat(String groupId, chatMessageData) {
-    Firestore.instance.collection('friendsChatGroup').document(groupId).collection(
-        'messages').add(chatMessageData);
+    Firestore.instance.collection('friendsChatGroup')
+        .document(groupId)
+        .collection(
+        'messages')
+        .add(chatMessageData);
     // message라는 collection을 특정 groupID의 document에 생성함과 동시에 message collection 내부에 새로운 document가 추가되고, 그 document내에
     //{ message: "", sender: "", time: 큰 정수자료형(long같은...) } 틀에다가 키에 맞는 값들이 추가된다.
     //chatMessageData에 대한 자세한부분은 sendMessage를 호출하는 코드가 있는 chat_page.dart를 확인하기 바란다.
 
     //groups의 특정 groupID내의 recentMessage/recentMessageSender/recentMessageTime 업데이트
-    Firestore.instance.collection('friendsChatGroup').document(groupId).updateData({
+    Firestore.instance.collection('friendsChatGroup')
+        .document(groupId)
+        .updateData({
       'recentMessage': chatMessageData['message'],
       'recentMessageSender': chatMessageData['sender'],
       'recentMessageTime': chatMessageData['time'].toString(),
@@ -333,9 +346,12 @@ class DatabaseService {
     return Firestore.instance.collection('groups').document(groupId).collection(
         'messages').orderBy('time').snapshots();
   }
+
   getFriendChats(String groupId) async {
-    return Firestore.instance.collection('friendsChatGroup').document(groupId).collection(
-        'messages').orderBy('time').snapshots();
+    return Firestore.instance.collection('friendsChatGroup').document(groupId)
+        .collection(
+        'messages').orderBy('time')
+        .snapshots();
   }
 
 
@@ -354,6 +370,31 @@ class DatabaseService {
       return true;
     } else if (!(groupDocSnapshot.data["admin"] == participantName)) {
       return false;
+    }
+  }
+
+
+  Future deleteMembers(String groupId, String groupName, String userName) async {
+
+    DocumentReference userDocRef = userCollection.document(userName); //특정 uid로 명칭된 document의 주소를 userDocRef에 저장
+    DocumentSnapshot userDocSnapshot = await userDocRef.get(); //특정 uid로 명칭된 document내에 저장된 데이터들을 얻어와서 userDocSnapshot에 저장
+    DocumentReference groupDocRef = groupCollection.document(groupId); //특정 groupId로 명칭된 document 주소를 groupDocRef에 저장
+
+    List<dynamic> groups = await userDocSnapshot.data['groups'];
+    //특정 유저의 데이터에서 groups라는 키를 통해 groups에 저장된 모든 값들을 배열 형태로 저장
+    //쉽게 말하자면, 사용자가 속한 그룹들의 정보를 groups라는 배열에 저장하는 것이며, groups키 내의 값들은 groupID_방제목 형태로 저장되어있다.
+
+    //그룹에서 맴버 삭제하는 코드
+    if (groups.contains(groupId + '_' + groupName)) { //togglinGroupJoin함수의 매개변수로 들어온 groupId와 groupName이 특정 유저의 groups데이터에 존재한다면
+      await userDocRef.updateData({
+        'groups': FieldValue.arrayRemove([groupId + '_' + groupName])
+        //groups에서 매개변수로로 들어온 그룹Id_그룹이름에 해당하는 데이터 삭제
+      });
+
+      await groupDocRef.updateData({
+        'members': FieldValue.arrayRemove([uid + '_' + userName])
+        //groups에서 특정 gid로 명칭된 document안의 키값 중 members 내에 저장된 uid_userName 삭제
+      });
     }
   }
 }
