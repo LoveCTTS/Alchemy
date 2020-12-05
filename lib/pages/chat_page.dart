@@ -38,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   FirebaseUser _user;
-  bool isDeleted=false;
+  bool hasNotMember=false;
 
   @override
   void initState() {
@@ -213,16 +213,13 @@ class _ChatPageState extends State<ChatPage> {
                   child:IconButton(
                       icon: Icon(Icons.input,size:40, color: Colors.white),
                     onPressed: () async{
-
-
                       await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName);
-                      setState(() {
-                        isDeleted=true;
-                      });
+                      // hasNotMember = await DatabaseService().hasNotMembers(widget.groupId);
+                      if(hasNotMember){
+                        DatabaseService().deleteGroup(widget.groupId);
+                      }
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
-
-
 
                     }
                     ),

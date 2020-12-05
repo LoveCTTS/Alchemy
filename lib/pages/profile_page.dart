@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final picker = ImagePicker();
   bool _hasNetworkImage=false;
   String _userName='';
+  StorageReference _storageReference;
 
   @override
   void initState(){
@@ -43,6 +44,19 @@ class _ProfilePageState extends State<ProfilePage> {
     _userName=await HelperFunctions.getUserNameSharedPreference();
   }
 
+  void _deleteImageFromStorage() async{
+
+    StorageReference _storageReference = _firebaseStorage.ref().child("users/${_user.uid}");
+    String downloadURL = await _storageReference.getDownloadURL();
+
+    setState(() {
+      _profileImageURL = downloadURL;
+    });
+
+    _storageReference = await FirebaseStorage.instance.getReferenceFromUrl(_profileImageURL);
+    _storageReference.delete();
+
+  }
   void _uploadImageToStorage(ImageSource source) async {
     File image = await ImagePicker.pickImage(source: source);
 
@@ -85,58 +99,163 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void _popupEdit(BuildContext context) {
+
+
+    AlertDialog edit = AlertDialog(
+        content: Container(
+            width: 250,
+            height: 150,
+            child:Column(children: [
+
+              TextButton(
+                onPressed: (){
+
+                  _uploadImageToStorage(ImageSource.gallery);
+                },
+                  child: Text("업로드")),
+              TextButton(
+
+                  onPressed: (){
+
+                    _deleteImageFromStorage();
+                  },
+
+                  child: Text("삭제하기")),
+            ]
+            )
+        ) ,
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return edit;
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
           padding: EdgeInsets.symmetric(vertical: 50.0),
           children: <Widget>[
-                Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/download.png")
 
-                    ),
-                  ),
-            ),
+
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text("Gallery"),
-                  onPressed: () {
-                    _uploadImageToStorage(ImageSource.gallery);
-                  },
+                children: [
+                  GestureDetector(
+                    onTap: (){
+
+                      _popupEdit(context);
+                    },
+                      child: Container(
+              height: 80,
+              width: 80,
+              child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: DecorationImage(
+                    image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
+
                 ),
-                RaisedButton(
-                  child: Text("Camera"),
-                  onPressed: () {
-                    _uploadImageToStorage(ImageSource.camera);
-                  },
-                )
-              ],
+              ),
+            )),
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                      image: AssetImage("images/default.png")
+
+                  ),
+                ),
+              ),
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                      image: AssetImage("images/default.png")
+
+                  ),
+                ),
+              ),
+              ]),
+            Row(
+                children: [
+                  Container(
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: DecorationImage(
+                    image: AssetImage("images/default.png")
+
+                ),
+              ),
             ),
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                      image: AssetImage("images/default.png")
+
+                  ),
+                ),
+              ),
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                      image: AssetImage("images/default.png")
+
+                  ),
+                ),
+              ),
+            ]),
             SizedBox(height: 23.0),
-            ListTile(
-              onTap: () {
 
-              },
-              selected: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.group),
-              title: Text('Groups'),
-            ),
-            ListTile(
-              onTap: () {
+            Container(
+                child: TextField(
 
-              },
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
-            ),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 35.0, horizontal: 10.0),
+                      border: OutlineInputBorder(),
+                      labelText: '자기 소개 ',
+                    )
+
+            )),
+            SizedBox(height:30),
+            Container(
+                child: TextField(
+
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      border: OutlineInputBorder(),
+                      labelText: '관심 해시태그 ',
+                    )
+
+                )),
+            SizedBox(height:30),
+            Container(
+                child: TextField(
+
+                    decoration: InputDecoration(
+
+                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      border: OutlineInputBorder(),
+                      labelText: '거주지 ',
+                    )
+
+                )),
+
             ListTile(
               onTap: () async {
 

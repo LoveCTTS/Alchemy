@@ -143,7 +143,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
         ),
         body: StreamBuilder(
-            stream: DatabaseService(uid:_user.uid).userCollection.document(_userName).snapshots(),
+            stream: DatabaseService().userCollection.document(_userName).snapshots(),
             builder: (context, snapshot) {
               List<Widget> children;
               if (snapshot.hasError) {

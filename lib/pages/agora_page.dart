@@ -26,6 +26,7 @@ class _AgoraPageState extends State<AgoraPage> {
   String roomPassword;
   StateSetter _setState;
   bool isSwitched=false;
+  bool hasMembers=false;
 
 
 
@@ -104,16 +105,12 @@ class _AgoraPageState extends State<AgoraPage> {
 
                       int reqIndex=allGroups.length-index-1;
 
+                        return GroupTile(
+                            userName: _userName, //특정 유저의 풀네임을 userName에 저장
+                            groupId: allGroups[reqIndex]["groupId"].toString(),
+                            groupName: allGroups[reqIndex]["groupName"].toString()
+                        );
 
-                      return GroupTile(
-
-                          userName: _userName, //특정 유저의 풀네임을 userName에 저장
-
-                          groupId: allGroups[reqIndex]["groupId"].toString(),
-
-                          groupName: allGroups[reqIndex]["groupName"].toString()
-
-                      );
 
                     }
 

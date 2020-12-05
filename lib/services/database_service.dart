@@ -266,6 +266,8 @@ class DatabaseService {
     }
   }
 
+
+
   Future<bool> isSameRoomPassword(String groupId, String password) async {
     DocumentReference groupDocRef = groupCollection.document(groupId);
     DocumentSnapshot groupDocSnapshot = await groupDocRef.get();
@@ -287,6 +289,7 @@ class DatabaseService {
       return false;
     }
   }
+
 
   // 특정 사용자의 데이터를 얻어오기
   Future getUserData(String email) async {
@@ -357,7 +360,7 @@ class DatabaseService {
 
   // 그룹 찾기
   searchByName(String groupName) {
-    return Firestore.instance.collection("groups").where(
+    return groupCollection.where(
         'groupName', isEqualTo: groupName).getDocuments();
   }
 
@@ -397,4 +400,10 @@ class DatabaseService {
       });
     }
   }
+
+  deleteGroup(String groupId) async{
+
+    await groupCollection.document(groupId).delete();
+  }
+
 }
