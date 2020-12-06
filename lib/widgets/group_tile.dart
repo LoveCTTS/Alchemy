@@ -23,7 +23,7 @@ class GroupTile extends StatefulWidget {
 }
 class GroupTileState extends State<GroupTile>{
 
-  FirebaseUser _user;
+  User _user;
   bool isSecretRoom = false;
   String roomPassword = '';
   bool isSameRoomPassword = false;

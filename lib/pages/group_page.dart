@@ -17,7 +17,7 @@ class _GroupPageState extends State<GroupPage> {
 
   // data
   final AuthService _auth = AuthService(); //
-  FirebaseUser _user;
+  User _user;
   String _groupName;
   String _userName = '';
   String _email = '';
@@ -119,7 +119,7 @@ class _GroupPageState extends State<GroupPage> {
 
 
   _getUserAuthAndJoinedGroups() async {
-    _user = await FirebaseAuth.instance.currentUser; //현재 사용자에 대한 정보를 _user에 저장
+    _user = FirebaseAuth.instance.currentUser; //현재 사용자에 대한 정보를 _user에 저장
 
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 그룹페이지의 _userName에 초기화
     await HelperFunctions.getUserNameSharedPreference().then((value) {
@@ -187,7 +187,7 @@ class _GroupPageState extends State<GroupPage> {
         style: TextStyle(
           fontSize: 15.0,
           height: 2.0,
-          color: Colors.black             
+          color: Colors.black
         )
       ),
       actions: [

@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:flutter/cupertino.dart';
-import 'package:linkproto/widgets/mikemessage_tile.dart';
 
 class DatabaseService {
 
@@ -314,14 +311,12 @@ class DatabaseService {
   //특정 사용자의 정보를 얻어 오기(snapshots()함수를 사용하면 데이터를 수정되자마자 바로 적용되어야하기때문에, StreamBuilder를 사용해야만 함.)
   getUserSnapshots() async {
     //
-    return FirebaseFirestore.instance.collection("users")
-        .doc(userName)
-        .snapshots();
+    return userCollection.doc(userName).snapshots();
   }
 
   // 메세지 전송
   sendMessage(String groupId, chatMessageData) {
-    FirebaseFirestore.instance.collection('groups').doc(groupId).collection(
+    DatabaseService().groupCollection.doc(groupId).collection(
         'messages').add(chatMessageData);
     // message라는 collection을 특정 groupID의 document에 생성함과 동시에 message collection 내부에 새로운 document가 추가되고, 그 document내에
     //{ message: "", sender: "", time: 큰 정수자료형(long같은...) } 틀에다가 키에 맞는 값들이 추가된다.

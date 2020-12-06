@@ -35,7 +35,7 @@ class _FriendTileState extends State<FriendTile>{
     _userName=await HelperFunctions.getUserNameSharedPreference();
     _user = FirebaseAuth.instance.currentUser;
   }
-  void _popupTest(BuildContext context) {
+  void _popupChat(BuildContext context) {
 
     Widget sendButton = FlatButton(
         minWidth: 80,
@@ -79,7 +79,7 @@ class _FriendTileState extends State<FriendTile>{
         children: <Widget>[
           GestureDetector(
             onTap: (){
-              _popupTest(context);
+              _popupChat(context);
 
             },
               child:Container(

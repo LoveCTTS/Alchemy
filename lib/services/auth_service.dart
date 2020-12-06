@@ -18,17 +18,14 @@ class AuthService {
   //  }
 
 
+  Stream<User> get authStateChanges => _auth.authStateChanges();
   //로그인페이지에서 이메일과 비밀번호를 입력하였을때 인증처리 과정을 보여주는 함수
   Future signInWithEmailAndPassword(String email, String password) async {
     try { //에러가 있을수도있는 명령어들은 try{ }안에 전부다 기입
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      //FirebaseAuth형의 인스턴스내의 signInWithEmailAndPassword를 이용한 결과값을 AuthResult형의 result변수에 저장
-      User user = result.user;
-
-      return _userFromFirebaseUser(user);
-    } catch(e) { //위 try에서 예외(Error)가 생겼다면, 그 오류정보가 매개변수 e에 저장이 되고, catch{ }안에서 에러를 어떻게 처리할것인지에 대한 명령어 기입
-      print(e.toString()); //e에 저장된 오류정보를 e.toString()을 통해 에러를 문자열로 바꿔준 후에 출력
-      return null;
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return "Signed in";
+    } on FirebaseAuthException catch(e) { //위 try에서 예외(Error)가 생겼다면, 그 오류정보가 매개변수 e에 저장이 되고, catch{ }안에서 에러를 어떻게 처리할것인지에 대한 명령어 기입
+      return e.message;
     }
   }
 
@@ -42,7 +39,6 @@ class AuthService {
       //FirebaseUser에 새로운 user 초기화
       await DatabaseService(uid: user.uid,userName: fullName).updateUserData(fullName, email, password);
       //Firebase DB에 새로운 풀네임/이메일/비밀번호를 가진 user 갱신
-      return _userFromFirebaseUser(user);
     } catch(e) {
       print(e.toString());
       return null;

@@ -16,7 +16,7 @@ class FriendsListPage extends StatefulWidget {
 
 class _FriendsListPageState extends State<FriendsListPage> {
 
-  FirebaseUser _user;
+  User _user;
   String _userName = '';
   TextEditingController messageEditingController = TextEditingController();
 
@@ -31,7 +31,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   getUserInfo() async{
 
-    _user = await FirebaseAuth.instance.currentUser;
+    _user = FirebaseAuth.instance.currentUser;
 
     await HelperFunctions.getUserNameSharedPreference().then((value) {
       setState(() {
@@ -54,8 +54,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
             width: 250,
             height: 300,
             child: ListView(children: [
-              StreamBuilder(
-                  stream: DatabaseService(uid:_user.uid, userName: _userName).userCollection.document(_userName).snapshots(),
+              /*StreamBuilder(
+                  stream: DatabaseService(uid:_user.uid, userName: _userName).userCollection.doc(_userName).snapshots(),
                   builder: (context, snapshot) {
                     List<Widget> children;
                     if (snapshot.hasError) {
@@ -89,7 +89,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           }
                       );
                     }
-                  }),
+                  }),*/
 
             ]
             )),
@@ -143,7 +143,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
         ),
         body: StreamBuilder(
-            stream: DatabaseService().userCollection.document(_userName).snapshots(),
+            stream: DatabaseService().userCollection.doc(_userName).snapshots(),
             builder: (context, snapshot) {
               List<Widget> children;
               if (snapshot.hasError) {
@@ -186,14 +186,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         return CircularProgressIndicator();
 
                       }else{
-                        List allFriendGroups = snapshot.data.documents.map((e) {return e.data;}).toList();
+                        List allFriendGroups = snapshot.data.docs.map((e) {return e.data;}).toList();
                         return ListView.builder(
                             itemCount: friendList.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               int reqIndex = friendList.length - index - 1;
                               return FriendTile(
-                                groupId: allFriendGroups[reqIndex]["groupId"],
+                                groupId: allFriendGroups[reqIndex]()["groupId"],
                                 friendName: friendList[reqIndex],
                               );
                             }

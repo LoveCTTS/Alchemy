@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/pages/signin_page.dart';
 import 'package:linkproto/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'helper/helper_functions.dart';
 import 'pages/authenticate_page.dart';
 import 'pages/home_page.dart';
@@ -21,16 +22,38 @@ void main() async{
 class MyApp extends StatelessWidget{
   @override
   Widget build(context){
-    return MaterialApp(
-      home: AuthenticationWrapper(),
+    return MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+
+        ),
+        StreamProvider(
+          create: (context) => context.read<AuthService>().authStateChanges,
+        )
+      ],
+
+      child: MaterialApp(
+        home: AuthenticationWrapper(),
+    ),
+
     );
   }
 }
 class AuthenticationWrapper extends StatelessWidget{
 
+  const AuthenticationWrapper({
+
+    Key key,
+}): super(key: key);
+
   @override
   Widget build(context){
-    return Container();
+    final firebaseUser = context.watch<User>();
+    if(firebaseUser != null){
+      return HomePage();
+    }
+    return SignInPage();
   }
 }
 //변화가있는 위젯을 작성시 StatefulWidget으로부터 상속 받기

@@ -37,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController messageEditingController = new TextEditingController();
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
-  FirebaseUser _user;
+  User _user;
 
   @override
   void initState() {
@@ -170,7 +170,7 @@ class _ChatPageState extends State<ChatPage> {
               Align(child: Text("참여자 목록",style: TextStyle(height:3, fontSize:30))),
               Drawer(
                 child: StreamBuilder (
-                stream: Firestore.instance.collection("groups").document(widget.groupId).snapshots(),
+                stream: FirebaseFirestore.instance.collection("groups").doc(widget.groupId).snapshots(),
                 builder: (context,snapshot) {
                   List<Widget> children ;
                   if(snapshot.hasError){
@@ -217,7 +217,7 @@ class _ChatPageState extends State<ChatPage> {
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
 
-                         DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
+                        await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
                         await DatabaseService().deleteGroupIfNoMembers(widget.groupId);// 맴버가 아무도없다면 그룹 폭파
 
                     }

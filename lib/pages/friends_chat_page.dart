@@ -33,7 +33,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
   TextEditingController messageEditingController = new TextEditingController();
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
-  FirebaseUser _user;
+  User _user;
 
 
 
@@ -61,9 +61,9 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
 
                   //메세지 말풍선
                   return MessageTile(
-                    message: snapshot.data.documents[index].data["message"],
-                    sender: snapshot.data.documents[index].data["sender"],
-                    sentByMe: widget.userName == snapshot.data.documents[index].data["sender"],
+                    message: snapshot.data.docs[index].data["message"],
+                    sender: snapshot.data.docs[index].data["sender"],
+                    sentByMe: widget.userName == snapshot.data.docs[index].data["sender"],
                     time: DateString,
                   );
                 }
@@ -109,7 +109,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
 
   }
 
-  getUserID() async{ FirebaseUser _user = await FirebaseAuth.instance.currentUser;}
+  getUserID() async{ User _user = await FirebaseAuth.instance.currentUser;}
 
   @override
   void initState() {

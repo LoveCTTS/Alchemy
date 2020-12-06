@@ -12,7 +12,7 @@ class AgoraPage extends StatefulWidget {
 }
 
 class _AgoraPageState extends State<AgoraPage> {
-  FirebaseUser _user;
+  User _user;
   String _groupName;
   String _userName = '';
   String _groups='';
@@ -84,7 +84,7 @@ class _AgoraPageState extends State<AgoraPage> {
           return CircularProgressIndicator();
 
         } else {
-          List allGroups = snapshot.data.documents.map((e){return e.data;}).toList();
+          List allGroups = snapshot.data.docs.map((e){return e.data;}).toList();
           return SingleChildScrollView(
               physics: ScrollPhysics(),
               child: Column(
@@ -104,8 +104,8 @@ class _AgoraPageState extends State<AgoraPage> {
 
                         return GroupTile(
                             userName: _userName, //특정 유저의 풀네임을 userName에 저장
-                            groupId: allGroups[reqIndex]["groupId"].toString(),
-                            groupName: allGroups[reqIndex]["groupName"].toString()
+                            groupId: allGroups[reqIndex]()["groupId"].toString(),
+                            groupName: allGroups[reqIndex]()["groupName"].toString()
                         );
 
 
@@ -170,15 +170,15 @@ class _AgoraPageState extends State<AgoraPage> {
                       }
                       if(!snapshot.hasData) { return Text("Currently Not Mike",style: TextStyle(fontSize:30));
                       } else {
-                      List mikeMessageList = snapshot.data.documents.map((e){return e.data;}).toList();
+                      List mikeMessageList = snapshot.data.docs.map((e){return e.data;}).toList();
                       return ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
                           itemCount: mikeMessageList.length, //일단 확성기에 4개만 보이도록 하였음.(입력칸 없어지는 문제때문에)
                           shrinkWrap: true,
                           itemBuilder: (context,index){
                             int reqIndex=mikeMessageList.length-index-1;
                             return MikeMessageTile(
-                              senderName: mikeMessageList[reqIndex]["sender"].toString(),
-                              mikeMessage: mikeMessageList[reqIndex]["mikeMessage"].toString(),
+                              senderName: mikeMessageList[reqIndex]()["sender"].toString(),
+                              mikeMessage: mikeMessageList[reqIndex]()["mikeMessage"].toString(),
                             );
 
                     }
@@ -473,7 +473,7 @@ class _AgoraPageState extends State<AgoraPage> {
                                   }).toList();
                                   //snapshot에 저장된 데이터에 접근하기위해서는 위와같이 List형태로 바꿔서 접근하는게 표준적임.
                                   return Text(
-                                      "${mikeMessageList[0]["sender"]}:${mikeMessageList[0]["mikeMessage"]}",
+                                      "${mikeMessageList[0]()["sender"]}:${mikeMessageList[0]()["mikeMessage"]}",
                                       style: TextStyle(
                                           fontSize: 13, color: Colors.white));
                                   //[0]으로 접근하면 가장 최근에 생성된데이터를 볼수있음.(descending을 false로 바꾸면 가장 과거데이터를 보게 됨.)
