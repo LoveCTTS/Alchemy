@@ -28,7 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final picker = ImagePicker();
   bool _hasNetworkImage=false;
   String _userName='';
-  StorageReference _storageReference;
+  Reference _storageReference;
+  bool distanceSwitched=false;
+  bool ageSwitched=false;
 
   @override
   void initState(){
@@ -39,14 +41,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   void _prepareService() async{
-    _user=await _firebaseAuth.currentUser();
+    _user= _firebaseAuth.currentUser;
     _hasNetworkImage = await hasNetworkImage();
     _userName=await HelperFunctions.getUserNameSharedPreference();
   }
 
   void _deleteImageFromStorage() async{
 
-    StorageReference _storageReference = _firebaseStorage.ref().child("users/${_user.uid}");
+    Reference _storageReference = _firebaseStorage.ref().child("users/${_user.uid}");
     String downloadURL = await _storageReference.getDownloadURL();
 
     setState(() {
@@ -67,14 +69,14 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
-    StorageReference storageReference =
+    Reference storageReference =
     _firebaseStorage.ref().child("users/${_user.uid}");
 
-    // 파일 업로드
-    StorageUploadTask storageUploadTask = storageReference.putFile(_image);
-
-    // 파일 업로드 완료까지 대기
-    await storageUploadTask.onComplete;
+   try{
+     await storageReference.putFile(_image);
+   }on FirebaseException catch (e){
+     print("Failed Upload");
+   }
 
     String downloadURL = await storageReference.getDownloadURL();
 
@@ -86,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
    hasNetworkImage() async{
 
-    StorageReference storageReference =
+    Reference storageReference =
     _firebaseStorage.ref().child("users/${_user.uid}");
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
@@ -138,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0),
+          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 15),
           children: <Widget>[
 
 
@@ -255,6 +257,37 @@ class _ProfilePageState extends State<ProfilePage> {
                     )
 
                 )),
+            Row(children: [
+              Text("나이 표시"),
+              Switch(
+                  activeColor: Colors.pinkAccent,
+                  value: ageSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      ageSwitched = value;
+                      print(ageSwitched);
+                    }
+                    );
+                  }
+              )
+
+            ]),
+            Row(children: [
+              Text("거리 표시"),
+              Switch(
+                  activeColor: Colors.pinkAccent,
+                  value: distanceSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      distanceSwitched = value;
+                      print(distanceSwitched);
+                    }
+                    );
+                  }
+              )
+
+            ]),
+
 
             ListTile(
               onTap: () async {

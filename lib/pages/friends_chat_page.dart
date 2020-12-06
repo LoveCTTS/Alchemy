@@ -109,7 +109,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
 
   }
 
-  getUserID() async{ FirebaseUser _user = await FirebaseAuth.instance.currentUser();}
+  getUserID() async{ FirebaseUser _user = await FirebaseAuth.instance.currentUser;}
 
   @override
   void initState() {

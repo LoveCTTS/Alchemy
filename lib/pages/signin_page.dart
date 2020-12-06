@@ -40,7 +40,7 @@ class _SignInPageState extends State<SignInPage> {
           await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
           await HelperFunctions.saveUserEmailSharedPreference(email); //현재 사용자의 email을 저장
           await HelperFunctions.saveUserNameSharedPreference(
-            userInfoSnapshot.documents[0].data['fullName']
+            userInfoSnapshot.docs[0].data()["fullName"]
           );// 현재 사용자의 풀네임을 저장
 
           // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분

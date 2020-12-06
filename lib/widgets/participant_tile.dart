@@ -53,7 +53,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
                     FlatButton(
                         onPressed: ()async{
-                      _user=await FirebaseAuth.instance.currentUser();
+                      _user= FirebaseAuth.instance.currentUser;
 
                       DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);
                       if(await Vibration.hasVibrator() && !await Vibration.hasAmplitudeControl()){

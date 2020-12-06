@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
 import '../widgets/group_tile.dart';
-import 'package:custom_switch/custom_switch.dart';
 import '../widgets/mikemessage_tile.dart';
 
 class AgoraPage extends StatefulWidget {
@@ -14,19 +12,18 @@ class AgoraPage extends StatefulWidget {
 }
 
 class _AgoraPageState extends State<AgoraPage> {
-  //데이터
-  final AuthService _auth = AuthService(); //
   FirebaseUser _user;
   String _groupName;
   String _userName = '';
-  String _email = '';
-  Stream _groups;
+  String _groups='';
+  String _email='';
   int changeSkin=0;
   String mikeMessageInMikePopup;
   String roomPassword;
   StateSetter _setState;
   bool isSwitched=false;
   bool hasMembers=false;
+
 
 
 
@@ -40,7 +37,7 @@ class _AgoraPageState extends State<AgoraPage> {
   }
 
   _getUserAuthAndJoinedGroups() async {
-    _user = await FirebaseAuth.instance.currentUser(); //현재 접속된 사용자에 대한 정보를 _user에 저장
+    _user = FirebaseAuth.instance.currentUser; //현재 접속된 사용자에 대한 정보를 _user에 저장
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 아고라페이지의 _userName에 초기화
     await HelperFunctions.getUserNameSharedPreference().then((value) {
       setState(() {

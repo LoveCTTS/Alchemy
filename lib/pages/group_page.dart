@@ -119,7 +119,7 @@ class _GroupPageState extends State<GroupPage> {
 
 
   _getUserAuthAndJoinedGroups() async {
-    _user = await FirebaseAuth.instance.currentUser(); //현재 사용자에 대한 정보를 _user에 저장
+    _user = await FirebaseAuth.instance.currentUser; //현재 사용자에 대한 정보를 _user에 저장
 
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 그룹페이지의 _userName에 초기화
     await HelperFunctions.getUserNameSharedPreference().then((value) {

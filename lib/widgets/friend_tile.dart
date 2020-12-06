@@ -22,7 +22,7 @@ class FriendTile extends StatefulWidget {
 
 class _FriendTileState extends State<FriendTile>{
 
-  FirebaseUser _user;
+  User _user;
   String _userName='';
 
   @override
@@ -33,7 +33,7 @@ class _FriendTileState extends State<FriendTile>{
   }
   getUserInfo() async{
     _userName=await HelperFunctions.getUserNameSharedPreference();
-    _user = await FirebaseAuth.instance.currentUser();
+    _user = FirebaseAuth.instance.currentUser;
   }
   void _popupTest(BuildContext context) {
 

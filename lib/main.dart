@@ -1,23 +1,50 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/pages/signin_page.dart';
+import 'package:linkproto/services/auth_service.dart';
 import 'helper/helper_functions.dart';
 import 'pages/authenticate_page.dart';
 import 'pages/home_page.dart';
 import 'pages/test_page.dart';
 import 'routes/routes.dart';
 
-//메인에서 runApp을 통해 MyApp 클래스 실행
-void main() => runApp(MyApp());
 
+//메인에서 runApp을 통해 MyApp 클래스 실행
+void main() async{
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget{
+  @override
+  Widget build(context){
+    return MaterialApp(
+      home: AuthenticationWrapper(),
+    );
+  }
+}
+class AuthenticationWrapper extends StatelessWidget{
+
+  @override
+  Widget build(context){
+    return Container();
+  }
+}
 //변화가있는 위젯을 작성시 StatefulWidget으로부터 상속 받기
-class MyApp extends StatefulWidget {
+class _MyApp extends StatefulWidget {
 
   @override //StatefulWidget으로부터 상속받은 기능이나 변수들을 Customizing하여 사용
 
   _MyAppState createState() => _MyAppState(); //createState(){ new _MyAppState }
+
+
 }
 
-class _MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은 _MyAppState
+
+class _MyAppState extends State<_MyApp> { //State<MyApp>으로부터 상속받은 _MyAppState
 
   bool _isLoggedIn = false; // 로그인 안되있는상태로 시작
 
@@ -26,7 +53,11 @@ class _MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은
   @override
   void initState() { // 상태 초기화 함수(State<MyApp>에 이미 작성되어 있기 때문에, 상속받은 _MyAppState도 initState()사용가능
     super.initState(); //Sate<MyApp> 조상님 인스턴스 안에서 initSate 실행하여 상태 초기화(Super 키워드 이해할것!)
-    _getUserLoggedInStatus(); //_getUserLoggedInStatus()함수 호출
+    _getUserLoggedInStatus();//_getUserLoggedInStatus()함수 호출
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
+
+    });
+
   }
 
   //로그인 되었는지 안되었는지 상태 정보 얻기
@@ -45,14 +76,19 @@ class _MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( //앱의 시작점으로서 MaterialApp을 반드시 사용해야만 한다.(자세한 사항은 MaterialApp class 참조할 것)
+    return MaterialApp(//앱의 시작점으로서 MaterialApp을 반드시 사용해야만 한다.(자세한 사항은 MaterialApp class 참조할 것)
       title: 'Group Chats',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Raleway'), //MaterialAPP에 속하는 위젯 모두를 기본적으로 Dark Theme로 설정
       darkTheme: ThemeData.dark(), // 앱이 DarkMode일때 적용되는 테마 값을 dark로 설정
-
       initialRoute: _isLoggedIn? '/home' : '/auth', // 기본적으로 로그인되었다면 HomePage를 기본 루트로 설정하고, 로그인 실패시 AuthenticaePage로 설정
       routes: routes,
+
+
     );
   }
+
+
+
 }
+

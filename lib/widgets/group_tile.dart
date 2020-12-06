@@ -41,14 +41,15 @@ class GroupTileState extends State<GroupTile>{
   }
 
   void _prepareService() async{
-    _user=await FirebaseAuth.instance.currentUser();
-    _hasNetworkImage = await hasNetworkImage();
+    _user= FirebaseAuth.instance.currentUser;
+    _hasNetworkImage = await groupNetworkImage();
     _userName = await HelperFunctions.getUserNameSharedPreference();
 
   }
-  hasNetworkImage() async{
 
-    StorageReference storageReference =
+  groupNetworkImage() async{
+
+    Reference storageReference =
     _firebaseStorage.ref().child("users/${_user.uid}");
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
@@ -70,7 +71,7 @@ class GroupTileState extends State<GroupTile>{
         children: <Widget>[
           GestureDetector(
         onTap: () async {
-          _user = await FirebaseAuth.instance.currentUser();
+          _user = FirebaseAuth.instance.currentUser;
           isSecretRoom = await DatabaseService().isSecretRoom(widget.groupId);
           if(isSecretRoom){
             showDialog(
@@ -163,7 +164,7 @@ class GroupTileState extends State<GroupTile>{
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/download.png"),
+                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png"),
                           ),
                         ),
                       ),
