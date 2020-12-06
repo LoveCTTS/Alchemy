@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linkproto/pages/authenticate_page.dart';
+import '../main.dart';
 import '../pages/chat_page.dart';
 import '../pages/agora_page.dart';
 import '../pages/group_page.dart';
@@ -12,5 +13,6 @@ final routes = {
   '/auth': (BuildContext context) => AuthenticatePage(),
   '/agora': (BuildContext context) => AgoraPage(),
   '/group': (BuildContext context) => GroupPage(),
+  '/authWrap': (BuildContext context) => AuthenticationWrapper()
 
 };

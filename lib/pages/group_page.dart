@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +130,7 @@ class _GroupPageState extends State<GroupPage> {
       });
     });
     //특정 유저가 속한 그룹정보를 매개변수 snapshot에 복사하고 그 정보를 _groups에 저장
-    DatabaseService(uid: _user.uid,userName: _userName).getUserSnapshots().then((snapshots) {
+    DatabaseService(userName: _userName).getUserSnapshots().then((snapshots) {
       // print(snapshots);
       setState(() {
         _joinedGroups = snapshots;

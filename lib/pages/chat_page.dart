@@ -82,13 +82,13 @@ class _ChatPageState extends State<ChatPage> {
             //format에는 화면에 시간을 어떤양식으로 보여줄지를 설정할 수 있음
             var format = new DateFormat.Md().add_jm();
             //DateString은 DateTime.fromMillisecondSinceEpoch함수를 통해 millisecond값을 DateTime형태로 바꿔주고, format함수를통해 보기좋은 시간형태로 바뀐 문자열 형태를 저장
-            var dateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data["time"]));
+            var dateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data()["time"]));
 
 
             return MessageTile(
-              message: snapshot.data.documents[index].data["message"],
-              sender: snapshot.data.documents[index].data["sender"],
-              sentByMe: widget.userName == snapshot.data.documents[index].data["sender"],
+              message: snapshot.data.documents[index].data()["message"],
+              sender: snapshot.data.documents[index].data()["sender"],
+              sentByMe: widget.userName == snapshot.data.documents[index].data()["sender"],
               time: dateString,
             );
           }

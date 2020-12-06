@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
 
@@ -57,13 +57,13 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
                   //format에는 화면에 시간을 어떤양식으로 보여줄지를 설정할 수 있음
                   var format = new DateFormat.Md().add_jm();
                   //DateString은 DateTime.fromMillisecondSinceEpoch함수를 통해 millisecond값을 DateTime형태로 바꿔주고, format함수를통해 보기좋은 시간형태로 바뀐 문자열 형태를 저장
-                  var DateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data["time"]));
+                  var DateString = format.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.documents[index].data()["time"]));
 
                   //메세지 말풍선
                   return MessageTile(
-                    message: snapshot.data.docs[index].data["message"],
-                    sender: snapshot.data.docs[index].data["sender"],
-                    sentByMe: widget.userName == snapshot.data.docs[index].data["sender"],
+                    message: snapshot.data.docs[index].data()["message"],
+                    sender: snapshot.data.docs[index].data()["sender"],
+                    sentByMe: widget.userName == snapshot.data.docs[index].data()["sender"],
                     time: DateString,
                   );
                 }
