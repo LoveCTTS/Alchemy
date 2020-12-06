@@ -152,6 +152,7 @@ class DatabaseService {
     await friendsChatGroupDocRef.update({
       'members': FieldValue.arrayUnion([friendName]),
     });
+    return friendsChatGroupDocRef.id;
   }
 
 
@@ -160,13 +161,13 @@ class DatabaseService {
         {'request': FieldValue.arrayRemove([senderName])});
   }
 
-  permitFriendRequest(senderName) async {
+  permitFriendRequest(String friendChatGroupId, String senderName) async {
     await userCollection.doc(userName).update(
-        {'friends': FieldValue.arrayUnion([senderName])});
+        {'friends': FieldValue.arrayUnion([friendChatGroupId + '_' + senderName])});
     await userCollection.doc(userName).update(
         {'request': FieldValue.arrayRemove([senderName])});
     await userCollection.doc(senderName).update(
-        {'friends': FieldValue.arrayUnion([userName])});
+        {'friends': FieldValue.arrayUnion([friendChatGroupId + '_' + userName])});
   }
 
 

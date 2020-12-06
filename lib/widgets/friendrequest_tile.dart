@@ -12,9 +12,10 @@ class FriendRequestTile extends StatelessWidget { //그룹 타일도 한번 실�
 
   final String receiverName;
   final String senderName;
+  final String friendChatGroupId;
 
 
-  FriendRequestTile({this.receiverName,this.senderName});
+  FriendRequestTile({this.receiverName,this.senderName,this.friendChatGroupId});
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +38,11 @@ class FriendRequestTile extends StatelessWidget { //그룹 타일도 한번 실�
                     FlatButton(
                         onPressed: ()async{
 
-                          DatabaseService(userName: receiverName).permitFriendRequest(senderName);
-                          DatabaseService(userName: receiverName).createFriendsChatGroup(receiverName, senderName);
+                          await DatabaseService(userName: receiverName).createFriendsChatGroup(receiverName, senderName).then((value){
+
+                            DatabaseService(userName: receiverName).permitFriendRequest(value,senderName);
+                          });
+
                           Navigator.of(context).pop();
                         },
                         child:Text("수락"))

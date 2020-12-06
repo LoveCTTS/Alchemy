@@ -39,6 +39,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
       });
     });
   }
+  String _destructureId(String res) {
+    // print(res.substring(0, res.indexOf('_')));
+    return res.substring(0, res.indexOf('_'));
+    //indexOf를 통해 문자열에서 _(언더바)의 위치를 알아내서 인덱스값을 반환하게되면, res.substring(0, 인덱스값) 형태가 되니깐. 그룹Id를 문자열로 반환하게됨
+  }
+
+
+  String _destructureName(String res) {
+    // print(res.substring(res.indexOf('_') + 1));
+    return res.substring(res.indexOf('_') + 1);
+    //"그룹ID_그룹이름" 형태의 문자열에서 indexOf('_')를 이용해 _(언더바)가 있는 인덱스 위치를 알아내고, +1을 하여 subString을 호출하면 그룹이름만 문자열로 반환한다.
+  }
 
   void _popupFriendRequest(BuildContext context) {
     Widget closeButton = FlatButton(
@@ -54,7 +66,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             width: 250,
             height: 300,
             child: ListView(children: [
-              /*StreamBuilder(
+              StreamBuilder(
                   stream: DatabaseService(uid:_user.uid, userName: _userName).userCollection.doc(_userName).snapshots(),
                   builder: (context, snapshot) {
                     List<Widget> children;
@@ -75,7 +87,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       return Text("Currently Not Friend",
                           style: TextStyle(fontSize: 30));
                     } else {
-                      var friendRequestList = snapshot.data["request"];
+                      var friendRequestList = snapshot.data["request"]; //이부분 data가 data()로 패치됬다고 되있는데 data()라고 하면 실행이 DocumentSnapshot noSuchMethod Error 뜸 -_-;
                       return ListView
                           .builder(
                           itemCount: friendRequestList.length,
@@ -89,7 +101,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           }
                       );
                     }
-                  }),*/
+                  }),
 
             ]
             )),
@@ -163,43 +175,20 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 return CircularProgressIndicator();
               } else {
                 var friendList = snapshot.data["friends"];
-                return StreamBuilder(
-                    stream: DatabaseService(uid:_user.uid,userName: _userName).friendsChatCollection.snapshots(),
-                    builder: (context, snapshot) {
 
-                      List<Widget> children;
-                      if(snapshot.hasError){
-
-                        children = <Widget>[
-                          Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 60,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Text('Error: ${snapshot.error}'),
-                          )
-                        ];
-                      }
-                      if(!snapshot.hasData) {
-                        return CircularProgressIndicator();
-
-                      }else{
-                        List allFriendGroups = snapshot.data.docs.map((e) {return e.data;}).toList();
                         return ListView.builder(
                             itemCount: friendList.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               int reqIndex = friendList.length - index - 1;
                               return FriendTile(
-                                groupId: allFriendGroups[reqIndex]()["groupId"],
-                                friendName: friendList[reqIndex],
+                                friendChatGroupId: _destructureId(friendList[reqIndex]),
+                                friendName: _destructureName(friendList[reqIndex]),
                               );
                             }
                         );
-                      }
-                    });
+
+
               }
             }
         ),

@@ -24,7 +24,8 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
 
   bool isChief=false;
-  FirebaseUser _user ;
+  User _user ;
+
 
 
 
@@ -34,10 +35,12 @@ class _ParticipantTileState extends State<ParticipantTile> {
     // TODO: implement initState
     super.initState();
 
+    _user = FirebaseAuth.instance.currentUser;
     DatabaseService().isChief(widget.participantName, widget.groupId).then((value){
       isChief=value;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,6 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
                     FlatButton(
                         onPressed: ()async{
-                      _user= FirebaseAuth.instance.currentUser;
 
                       DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);
                       if(await Vibration.hasVibrator() && !await Vibration.hasAmplitudeControl()){

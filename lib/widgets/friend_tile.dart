@@ -11,10 +11,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class FriendTile extends StatefulWidget {
 
-  final String groupId;
+  final String friendChatGroupId;
   final String friendName;
 
-  FriendTile({this.groupId, this.friendName});
+  FriendTile({this.friendChatGroupId, this.friendName});
 
   @override
   _FriendTileState createState() => _FriendTileState();
@@ -45,7 +45,7 @@ class _FriendTileState extends State<FriendTile>{
           Navigator.of(context).pop();
           //채팅방으로 가기
           Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              FriendsChatPage(groupId: widget.groupId,
+              FriendsChatPage(groupId: widget.friendChatGroupId,
                 userName: _userName)));
         });
     Widget closeButton = FlatButton(
