@@ -13,6 +13,5 @@ final routes = {
   '/auth': (BuildContext context) => AuthenticatePage(),
   '/agora': (BuildContext context) => AgoraPage(),
   '/group': (BuildContext context) => GroupPage(),
-  '/authWrap': (BuildContext context) => AuthenticationWrapper()
 
 };
