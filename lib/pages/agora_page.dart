@@ -36,6 +36,7 @@ class _AgoraPageState extends State<AgoraPage> {
 
   }
 
+
   _getUserAuthAndJoinedGroups() async {
     _user = FirebaseAuth.instance.currentUser; //현재 접속된 사용자에 대한 정보를 _user에 저장
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 아고라페이지의 _userName에 초기화

@@ -55,10 +55,6 @@ class _HomePageState extends State<HomePage> {
             unselectedItemColor: Color(0xff483d8b),
             items: [
               new BottomNavigationBarItem(
-                icon: Icon(Icons.shop, size:20.0),
-                title: Text('상점'),
-              ),
-              new BottomNavigationBarItem(
                 icon: Icon(Icons.chat, size:20.0),
                 title: Text('친구'),
               ),

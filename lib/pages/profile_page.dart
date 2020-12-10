@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController appealController= TextEditingController();
   TextEditingController hashTagController= TextEditingController();
   TextEditingController localController= TextEditingController();
+  TextEditingController ageController = TextEditingController();
 
   @override
   initState() {
@@ -43,11 +44,13 @@ class _ProfilePageState extends State<ProfilePage> {
     appealController.addListener(() { });
     hashTagController.addListener(() { });
     localController.addListener(() { });
+    ageController.addListener(() { });
     _prepareService();
 
   }
   @override
   void dispose(){
+    ageController.dispose();
     localController.dispose();
     hashTagController.dispose();
     appealController.dispose();
@@ -73,6 +76,11 @@ class _ProfilePageState extends State<ProfilePage> {
     await DatabaseService(userName: _userName).getUserHashTag().then((value){
       setState(() {
         hashTagController.text = value;
+      });
+    });
+    await DatabaseService(userName: _userName).getUserAge().then((value){
+      setState(() {
+        ageController.text = value;
       });
     });
 
@@ -171,7 +179,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(
+        body: GestureDetector(
+            child:ListView(
           padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 80),
           children: <Widget>[
             Row(
@@ -275,6 +284,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height:30),
             TextField(
+
+                controller: ageController,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  border: OutlineInputBorder(),
+                  labelText: '나이',
+                )
+            ),
+            SizedBox(height:30),
+            TextField(
                 maxLines: 1,
                 controller: localController,
                 decoration: InputDecoration(
@@ -283,6 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   labelText: '거주지 ',
                 )
             ),
+
             Row(children: [
               Text("나이 표시"),
               Switch(
@@ -316,6 +337,7 @@ class _ProfilePageState extends State<ProfilePage> {
               DatabaseService(userName: _userName).updateAppeal(appealController.text);
               DatabaseService(userName: _userName).updateLocal(localController.text);
               DatabaseService(userName: _userName).updateHashTag(hashTagController.text);
+              DatabaseService(userName: _userName).updateAge(ageController.text);
             }, child: Text("저장하기")),
 
             ListTile(
@@ -329,6 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
               title: Text('Log Out', style: TextStyle(color: Colors.red)),
             ),
           ],
+        )
         )
     );
   }
