@@ -7,16 +7,20 @@ class DatabaseService {
   final String uid; //문자열 형태의 상수형 uid 변수 선언
   final String userName;
 
-  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage
+      .instance;
+
   //인스턴스를 생성함과동시에 uid를 받아오기위한 생성자 선언
   DatabaseService({
     this.uid, this.userName
   });
 
   // Collection reference클래스를 사용해서 CloudStore에 생성되어있는 users, groups에 접근하기 위해 선언
-  final CollectionReference userCollection = FirebaseFirestore.instance.collection(
+  final CollectionReference userCollection = FirebaseFirestore.instance
+      .collection(
       'users');
-  final CollectionReference groupCollection = FirebaseFirestore.instance.collection(
+  final CollectionReference groupCollection = FirebaseFirestore.instance
+      .collection(
       'groups');
   final CollectionReference mikeMessageCollection = FirebaseFirestore.instance
       .collection('mikeMessage');
@@ -63,6 +67,28 @@ class DatabaseService {
       'createdTime': FieldValue.serverTimestamp(),
     });
   }
+
+  Future updateAppeal(String appealContents) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'appeal': appealContents
+    });
+  }
+
+  Future updateLocal(String local) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'local': local
+    });
+  }
+
+  Future updateHashTag(String hashTag) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'hashTag': hashTag
+    });
+  }
+
 
   // 그룹 생성
   Future createGroup(String userName, String groupName) async {
@@ -163,11 +189,16 @@ class DatabaseService {
 
   permitFriendRequest(String friendChatGroupId, String senderName) async {
     await userCollection.doc(userName).update(
-        {'friends': FieldValue.arrayUnion([friendChatGroupId + '_' + senderName])});
+        {
+          'friends': FieldValue.arrayUnion(
+              [friendChatGroupId + '_' + senderName])
+        });
     await userCollection.doc(userName).update(
         {'request': FieldValue.arrayRemove([senderName])});
     await userCollection.doc(senderName).update(
-        {'friends': FieldValue.arrayUnion([friendChatGroupId + '_' + userName])});
+        {
+          'friends': FieldValue.arrayUnion([friendChatGroupId + '_' + userName])
+        });
   }
 
 
@@ -264,7 +295,6 @@ class DatabaseService {
   }
 
 
-
   Future<bool> isSameRoomPassword(String groupId, String password) async {
     DocumentReference groupDocRef = groupCollection.doc(groupId);
     DocumentSnapshot groupDocSnapshot = await groupDocRef.get();
@@ -287,13 +317,14 @@ class DatabaseService {
     }
   }
 
-  Future deleteGroupIfNoMembers(String groupId) async{
+  Future deleteGroupIfNoMembers(String groupId) async {
     DocumentReference groupDocRef = groupCollection.doc(groupId);
     DocumentSnapshot groupDocSnapshot = await groupDocRef.get();
 
 
     List<dynamic> members = await groupDocSnapshot.data()['members'];
-    if(members.isEmpty){
+    if (members.isEmpty) {
+      await groupDocRef.delete();
 
       await groupCollection.doc(groupId).delete();
     }
@@ -310,10 +341,34 @@ class DatabaseService {
   }
 
   //특정 사용자의 정보를 얻어 오기(snapshots()함수를 사용하면 데이터를 수정되자마자 바로 적용되어야하기때문에, StreamBuilder를 사용해야만 함.)
-  getUserSnapshots() async {
-    //
-    return userCollection.doc(userName).snapshots();
+
+  Future getUserSnapshots() async {
+    getUserSnapshots() async {
+      //
+      return userCollection.doc(userName).snapshots();
+    }
   }
+
+
+  Future<String> getUserAppeal() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return await userDocSnapshot.data()['appeal'];
+  }
+  Future<String> getUserLocal() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return await userDocSnapshot.data()['local'];
+  }
+  Future<String> getUserHashTag() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return await userDocSnapshot.data()['hashTag'];
+  }
+
 
   // 메세지 전송
   sendMessage(String groupId, chatMessageData) {
@@ -353,12 +408,15 @@ class DatabaseService {
 
   // 특정 그룹의 채팅 찾기
   getChats(String groupId) async {
-    return FirebaseFirestore.instance.collection('groups').doc(groupId).collection(
-        'messages').orderBy('time').snapshots();
+    return FirebaseFirestore.instance.collection('groups').doc(groupId)
+        .collection(
+        'messages').orderBy('time')
+        .snapshots();
   }
 
   getFriendChats(String groupId) async {
-    return FirebaseFirestore.instance.collection('friendsChatGroup').doc(groupId)
+    return FirebaseFirestore.instance.collection('friendsChatGroup').doc(
+        groupId)
         .collection(
         'messages').orderBy('time')
         .snapshots();
@@ -384,18 +442,22 @@ class DatabaseService {
   }
 
 
-  Future deleteMembers(String groupId, String groupName, String userName) async {
-
-    DocumentReference userDocRef = userCollection.doc(userName); //특정 uid로 명칭된 document의 주소를 userDocRef에 저장
-    DocumentSnapshot userDocSnapshot = await userDocRef.get(); //특정 uid로 명칭된 document내에 저장된 데이터들을 얻어와서 userDocSnapshot에 저장
-    DocumentReference groupDocRef = groupCollection.doc(groupId); //특정 groupId로 명칭된 doc 주소를 groupDocRef에 저장
+  Future deleteMembers(String groupId, String groupName,
+      String userName) async {
+    DocumentReference userDocRef = userCollection.doc(
+        userName); //특정 uid로 명칭된 document의 주소를 userDocRef에 저장
+    DocumentSnapshot userDocSnapshot = await userDocRef
+        .get(); //특정 uid로 명칭된 document내에 저장된 데이터들을 얻어와서 userDocSnapshot에 저장
+    DocumentReference groupDocRef = groupCollection.doc(
+        groupId); //특정 groupId로 명칭된 doc 주소를 groupDocRef에 저장
 
     List<dynamic> groups = await userDocSnapshot.data()['groups'];
     //특정 유저의 데이터에서 groups라는 키를 통해 groups에 저장된 모든 값들을 배열 형태로 저장
     //쉽게 말하자면, 사용자가 속한 그룹들의 정보를 groups라는 배열에 저장하는 것이며, groups키 내의 값들은 groupID_방제목 형태로 저장되어있다.
 
     //그룹에서 맴버 삭제하는 코드
-    if (groups.contains(groupId + '_' + groupName)) { //togglinGroupJoin함수의 매개변수로 들어온 groupId와 groupName이 특정 유저의 groups데이터에 존재한다면
+    if (groups.contains(groupId + '_' +
+        groupName)) { //togglinGroupJoin함수의 매개변수로 들어온 groupId와 groupName이 특정 유저의 groups데이터에 존재한다면
       await userDocRef.update({
         'groups': FieldValue.arrayRemove([groupId + '_' + groupName])
         //groups에서 매개변수로로 들어온 그룹Id_그룹이름에 해당하는 데이터 삭제
@@ -408,3 +470,4 @@ class DatabaseService {
     }
   }
 }
+

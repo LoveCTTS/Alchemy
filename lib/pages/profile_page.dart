@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/services/auth_service.dart';
-
+import 'package:linkproto/services/database_service.dart';
 import 'authenticate_page.dart';
-import 'group_page.dart';
 
 
 
@@ -22,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final AuthService _auth = AuthService();
   File _image;
   FirebaseAuth _firebaseAuth =FirebaseAuth.instance;
-  FirebaseUser _user;
+  User _user;
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   String _profileImageURL = "";
   final picker = ImagePicker();
@@ -31,19 +30,52 @@ class _ProfilePageState extends State<ProfilePage> {
   Reference _storageReference;
   bool distanceSwitched=false;
   bool ageSwitched=false;
+  String appealContents='';
+  String local='';
+  String hashTag='';
+  TextEditingController appealController= TextEditingController();
+  TextEditingController hashTagController= TextEditingController();
+  TextEditingController localController= TextEditingController();
 
   @override
-  void initState(){
-
+  initState() {
     super.initState();
+    appealController.addListener(() { });
+    hashTagController.addListener(() { });
+    localController.addListener(() { });
     _prepareService();
+
+  }
+  @override
+  void dispose(){
+    localController.dispose();
+    hashTagController.dispose();
+    appealController.dispose();
+    _prepareService().dispose();
+    super.dispose();
   }
 
-
-  void _prepareService() async{
+  _prepareService() async{
     _user= _firebaseAuth.currentUser;
     _hasNetworkImage = await hasNetworkImage();
     _userName=await HelperFunctions.getUserNameSharedPreference();
+
+    await DatabaseService(userName: _userName).getUserAppeal().then((value){
+      setState(() {
+        appealController.text = value;
+      });
+    });
+    await DatabaseService(userName: _userName).getUserLocal().then((value){
+      setState(() {
+        localController.text = value;
+      });
+    });
+    await DatabaseService(userName: _userName).getUserHashTag().then((value){
+      setState(() {
+        hashTagController.text = value;
+      });
+    });
+
   }
 
   void _deleteImageFromStorage() async{
@@ -72,11 +104,11 @@ class _ProfilePageState extends State<ProfilePage> {
     Reference storageReference =
     _firebaseStorage.ref().child("users/${_user.uid}");
 
-   try{
-     await storageReference.putFile(_image);
-   }on FirebaseException catch (e){
-     print("Failed Upload");
-   }
+    try{
+      await storageReference.putFile(_image);
+    }on FirebaseException catch (e){
+      print("Failed Upload");
+    }
 
     String downloadURL = await storageReference.getDownloadURL();
 
@@ -86,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-   hasNetworkImage() async{
+  hasNetworkImage() async{
 
     Reference storageReference =
     _firebaseStorage.ref().child("users/${_user.uid}");
@@ -105,28 +137,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
     AlertDialog edit = AlertDialog(
-        content: Container(
-            width: 250,
-            height: 150,
-            child:Column(children: [
+      content: Container(
+          width: 250,
+          height: 150,
+          child:Column(children: [
 
-              TextButton(
+            TextButton(
                 onPressed: (){
 
                   _uploadImageToStorage(ImageSource.gallery);
                 },
-                  child: Text("업로드")),
-              TextButton(
+                child: Text("업로드")),
+            TextButton(
 
-                  onPressed: (){
+                onPressed: (){
 
-                    _deleteImageFromStorage();
-                  },
+                  _deleteImageFromStorage();
+                },
 
-                  child: Text("삭제하기")),
-            ]
-            )
-        ) ,
+                child: Text("삭제하기")),
+          ]
+          )
+      ) ,
     );
 
     showDialog(
@@ -140,123 +172,117 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 15),
+          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 80),
           children: <Widget>[
-
-
             Row(
                 children: [
                   GestureDetector(
-                    onTap: (){
+                      onTap: (){
 
-                      _popupEdit(context);
-                    },
+                        _popupEdit(context);
+                      },
                       child: Container(
-              height: 80,
-              width: 80,
-              child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                image: DecorationImage(
-                    image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
 
-                ),
-              ),
-            )),
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                      image: AssetImage("images/default.png")
+                          ),
+                        ),
+                      )),
+                  Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                          image: AssetImage("images/default.png")
 
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                      image: AssetImage("images/default.png")
+                  Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                          image: AssetImage("images/default.png")
 
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              ]),
+                ]),
             Row(
                 children: [
                   Container(
-              height: 80,
-              width: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                image: DecorationImage(
-                    image: AssetImage("images/default.png")
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                          image: AssetImage("images/default.png")
 
-                ),
-              ),
-            ),
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                      image: AssetImage("images/default.png")
-
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                      image: AssetImage("images/default.png")
+                  Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                          image: AssetImage("images/default.png")
 
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ]),
+                  Container(
+                    height: 80,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                          image: AssetImage("images/default.png")
+
+                      ),
+                    ),
+                  ),
+                ]),
             SizedBox(height: 23.0),
-
-            Container(
-                child: TextField(
-
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 35.0, horizontal: 10.0),
-                      border: OutlineInputBorder(),
-                      labelText: '자기 소개 ',
-                    )
-
-            )),
+            TextField(
+                maxLines: null,
+                controller: appealController,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 35.0, horizontal: 10.0),
+                    border: OutlineInputBorder(),
+                    labelText: "자기소개"
+                )
+            ),
             SizedBox(height:30),
-            Container(
-                child: TextField(
+            TextField(
 
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                      border: OutlineInputBorder(),
-                      labelText: '관심 해시태그 ',
-                    )
-
-                )),
+                controller: hashTagController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  border: OutlineInputBorder(),
+                  labelText: '관심 해시태그 ',
+                )
+            ),
             SizedBox(height:30),
-            Container(
-                child: TextField(
-
-                    decoration: InputDecoration(
-
-                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                      border: OutlineInputBorder(),
-                      labelText: '거주지 ',
-                    )
-
-                )),
+            TextField(
+                maxLines: 1,
+                controller: localController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  border: OutlineInputBorder(),
+                  labelText: '거주지 ',
+                )
+            ),
             Row(children: [
               Text("나이 표시"),
               Switch(
@@ -270,7 +296,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }
               )
-
             ]),
             Row(children: [
               Text("거리 표시"),
@@ -285,9 +310,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }
               )
-
             ]),
 
+            TextButton(onPressed: (){
+              DatabaseService(userName: _userName).updateAppeal(appealController.text);
+              DatabaseService(userName: _userName).updateLocal(localController.text);
+              DatabaseService(userName: _userName).updateHashTag(hashTagController.text);
+            }, child: Text("저장하기")),
 
             ListTile(
               onTap: () async {
@@ -304,4 +333,5 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
 
