@@ -166,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
   }
 
   void _popupEdit(BuildContext context) {
@@ -209,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         body: GestureDetector(
             child:ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 80),
+          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 40),
           children: <Widget>[
             Row(
                 children: [
@@ -351,13 +351,18 @@ class _ProfilePageState extends State<ProfilePage> {
               Switch(
                   activeColor: Colors.pinkAccent,
                   value: distanceSwitched,
-                  onChanged: (value) {
+                  onChanged: (switched) {
                     setState(() {
-                      distanceSwitched = value;
+                      distanceSwitched = switched;
                       print(distanceSwitched);
                     }
                     );
-                    print(_determinePosition());
+                    if(distanceSwitched){
+                         _determinePosition().then((value){
+                        DatabaseService(userName: _userName).updateLocationFromGPS(value.latitude, value.longitude);
+                        //double distanceInMeters = Geolocator.distanceBetween(52.2165157, 6.9437819, 52.3546274, 4.8285838);
+                      });
+                    }
                   }
               )
             ]),

@@ -82,6 +82,7 @@ class DatabaseService {
     });
   }
 
+
   Future updateHashTag(String hashTag) async {
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
     return await userCollection.doc(userName).update({
@@ -94,6 +95,13 @@ class DatabaseService {
       'age': age
     });
   }
+  Future updateLocationFromGPS(double latitude,double longitude ) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'locationFromGPS': GeoPoint(latitude, longitude),
+    });
+  }
+
 
 
   // 그룹 생성
@@ -349,10 +357,8 @@ class DatabaseService {
   //특정 사용자의 정보를 얻어 오기(snapshots()함수를 사용하면 데이터를 수정되자마자 바로 적용되어야하기때문에, StreamBuilder를 사용해야만 함.)
 
   Future getUserSnapshots() async {
-    getUserSnapshots() async {
-      //
       return userCollection.doc(userName).snapshots();
-    }
+
   }
 
 
@@ -379,6 +385,11 @@ class DatabaseService {
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
     return await userDocSnapshot.data()['age'];
+  }
+  Future<GeoPoint> getLocationFromGPS() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+    return await userDocSnapshot.data()['locationFromGPS'];
   }
 
 
