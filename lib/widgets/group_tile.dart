@@ -50,7 +50,7 @@ class GroupTileState extends State<GroupTile>{
   groupNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref().child("users/${_user.uid}");
+    _firebaseStorage.ref().child('user_image').child(_userName);
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;

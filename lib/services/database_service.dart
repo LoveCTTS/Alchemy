@@ -368,6 +368,12 @@ class DatabaseService {
 
     return await userDocSnapshot.data()['appeal'];
   }
+  Future<GeoPoint> getUserLocationFromGPS() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return await userDocSnapshot.data()['locationFromGPS'];
+  }
   Future<String> getUserLocal() async {
     DocumentReference userDocRef = userCollection.doc(userName);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
@@ -438,11 +444,13 @@ class DatabaseService {
   }
 
   getFriendChats(String groupId) async {
+
     return FirebaseFirestore.instance.collection('friendsChatGroup').doc(
         groupId)
         .collection(
         'messages').orderBy('time')
         .snapshots();
+
   }
 
 

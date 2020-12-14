@@ -32,6 +32,11 @@ class _GroupPageState extends State<GroupPage> {
     _getUserAuthAndJoinedGroups();
   }
 
+  @override
+  void dispose(){
+    _getUserAuthAndJoinedGroups().dispose();
+    super.dispose();
+  }
 
   // 사용자가 아무 그룹에도 가입되어있지않았을때 뜨는 위젯(사용하지않을수도있어서 주석정리안함)
   Widget noGroupWidget() {

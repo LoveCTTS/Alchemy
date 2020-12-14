@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/pages/friends_chat_page.dart';
 import '../pages/chat_page.dart';
@@ -24,16 +27,51 @@ class _FriendTileState extends State<FriendTile>{
 
   User _user;
   String _userName='';
+  String appeal='';
+  StateSetter _setState;
+  bool _hasNetworkImage=false;
+  String _profileImageURL='';
+  FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  double distance;
+  GeoPoint myGeoPoint;
 
   @override
   void initState() {
 
     super.initState();
-    getUserInfo();
+    _prepareService();
   }
-  getUserInfo() async{
+  @override
+  void dispose() {
+
+    _prepareService().dispose();
+    super.dispose();
+
+  }
+  _prepareService() async{
+
     _userName=await HelperFunctions.getUserNameSharedPreference();
     _user = FirebaseAuth.instance.currentUser;
+    _hasNetworkImage = await hasNetworkImage();
+    await DatabaseService(userName:_userName).getLocationFromGPS().then((value){
+      myGeoPoint = value;
+    });
+
+  }
+
+  hasNetworkImage() async{
+
+    Reference storageReference =
+    _firebaseStorage.ref().child("user_image").child(widget.friendName);
+    String downloadURL = await storageReference.getDownloadURL();
+    if(downloadURL == null){
+      return false;
+    }else if(downloadURL != null){
+      setState((){
+        _profileImageURL = downloadURL;
+      });
+      return true;
+    }
   }
   void _popupChat(BuildContext context) {
 
@@ -56,8 +94,58 @@ class _FriendTileState extends State<FriendTile>{
         });
 
     AlertDialog test = AlertDialog(
-        title: Text("Test"),
-        content: Text("Test"),
+        title: Text(widget.friendName),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20.0)
+          )
+        ),
+        content: Builder(
+          builder: (context){
+        return ListView(
+
+            shrinkWrap: true,
+            children: <Widget>[
+              Container(
+                height: 250,
+                width: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                      image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
+
+                  ),
+                ),
+              ),
+              StatefulBuilder(
+                builder: (context, setState){
+                  _setState = setState;
+                  DatabaseService(userName: widget.friendName).getUserAppeal().then((value){
+                    _setState(() {
+                      appeal = value;
+                    });
+                  });
+                  return Text(appeal);
+        }
+        ),
+              SizedBox(height:10),
+              StatefulBuilder(
+                  builder: (context, setState){
+                    _setState = setState;
+                    DatabaseService(userName: widget.friendName).getLocationFromGPS().then((value){
+                      _setState(() {
+                        distance = Geolocator.distanceBetween(
+                            myGeoPoint.latitude, myGeoPoint.longitude,
+                            value.latitude, value.longitude);
+                      });
+                    });
+                    return Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km"); // 그냥 / 나눗셈보다는 Dart의 연산자인 ~/을 이용하면 소수점 아래는 자동으로 제거되는 연산자
+                  }
+              )
+        ]
+        );
+          }
+        ),
         actions: <Widget>[
           closeButton,
           sendButton

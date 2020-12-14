@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/services/auth_service.dart';
 import 'package:linkproto/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'authenticate_page.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String appealContents='';
   String local='';
   String hashTag='';
+  final _picker = ImagePicker();
   TextEditingController appealController= TextEditingController();
   TextEditingController hashTagController= TextEditingController();
   TextEditingController localController= TextEditingController();
@@ -89,7 +91,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _deleteImageFromStorage() async{
 
-    Reference _storageReference = _firebaseStorage.ref().child("users/${_user.uid}");
+    Reference _storageReference = _firebaseStorage.ref().child('user_image').child(_userName); //child(_userName)
+
     String downloadURL = await _storageReference.getDownloadURL();
 
     setState(() {
@@ -101,7 +104,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   }
   void _uploadImageToStorage(ImageSource source) async {
-    File image = await ImagePicker.pickImage(source: source);
+    PickedFile pickedFile = await _picker.getImage(source: source);
+
+    File image = File(pickedFile.path);
 
     if (image == null) return;
 
@@ -109,10 +114,10 @@ class _ProfilePageState extends State<ProfilePage> {
       _image = image;
     });
 
-    // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
-    Reference storageReference =
-    _firebaseStorage.ref().child("users/${_user.uid}");
 
+
+    // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
+    Reference storageReference = _firebaseStorage.ref().child('user_image').child(_userName);
     try{
       await storageReference.putFile(_image);
     }on FirebaseException catch (e){
@@ -130,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
   hasNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref().child("users/${_user.uid}");
+    _firebaseStorage.ref().child('user_image').child(_userName);
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
@@ -180,14 +185,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
             TextButton(
                 onPressed: (){
-
                   _uploadImageToStorage(ImageSource.gallery);
                 },
                 child: Text("업로드")),
             TextButton(
-
                 onPressed: (){
-
                   _deleteImageFromStorage();
                 },
 
@@ -360,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     if(distanceSwitched){
                          _determinePosition().then((value){
                         DatabaseService(userName: _userName).updateLocationFromGPS(value.latitude, value.longitude);
-                        //double distanceInMeters = Geolocator.distanceBetween(52.2165157, 6.9437819, 52.3546274, 4.8285838);
+
                       });
                     }
                   }
@@ -377,6 +379,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ListTile(
               onTap: () async {
 
+                SharedPreferences preferences = await SharedPreferences.getInstance();
+                await preferences.clear();
                 await _auth.signOut();
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
               },

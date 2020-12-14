@@ -35,6 +35,11 @@ class _AgoraPageState extends State<AgoraPage> {
 
 
   }
+  @override
+  void dispose(){
+    _getUserAuthAndJoinedGroups().dispose();
+    super.dispose();
+  }
 
 
   _getUserAuthAndJoinedGroups() async {
@@ -232,7 +237,8 @@ class _AgoraPageState extends State<AgoraPage> {
                     builder: (context,setState){
                       _setState = setState;
 
-                      return Column(
+                      return ListView(
+                          shrinkWrap: true,
                           children:[
                             SizedBox(
                               height:50,

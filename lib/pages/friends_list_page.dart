@@ -29,6 +29,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
 
+  @override
+  void dispose(){
+    getUserInfo().dispose();
+    super.dispose();
+  }
+
   getUserInfo() async{
 
     _user = FirebaseAuth.instance.currentUser;
