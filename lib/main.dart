@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,9 @@ import 'pages/authenticate_page.dart';
 import 'pages/home_page.dart';
 import 'pages/test_page.dart';
 import 'routes/routes.dart';
+import 'pages/login_page.dart';
 
-
+/*
 //메인에서 runApp을 통해 MyApp 클래스 실행
 void main() async{
 
@@ -70,5 +72,22 @@ class AuthenticationWrapper extends StatelessWidget{
       return HomePage();
     }
     return SignInPage();
+  }
+}
+*/
+
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Login',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: LoginPage(),
+    );
   }
 }
