@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:linkproto/pages/sign_in_test.dart';
 import '../helper/helper_functions.dart';
 import 'home_page.dart';
 import '../services/auth_service.dart';
@@ -70,6 +71,70 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  Widget _signInButton() {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () {
+        signInWithGoogle().then((result) async{
+          if (result != null){
+
+
+            /*QuerySnapshot userInfoSnapshot = await DatabaseService().getUserData(email); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
+
+            await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
+            await HelperFunctions.saveUserEmailSharedPreference(email); //현재 사용자의 email을 저장
+            await HelperFunctions.saveUserNameSharedPreference(
+                userInfoSnapshot.docs[0].data()["fullName"]
+            );// 현재 사용자의 풀네임을 저장
+
+
+            // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분
+            print("Signed In");
+            await HelperFunctions.getUserLoggedInSharedPreference().then((value) {
+              print("Logged in: $value");
+            });
+            await HelperFunctions.getUserEmailSharedPreference().then((value) {
+              print("Email: $value");
+            });
+            await HelperFunctions.getUserNameSharedPreference().then((value) {
+              print("Full Name: $value");
+            });*/
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) {
+                  return HomePage();
+                },
+              ),
+            );
+          }
+        });
+
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: Colors.grey),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(image: AssetImage("assets/google_logo.png"), height: 35.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +212,10 @@ class _SignInPageState extends State<SignInPage> {
                       }
                     ),
                   ),
+
                 
                   SizedBox(height: 10.0),
-                  
+                  _signInButton(),
                   Text.rich( //Text의 생성자 Text.rich
 
                     TextSpan(
