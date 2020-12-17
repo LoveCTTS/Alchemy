@@ -25,9 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
   FirebaseAuth _firebaseAuth =FirebaseAuth.instance;
   User _user;
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-  String _profileImageURL = "";
+  List<String> _profileImageURL=List<String>(6);
   final picker = ImagePicker();
-  bool _hasNetworkImage=false;
+  List<bool> _hasNetworkImage = List<bool>.generate(6, (index) => false); //6개의 false값을 가지고있는 배열생성
   String _userName='';
   Reference _storageReference;
   bool distanceSwitched=false;
@@ -36,6 +36,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String local='';
   String hashTag='';
   final _picker = ImagePicker();
+
+  //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
   TextEditingController appealController= TextEditingController();
   TextEditingController hashTagController= TextEditingController();
   TextEditingController localController= TextEditingController();
@@ -43,27 +45,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   initState() {
-    super.initState();
+
+    _prepareService();
     appealController.addListener(() { });
     hashTagController.addListener(() { });
     localController.addListener(() { });
     ageController.addListener(() { });
-    _prepareService();
+    super.initState();
 
   }
   @override
   void dispose(){
+    super.dispose();
     ageController.dispose();
     localController.dispose();
     hashTagController.dispose();
     appealController.dispose();
     _prepareService().dispose();
-    super.dispose();
+
   }
 
   _prepareService() async{
     _user= _firebaseAuth.currentUser;
-    _hasNetworkImage = await hasNetworkImage();
     _userName=await HelperFunctions.getUserNameSharedPreference();
 
     await DatabaseService(userName: _userName).getUserAppeal().then((value){
@@ -86,24 +89,25 @@ class _ProfilePageState extends State<ProfilePage> {
         ageController.text = value;
       });
     });
+    for(int i=0;i<6;i++) {
+      _hasNetworkImage[i] =await hasNetworkImage(i);
+    }
 
   }
 
-  void _deleteImageFromStorage() async{
+  void _deleteImageFromStorage(int number) async{
 
-    Reference _storageReference = _firebaseStorage.ref().child('user_image').child(_userName); //child(_userName)
-
+    Reference _storageReference = _firebaseStorage.ref('user_image/$_userName' + '[$number]');
     String downloadURL = await _storageReference.getDownloadURL();
-
+    _storageReference = FirebaseStorage.instance.ref(downloadURL);
+    _storageReference.delete();
     setState(() {
-      _profileImageURL = downloadURL;
+      _profileImageURL[number] = downloadURL;
+      _hasNetworkImage[number] = false;
     });
 
-    _storageReference = await FirebaseStorage.instance.getReferenceFromUrl(_profileImageURL);
-    _storageReference.delete();
-
   }
-  void _uploadImageToStorage(ImageSource source) async {
+  void _uploadImageToStorage(ImageSource source,int number) async {
     PickedFile pickedFile = await _picker.getImage(source: source);
 
     File image = File(pickedFile.path);
@@ -114,38 +118,52 @@ class _ProfilePageState extends State<ProfilePage> {
       _image = image;
     });
 
-
-
     // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
-    Reference storageReference = _firebaseStorage.ref().child('user_image').child(_userName);
+    Reference storageReference = _firebaseStorage.ref('user_image/$_userName' + '[$number]');
+
     try{
       await storageReference.putFile(_image);
+
     }on FirebaseException catch (e){
       print("Failed Upload");
     }
 
+
+
+
     String downloadURL = await storageReference.getDownloadURL();
 
+
+
+    if(downloadURL!=null){
+
+      setState(() {
+        _profileImageURL[number] = downloadURL;
+        _hasNetworkImage[number] = true;
+
+      });
+    }
     // 업로드된 사진의 URL을 페이지에 반영
-    setState(() {
-      _profileImageURL = downloadURL;
-    });
+
   }
 
-  hasNetworkImage() async{
+    Future<bool> hasNetworkImage(int number) async{
 
     Reference storageReference =
-    _firebaseStorage.ref().child('user_image').child(_userName);
+    _firebaseStorage.ref("user_image/$_userName"+ "[$number]");
+
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
     }else if(downloadURL != null){
       setState((){
-        _profileImageURL = downloadURL;
+        _profileImageURL[number] = downloadURL;
       });
       return true;
     }
+    return false;
   }
+
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -171,10 +189,10 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
 
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.bestForNavigation);
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
   }
 
-  void _popupEdit(BuildContext context) {
+  void _popupEdit(BuildContext context,int number) {
 
 
     AlertDialog edit = AlertDialog(
@@ -184,13 +202,14 @@ class _ProfilePageState extends State<ProfilePage> {
           child:Column(children: [
 
             TextButton(
-                onPressed: (){
-                  _uploadImageToStorage(ImageSource.gallery);
+                onPressed: () {
+                   _uploadImageToStorage(ImageSource.gallery, number);
+
                 },
                 child: Text("업로드")),
             TextButton(
-                onPressed: (){
-                  _deleteImageFromStorage();
+                onPressed: () {
+                  _deleteImageFromStorage(number);
                 },
 
                 child: Text("삭제하기")),
@@ -213,12 +232,13 @@ class _ProfilePageState extends State<ProfilePage> {
             child:ListView(
           padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 40),
           children: <Widget>[
+
             Row(
                 children: [
                   GestureDetector(
                       onTap: (){
 
-                        _popupEdit(context);
+                        _popupEdit(context,0);
                       },
                       child: Container(
                         height: 80,
@@ -227,69 +247,99 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
-                              image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
+                              image: _hasNetworkImage[0]? NetworkImage(_profileImageURL[0]):AssetImage("images/default.png")
 
                           ),
                         ),
                       )),
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                          image: AssetImage("images/default.png")
+                  GestureDetector(
+                      onTap: (){
 
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                          image: AssetImage("images/default.png")
+                        _popupEdit(context,1);
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage[1]? NetworkImage(_profileImageURL[1]):AssetImage("images/default.png")
 
-                      ),
-                    ),
-                  ),
+                          ),
+                        ),
+                      )),
+                  GestureDetector(
+                      onTap: (){
+
+                        _popupEdit(context,2);
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage[2]? NetworkImage(_profileImageURL[2]):AssetImage("images/default.png")
+
+                          ),
+                        ),
+                      )),
                 ]),
             Row(
                 children: [
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                          image: AssetImage("images/default.png")
+                  GestureDetector(
+                      onTap: (){
 
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                          image: AssetImage("images/default.png")
+                        _popupEdit(context,3);
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage[3]? NetworkImage(_profileImageURL[3]):AssetImage("images/default.png")
 
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                          image: AssetImage("images/default.png")
+                          ),
+                        ),
+                      )),
+                  GestureDetector(
+                      onTap: (){
 
-                      ),
-                    ),
-                  ),
+                        _popupEdit(context,4);
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage[4]? NetworkImage(_profileImageURL[4]):AssetImage("images/default.png")
+
+                          ),
+                        ),
+                      )),
+                  GestureDetector(
+                      onTap: (){
+
+                        _popupEdit(context,5);
+                      },
+                      child: Container(
+                        height: 80,
+                        width: 80,
+                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: _hasNetworkImage[5]? NetworkImage(_profileImageURL[5]):AssetImage("images/default.png")
+
+                          ),
+                        ),
+                      )),
                 ]),
             SizedBox(height: 23.0),
             TextField(
@@ -353,17 +403,22 @@ class _ProfilePageState extends State<ProfilePage> {
               Switch(
                   activeColor: Colors.pinkAccent,
                   value: distanceSwitched,
-                  onChanged: (switched) {
+                  onChanged: (switched){
                     setState(() {
                       distanceSwitched = switched;
                       print(distanceSwitched);
                     }
                     );
                     if(distanceSwitched){
-                         _determinePosition().then((value){
+                      _determinePosition().then((value){
                         DatabaseService(userName: _userName).updateLocationFromGPS(value.latitude, value.longitude);
 
                       });
+                    }else if(distanceSwitched == false){
+
+                      DatabaseService(userName: _userName).deleteLocationFromGPS();
+
+
                     }
                   }
               )

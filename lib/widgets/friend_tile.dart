@@ -62,7 +62,7 @@ class _FriendTileState extends State<FriendTile>{
   hasNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref().child("user_image").child(widget.friendName);
+    _firebaseStorage.ref('user_image/${widget.friendName}' + '[1]');
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;

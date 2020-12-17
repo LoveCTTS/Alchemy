@@ -341,8 +341,6 @@ class _AgoraPageState extends State<AgoraPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-
-
           //앱 상단바의 위아래 높낮이 조절을위해 PreferredSize 를 사용하여야하고, 이를 상단바에만 적용하기위해서 SafeZone(그냥 직접 만든 것)을 사용
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(40.0),
@@ -459,7 +457,6 @@ class _AgoraPageState extends State<AgoraPage> {
                               builder: (context, snapshot) {
                                 List<Widget> children;
                                 if(snapshot.hasError){
-
                                   children = <Widget>[
                                     Icon(
                                       Icons.error_outline,

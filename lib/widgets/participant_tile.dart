@@ -24,28 +24,31 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
 
   bool isChief=false;
-  User _user ;
-
-
-
-
+  User _user;
 
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
+    prepareService();
 
-    _user = FirebaseAuth.instance.currentUser;
-    DatabaseService().isChief(widget.participantName, widget.groupId).then((value){
-      isChief=value;
-    });
+
   }
 
+  void prepareService() {
+    _user = FirebaseAuth.instance.currentUser;
+    DatabaseService().isChief(widget.participantName, widget.groupId).then((value){
+      setState(() {
+        isChief=value;
+      });
 
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
+          if(widget.senderName!=widget.participantName){
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -53,10 +56,8 @@ class _ParticipantTileState extends State<ParticipantTile> {
                   title: Text("Profile"),
                   content: Text("Test"),
                   actions: <Widget>[
-
                     FlatButton(
                         onPressed: ()async{
-
                       DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);
                       if(await Vibration.hasVibrator() && !await Vibration.hasAmplitudeControl()){
                         (Theme.of(context).platform == TargetPlatform.android)? Vibration.vibrate(
@@ -73,6 +74,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
               );
             },
           );
+          }
         },
         child:SizedBox( //Card size 조절하기위한 SizedBox
             height:65.0,

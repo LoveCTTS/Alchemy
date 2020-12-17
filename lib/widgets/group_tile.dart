@@ -33,24 +33,25 @@ class GroupTileState extends State<GroupTile>{
   String _userName='';
 
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
-    _prepareService();
+     _prepareService();
 
   }
 
-  void _prepareService() async{
+   _prepareService() async{
     _user= FirebaseAuth.instance.currentUser;
-    _hasNetworkImage = await groupNetworkImage();
     _userName = await HelperFunctions.getUserNameSharedPreference();
+    _hasNetworkImage = await groupNetworkImage();
+
 
   }
 
   groupNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref().child('user_image').child(_userName);
+    _firebaseStorage.ref('user_image/$_userName' + '[0]');
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;

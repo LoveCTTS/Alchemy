@@ -340,7 +340,6 @@ class DatabaseService {
     if (members.isEmpty) {
       await groupDocRef.delete();
 
-      await groupCollection.doc(groupId).delete();
     }
   }
 
@@ -499,6 +498,11 @@ class DatabaseService {
         //groups에서 특정 gid로 명칭된 document안의 키값 중 members 내에 저장된 uid_userName 삭제
       });
     }
+  }
+
+  Future deleteLocationFromGPS() async {
+    DocumentReference userDocRef = userCollection.doc(userName);
+    await userDocRef.update({'locationFromGPS': FieldValue.delete()});
   }
 }
 
