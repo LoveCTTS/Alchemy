@@ -230,10 +230,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
         body: GestureDetector(
             child:ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 40),
+          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 0),
           children: <Widget>[
 
-            Row(
+                Row(
                 children: [
                   GestureDetector(
                       onTap: (){
@@ -241,8 +241,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,0);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -258,8 +258,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,1);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -275,8 +275,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,2);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -295,8 +295,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,3);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -312,8 +312,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,4);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -329,8 +329,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,5);
                       },
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: 110,
+                        width: 110,
                         child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,

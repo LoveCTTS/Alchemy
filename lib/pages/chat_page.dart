@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linkproto/pages/agora_page.dart';
+import 'package:linkproto/pages/groupChatSettings.dart';
 import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
@@ -38,6 +39,7 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   User _user;
+
 
   @override
   void initState() {
@@ -158,6 +160,7 @@ class _ChatPageState extends State<ChatPage> {
         centerTitle: true,
         backgroundColor: Colors.black87,
         elevation: 0.0,
+
       ),
       endDrawer: Theme(
           data: Theme.of(context).copyWith(
@@ -209,20 +212,35 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Align(
                 alignment: Alignment.bottomLeft,
-                  child:IconButton(
-                      icon: Icon(Icons.input,size:40, color: Colors.white),
+                child:IconButton(
+                    icon: Icon(Icons.input,size:40, color: Colors.white),
                     onPressed: () async{
 
 
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
 
-                        await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
-                        await DatabaseService().deleteGroupIfNoMembers(widget.groupId);// 맴버가 아무도없다면 그룹 폭파
+                      await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
+                      await DatabaseService().deleteGroupIfNoMembers(widget.groupId);// 맴버가 아무도없다면 그룹 폭파
 
                     }
-                    ),
-                  )
+                ),
+              ),
+              Align(
+
+                alignment: Alignment.bottomRight,
+                child:IconButton(
+                    icon: Icon(Icons.settings),
+                    iconSize: 40,
+                    color: Colors.white,
+                    onPressed: () async{
+
+
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GroupChatSettingsPage()));
+
+                    }
+                ),
+              )
             ]
     )
       )

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/cupertino.dart';
 
 class DatabaseService {
 
@@ -452,6 +453,11 @@ class DatabaseService {
 
   }
 
+  Future<List<QueryDocumentSnapshot>> getGroupSnapshots() async{
+
+    QuerySnapshot qn = await groupCollection.get();
+    return qn.docs;
+  }
 
   // 그룹 찾기
   searchByName(String groupName) {

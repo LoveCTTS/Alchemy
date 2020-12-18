@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:linkproto/services/database_service.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
@@ -21,28 +24,27 @@ class _AgoraPageState extends State<AgoraPage> {
   String mikeMessageInMikePopup;
   String roomPassword;
   StateSetter _setState;
-  bool isSwitched=false;
+  bool enablePassword=false;
+  bool enableRoomImage=false;
   bool hasMembers=false;
-
-
-
 
   // initState
   @override
   void initState() {
     super.initState();
-    _getUserAuthAndJoinedGroups();
+    prepareSerivce();
+
 
 
   }
   @override
   void dispose(){
-    _getUserAuthAndJoinedGroups().dispose();
+    prepareSerivce().dispose();
     super.dispose();
   }
 
 
-  _getUserAuthAndJoinedGroups() async {
+  prepareSerivce() async {
     _user = FirebaseAuth.instance.currentUser; //현재 접속된 사용자에 대한 정보를 _user에 저장
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 아고라페이지의 _userName에 초기화
     await HelperFunctions.getUserNameSharedPreference().then((value) {
@@ -65,65 +67,77 @@ class _AgoraPageState extends State<AgoraPage> {
     });
   }
 
+  Widget mike(){
+    return Container(
+        width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
+        height: 30,
+        color: Colors.deepPurple,
+        child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
+            onTap: (){
+              _popupMike(context);
+            },
+            child: StreamBuilder( //실시간으로 확성기 데이터가 가장 최근 것으로 실시간으로 보여줄수있도록 StreamBuilder을 사용하였음.
+                stream: DatabaseService().mikeMessageCollection.orderBy('createdTime',descending: true).snapshots(),
+                //데이터가 실시간으로 바뀌는데, 생성된 시간을 기준으로하여 정렬
+                builder: (context, snapshot) {
+                  List<Widget> children;
+                  if(snapshot.hasError){
+                    children = <Widget>[
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 60,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text('Error: ${snapshot.error}'),
+                      )
+                    ];
+                  }
+                  if(!snapshot.hasData){ return CircularProgressIndicator();}
+                  else {
+                    List mikeMessageList = snapshot.data.documents
+                        .map((e) {
+                      return e.data;
+                    }).toList();
+                    //snapshot에 저장된 데이터에 접근하기위해서는 위와같이 List형태로 바꿔서 접근하는게 표준적임.
+                    return Text(
+                        "${mikeMessageList[0]()["sender"]}:${mikeMessageList[0]()["mikeMessage"]}",
+                        style: TextStyle(
+                            fontSize: 13, color: Colors.white));
+                    //[0]으로 접근하면 가장 최근에 생성된데이터를 볼수있음.(descending을 false로 바꾸면 가장 과거데이터를 보게 됨.)
+                  }
+                }
+            )
+        )
+    );
+  }
 //DB내의 모든 방 리스팅하기
   Widget allGroupsList() {
-    return StreamBuilder(
-      stream: DatabaseService().groupCollection.orderBy('createdTime').snapshots(),
-      builder: (context, snapshot) {
 
-        List<Widget> children;
-        if(snapshot.hasError){
-
-          children = <Widget>[
-            Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 60,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Text('Error: ${snapshot.error}'),
-            )
-          ];
+    return FutureBuilder(
+    future: DatabaseService().getGroupSnapshots(),
+        builder: ( _ , AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot){
+      if(snapshot.hasData){
+      List allGroups = snapshot.data.map((e) {return e.data;}).toList();
+        return ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+        itemCount: allGroups.length,
+        shrinkWrap: true, // 스크롤 뷰의 범위를 보고있는 내용에따라 결정해야하는지 여부(별로 중요하지않음)
+        itemBuilder: (context,index){
+          int reqIndex=allGroups.length-index-1;
+          return GroupTile(
+              userName: _userName, //특정 유저의 풀네임을 userName에 저장
+              groupId: allGroups[reqIndex]()["groupId"].toString(),
+              groupName: allGroups[reqIndex]()["groupName"].toString()
+          );
         }
-        if(!snapshot.hasData) {
-          return CircularProgressIndicator();
+        );
+      }else{
+        return CircularProgressIndicator();
+      }}
+    );
 
-        } else {
-          List allGroups = snapshot.data.docs.map((e){return e.data;}).toList();
-          return SingleChildScrollView(
-              physics: ScrollPhysics(),
-              child: Column(
-              children: [
-
-                ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
-
-                    physics: NeverScrollableScrollPhysics(),
-
-                    itemCount: allGroups.length,
-
-                    shrinkWrap: true, // 스크롤 뷰의 범위를 보고있는 내용에따라 결정해야하는지 여부(별로 중요하지않음)
-
-                    itemBuilder: (context,index){
-
-                      int reqIndex=allGroups.length-index-1;
-
-                        return GroupTile(
-                            userName: _userName, //특정 유저의 풀네임을 userName에 저장
-                            groupId: allGroups[reqIndex]()["groupId"].toString(),
-                            groupName: allGroups[reqIndex]()["groupName"].toString()
-                        );
-
-
-                    }
-
-                    )
-              ]
-          )
-          )
-          ;
-          }
-      });
   }
 
   //마이 버튼 눌렀을때 뜨는 창 ( 마피아 확성기 버튼 눌렀을때 뜨는 창과 같은 것)
@@ -268,11 +282,11 @@ class _AgoraPageState extends State<AgoraPage> {
                                       height: 25,
                                       child: Switch(
                                           activeColor: Colors.pinkAccent,
-                                          value: isSwitched,
+                                          value: enablePassword,
                                           onChanged: (value) {
                                             _setState(() {
-                                              isSwitched = value;
-                                              print(isSwitched);
+                                              enablePassword = value;
+                                              print(enablePassword);
                                             }
                                             );
                                           }
@@ -284,7 +298,7 @@ class _AgoraPageState extends State<AgoraPage> {
                             SizedBox(
                                 width:250,height:30,
                                 child:TextField(
-                                    enabled: isSwitched==false?false:true, //스위치 false이면 비밀번호 입력못하고, true면 비밀번호 입력가능
+                                    enabled: enablePassword==false?false:true, //스위치 false이면 비밀번호 입력못하고, true면 비밀번호 입력가능
                                     onChanged: (val) {
                                       roomPassword = val;
                                     },
@@ -298,6 +312,8 @@ class _AgoraPageState extends State<AgoraPage> {
                                         color: Colors.black
                                     )
                                 )),
+                            SizedBox(height:20),
+
                           ]);
                     }
                 ),
@@ -359,7 +375,11 @@ class _AgoraPageState extends State<AgoraPage> {
                                 icon: Icon(Icons.autorenew,color: Colors.black),
                                 padding: EdgeInsets.all(0.0),
                                 iconSize: 30,
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    allGroupsList();
+                                  });
+                                },
                               )
                           ),
 
@@ -441,56 +461,12 @@ class _AgoraPageState extends State<AgoraPage> {
                     )
                 )
             ),
-        body: ListView(
-            children: [
-              Container(
-                  width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
-                  height: 30,
-                  color: Colors.deepPurple,
-                  child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
-                    onTap: (){
-                      _popupMike(context);
-                    },
-                    child: StreamBuilder( //실시간으로 확성기 데이터가 가장 최근 것으로 실시간으로 보여줄수있도록 StreamBuilder을 사용하였음.
-                              stream: DatabaseService().mikeMessageCollection.orderBy('createdTime',descending: true).snapshots(),
-                        //데이터가 실시간으로 바뀌는데, 생성된 시간을 기준으로하여 정렬
-                              builder: (context, snapshot) {
-                                List<Widget> children;
-                                if(snapshot.hasError){
-                                  children = <Widget>[
-                                    Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                      size: 60,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 16),
-                                      child: Text('Error: ${snapshot.error}'),
-                                    )
-                                  ];
-                                }
-                                if(!snapshot.hasData){ return CircularProgressIndicator();}
-                                else {
-                                  List mikeMessageList = snapshot.data.documents
-                                      .map((e) {
-                                    return e.data;
-                                  }).toList();
-                                  //snapshot에 저장된 데이터에 접근하기위해서는 위와같이 List형태로 바꿔서 접근하는게 표준적임.
-                                  return Text(
-                                      "${mikeMessageList[0]()["sender"]}:${mikeMessageList[0]()["mikeMessage"]}",
-                                      style: TextStyle(
-                                          fontSize: 13, color: Colors.white));
-                                  //[0]으로 접근하면 가장 최근에 생성된데이터를 볼수있음.(descending을 false로 바꾸면 가장 과거데이터를 보게 됨.)
-                                }
-                              }
-                              )
-                  )
-              ),
-
-
-
-        allGroupsList()
-
+        body: Column(
+            children:<Widget>[
+              mike(), //확성기를 ListView가 아닌 Column안에 넣음으로써 그룹채팅 방들을 스크롤해도 같이 위로 안올라가게 막을수있다.
+          Expanded( //위젯에 expaned 위젯을 추가하면 레이아웃에서 overflow가 안보이게 할수있다.
+              child:SingleChildScrollView(
+                  child: allGroupsList()))
         ]
         ),
         /*Container(

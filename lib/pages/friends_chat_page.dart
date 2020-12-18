@@ -135,10 +135,10 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
   //채팅 페이지 디자인 관련 코드인데, 직접 실시간으로 조절하면서 디자인하면되니 설명은 생략함.
   @override
   Widget build(BuildContext context) {
-    //그룹채팅창에서 아무데나 터치해도 될수있게 하기위해 GestureDetector로 Scaffold 전체를 감싸줌
+
     return GestureDetector(
         onTap:(){
-          //사용자들이 그룹채팅창에서 아무데나 터치해도 TextEditor이 내려갈수있게?사라질수있게??하기위해 Focus Out시키는 코드를 삽입
+
           FocusScopeNode currentFocus = FocusScope.of(context); //현재 앱의 focus를 어디에 두고있는지 정보를 저장하고있는 context를 가져와서 currentFocus에 저장
           //Focus가 현재 잡혀있다면(아래 코드는 포커스관련 오류방지를위해 반드시 작성해주어야함)
           if(!currentFocus.hasPrimaryFocus){

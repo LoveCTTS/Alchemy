@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 class GroupTile extends StatefulWidget {
-  //그룹 타일도 한번 실행후 상태 변화가 없기때문에 StatelessWidget 사용
   final String userName;
   final String groupId;
   final String groupName;
@@ -51,7 +50,7 @@ class GroupTileState extends State<GroupTile>{
   groupNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref('user_image/$_userName' + '[0]');
+    _firebaseStorage.ref('group_image/$_userName' + '[0]');
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
@@ -165,7 +164,7 @@ class GroupTileState extends State<GroupTile>{
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png"),
+                            image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/main_image.png"),
                           ),
                         ),
                       ),
