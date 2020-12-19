@@ -18,21 +18,22 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
   User _user;
   String _userName = '';
-  TextEditingController messageEditingController = TextEditingController();
 
 
   //TextEditingController형의 인스턴스를 저장하는 변수 messageEditingController 생성
   @override
   void initState() {
-    super.initState();
     getUserInfo();
+    super.initState();
+
   }
 
 
   @override
   void dispose(){
-    getUserInfo().dispose();
+
     super.dispose();
+    getUserInfo().dispose();
   }
 
   getUserInfo() async{
@@ -45,6 +46,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
       });
     });
   }
+
   String _destructureId(String res) {
     // print(res.substring(0, res.indexOf('_')));
     return res.substring(0, res.indexOf('_'));
@@ -73,7 +75,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             height: 300,
             child: ListView(children: [
               StreamBuilder(
-                  stream: DatabaseService(uid:_user.uid, userName: _userName).userCollection.doc(_userName).snapshots(),
+                  stream: DatabaseService().userCollection.doc(_userName).snapshots(),
                   builder: (context, snapshot) {
                     List<Widget> children;
                     if (snapshot.hasError) {
@@ -192,9 +194,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                                 friendName: _destructureName(friendList[reqIndex]),
                               );
                             }
-                        );
-
-
+                            );
               }
             }
         ),

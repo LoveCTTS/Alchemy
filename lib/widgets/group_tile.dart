@@ -71,19 +71,16 @@ class GroupTileState extends State<GroupTile>{
         children: <Widget>[
           GestureDetector(
         onTap: () async {
-          _user = FirebaseAuth.instance.currentUser;
           isSecretRoom = await DatabaseService().isSecretRoom(widget.groupId);
           if(isSecretRoom){
             showDialog(
           context: context,
           builder: (BuildContext context) {
-            return Padding(
-                padding: EdgeInsets.only(top:250,bottom:250),
-                child:AlertDialog(
+                return AlertDialog(
                     title: Text("암호") ,
-                    content:Column(
+                    content:ListView(
+                      shrinkWrap: true,
                         children:[
-                          SizedBox(height:50),
                           SizedBox(
                               height:50,
                               child:TextField(
@@ -101,41 +98,38 @@ class GroupTileState extends State<GroupTile>{
                                       labelText: "Input Room Password"
                                   )
                               )),
+                        ]),
+                  actions: [
+                    FlatButton(
 
-                          SizedBox(height:50),
-                          Row( children: [
-                            FlatButton(
-                              minWidth: 80,
-                              child: Text("닫기",style:TextStyle(fontSize:20,color:Colors.black)),
-                              onPressed:  () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            SizedBox(width:80),
-                            FlatButton(
-                                minWidth: 80,
-                                child: Text("입장하기",style:TextStyle(fontSize:20,color:Colors.black)),
-                                onPressed:  () async {
+                      child: Text("닫기",style:TextStyle(fontSize:20,color:Colors.red)),
+                      onPressed:  () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
 
-                                  isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
-                                  if(isSameRoomPassword){
-                                    await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
-                                        widget.groupId, widget.groupName, widget.userName);
-                                    //채팅방으로 가기
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                        ChatPage(groupId: widget.groupId,
-                                          userName: widget.userName,
-                                          groupName: widget.groupName,)));
-                                  }else{
-                                    Navigator.of(context).pop();
-                                    // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
-                                  }
+                        child: Text("입장하기",style:TextStyle(fontSize:20,color:Colors.blue)),
+                        onPressed:  () async {
 
-                                }
-                            )]
-                          )
-                        ])
-                ));
+                          isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
+                          if(isSameRoomPassword){
+                            await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
+                                widget.groupId, widget.groupName, widget.userName);
+                            //채팅방으로 가기
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                ChatPage(groupId: widget.groupId,
+                                  userName: widget.userName,
+                                  groupName: widget.groupName,)));
+                          }else{
+                            Navigator.of(context).pop();
+                            // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
+                          }
+                        }
+                    )
+
+                  ],
+                );
 
           },
         );
