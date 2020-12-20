@@ -161,8 +161,10 @@ class GroupTileState extends State<GroupTile>{
       }
 
     },
-            child:Container(
-                    color: Colors.black,
+            child:Padding(
+              padding: EdgeInsets.only(left:10),
+                child:Container(
+                    color: Color(0xff212121),
                     width: MediaQuery.of(context).size.width,
                     height: 70.0,
                     child: Row(
@@ -181,9 +183,10 @@ class GroupTileState extends State<GroupTile>{
                           ),
                         ),
                       ),
+                      SizedBox(width:10),
                       Text(widget.groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.white/*Color(0xff483d8b)*/,
                           fontFamily: "RobotoMono-italic")),
-                          SizedBox(width:10),
+                          SizedBox(width:5),
                           StreamBuilder(
                             stream: DatabaseService().groupCollection.document(widget.groupId).snapshots(),
                             builder: (context,snapshot){
@@ -220,7 +223,7 @@ class GroupTileState extends State<GroupTile>{
                       ])
                               //decoration: kInnerDecoration
 
-    ),
+    )),
 
           ),
         ]);

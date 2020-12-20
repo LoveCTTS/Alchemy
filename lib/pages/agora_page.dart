@@ -72,10 +72,12 @@ class _AgoraPageState extends State<AgoraPage> {
   }
 
   Widget mike(){
-    return Container(
+    return Padding(
+      padding: EdgeInsets.only(left:10),
+        child:Container(
         width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
         height: 30,
-        color: Colors.black,
+        color: Color(0xff212121),
         child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
             onTap: (){
               _popupMike(context);
@@ -127,7 +129,7 @@ class _AgoraPageState extends State<AgoraPage> {
                 }
             )
         )
-    );
+    ));
   }
 //DB내의 모든 방 리스팅하기
   Widget allGroupsList() {
@@ -268,7 +270,7 @@ class _AgoraPageState extends State<AgoraPage> {
                           style: TextStyle(
                               fontSize: 10.0,
                               height: 5.0,
-                              color: Colors.white
+                              color: Colors.black
 
                           )
 
@@ -322,9 +324,9 @@ class _AgoraPageState extends State<AgoraPage> {
                                   _groupName = val;
                                 },
                                 style: TextStyle(
-                                    fontSize: 15.0,
+                                    fontSize: 10.0,
                                     height: 2.0,
-                                    color: Colors.white
+                                    color: Colors.black
                                 ),
                               decoration: InputDecoration(
                                 filled: true,
@@ -372,9 +374,9 @@ class _AgoraPageState extends State<AgoraPage> {
                                       labelText: "Password",
                                     ),
                                     style: TextStyle(
-                                        fontSize: 15.0,
+                                        fontSize: 10.0,
                                         height: 2.0,
-                                        color: Colors.white
+                                        color: Colors.black
                                     )
                                 )),
                             SizedBox(height:20),
@@ -429,7 +431,6 @@ class _AgoraPageState extends State<AgoraPage> {
                     child: AppBar(
                         title: Text("Agora", style: TextStyle(color: Colors.white, fontSize: 30,fontFamily : "Satisfy" )),
                         backgroundColor: Color(0xff9932cc),
-
                         //IconButton사이 간격을 조절하기위해서는 Icon을 포함하고있는 Container을 조절해야하는데, 그것을 조절하는방법이 SizedBox밖에 없음.
                         actions: <Widget>[
                           //새로고침 버튼
@@ -507,8 +508,10 @@ class _AgoraPageState extends State<AgoraPage> {
                               _popupMakeRoom(context);
                             },
                                 child:IconButton(
-                                icon: Icon(Icons.add,color: Colors.white),
-                                iconSize: 30,)
+
+                                  icon: Icon(Icons.add,color: Colors.white),
+
+                                  iconSize: 30,)
 
 
 
@@ -520,7 +523,7 @@ class _AgoraPageState extends State<AgoraPage> {
         body:
         Column(
             children:<Widget>[
-              SizedBox(height:30),
+              SizedBox(height:20),
               mike(), //확성기를 ListView가 아닌 Column안에 넣음으로써 그룹채팅 방들을 스크롤해도 같이 위로 안올라가게 막을수있다.
           Expanded( //위젯에 expaned 위젯을 추가하면 레이아웃에서 overflow가 안보이게 할수있다.
               child:SingleChildScrollView(
@@ -553,7 +556,7 @@ class _AgoraPageState extends State<AgoraPage> {
                 ])), //Scaffold 클래스의 body 속성에는 하나의 클래스만 사용하는 것이 원칙이고 기본이다.
             */
 
-      backgroundColor: Colors.black
+      backgroundColor: Color(0xff212121)
 
 
         );
