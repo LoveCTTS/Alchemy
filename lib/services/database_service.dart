@@ -455,14 +455,15 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots() async{
 
-    QuerySnapshot qn = await groupCollection.get();
+    QuerySnapshot qn = await groupCollection.orderBy('createdTime').get();
     return qn.docs;
   }
+
 
   // 그룹 찾기
   searchByName(String groupName) {
     return groupCollection.where(
-        'groupName', isEqualTo: groupName).getDocuments();
+        'groupName', isEqualTo: groupName).get();
   }
 
 

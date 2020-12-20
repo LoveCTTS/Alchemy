@@ -27,6 +27,7 @@ class _AgoraPageState extends State<AgoraPage> {
   bool enablePassword=false;
   bool enableRoomImage=false;
   bool hasMembers=false;
+  Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
 
   // initState
   @override
@@ -37,15 +38,17 @@ class _AgoraPageState extends State<AgoraPage> {
 
 
   }
+
   @override
   void dispose(){
     prepareSerivce().dispose();
     super.dispose();
   }
 
-
   prepareSerivce() async {
     _user = FirebaseAuth.instance.currentUser; //현재 접속된 사용자에 대한 정보를 _user에 저장
+
+    getGroupSnapshots= DatabaseService().getGroupSnapshots();
     //SharedPreference에 저장된 username을 매개변수 value에 복사하고 현재 아고라페이지의 _userName에 초기화
     await HelperFunctions.getUserNameSharedPreference().then((value) {
       setState(() {
@@ -116,7 +119,7 @@ class _AgoraPageState extends State<AgoraPage> {
   Widget allGroupsList() {
 
     return FutureBuilder(
-    future: DatabaseService().getGroupSnapshots(),
+    future: getGroupSnapshots,
         builder: ( _ , AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot){
       if(snapshot.hasData){
       List allGroups = snapshot.data.map((e) {return e.data;}).toList();
@@ -377,7 +380,7 @@ class _AgoraPageState extends State<AgoraPage> {
                                 iconSize: 30,
                                 onPressed: () {
                                   setState(() {
-                                    allGroupsList();
+                                    getGroupSnapshots= DatabaseService().getGroupSnapshots();
                                   });
                                 },
                               )
