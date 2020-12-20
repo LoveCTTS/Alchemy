@@ -21,7 +21,7 @@ class MikeMessageTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: 200, height: 60.0,
+            width: 200, height: 70.0,
             padding: EdgeInsets.all(0.5), //Gradient Border size 조절
             child: GestureDetector(
               onTap: () async {
@@ -32,7 +32,7 @@ class MikeMessageTile extends StatelessWidget {
                 child: Container(
                     child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("$senderName : $mikeMessage", style:TextStyle(fontWeight: FontWeight.bold,fontSize:10,color: Color(0xff483d8b),
+                        child: Text("$senderName : $mikeMessage", style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color: Colors.white,
                             fontFamily: "RobotoMono-italic"))),
                 ),
               ),

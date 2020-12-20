@@ -50,9 +50,9 @@ class _HomePageState extends State<HomePage> {
               });
             },
 
-            backgroundColor: Color(0xffe6e6fa),
-            selectedItemColor: Color(0xff8b008b),
-            unselectedItemColor: Color(0xff483d8b),
+            backgroundColor: Color(0xff9932cc),
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.black,
             items: [
               new BottomNavigationBarItem(
                 icon: Icon(Icons.chat, size:20.0),

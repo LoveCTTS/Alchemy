@@ -142,7 +142,7 @@ class _SignInPageState extends State<SignInPage> {
       body: Form(
         key: _formKey, //GlobalKey로 만든 _formKey로 한 위젯을 또다른 위젯으로 대체할때??바꿀때?(replacement) 제어 용도로 사용
         child: Container(
-          color: Color(0xffe6e6fa),
+          color: Colors.black,
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0), //horizontal이 커질수록 양옆으로 폭 조절, vertical은 위아래로 폭 조절
             children: <Widget>[
@@ -152,16 +152,11 @@ class _SignInPageState extends State<SignInPage> {
                 children: <Widget>[
                   FittedBox(
                       fit: BoxFit.fitWidth,
-                      child: Text("Alchemy", style: TextStyle(color: Colors.black, fontSize: 100, fontFamily: 'Satisfy'))),//앱 메인 제목(FittedBox를 통해 기기에 따라 유연하게 적용)
-                
-                  SizedBox(height: 30.0), //위젯사이 높낮이 조절을위해 SizeBox 사용
-                
-                  Text("로그인", style: TextStyle(color: Colors.black, fontSize: 18.0)),
-
+                      child: Text("Alchemy", style: TextStyle(color: Colors.purpleAccent, fontSize: 100, fontFamily: 'Satisfy'))),//앱 메인 제목(FittedBox를 통해 기기에 따라 유연하게 적용)
                   SizedBox(height: 20.0),
                 
                   TextFormField( //입력칸 위젯
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     decoration: textInputDecoration.copyWith(labelText: '이메일'), //입력칸 라벨
 
                     // email 입력시 규칙 적용
@@ -181,7 +176,7 @@ class _SignInPageState extends State<SignInPage> {
 
                   //비밀번호 입력칸
                   TextFormField(
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     decoration: textInputDecoration.copyWith(labelText: '비밀번호'), //라벨
                     validator: (val) => val.length < 6 ? '비밀번호는 최소 6자리 이상' : null, // 비밀번호 규칙
                     obscureText: true,
@@ -202,7 +197,7 @@ class _SignInPageState extends State<SignInPage> {
                     height: 50.0, // 높이 조절
                     child: RaisedButton(
                       elevation: 0.0, // 바꿔봐도 바뀌는게없음..(안중요)(z-coordinate at which to place this button relative to its parent 라고하는데 이해안됨.)
-                      color: Colors.black,
+                      color: Colors.purple,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                       child: Text('로그인', style: TextStyle(color: Colors.white, fontSize: 16.0)),
 
@@ -215,17 +210,17 @@ class _SignInPageState extends State<SignInPage> {
 
                 
                   SizedBox(height: 10.0),
-                  _signInButton(),
+                  //_signInButton(),
                   Text.rich( //Text의 생성자 Text.rich
 
                     TextSpan(
                       text: "계정이 아직 없으신가요? ",
-                      style: TextStyle(color: Colors.black, fontSize: 12.0),
+                      style: TextStyle(color: Colors.white, fontSize: 12.0),
                       children: <TextSpan>[
                         TextSpan(
                           text: '계정 생성',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             decoration: TextDecoration.underline
                           ),
 

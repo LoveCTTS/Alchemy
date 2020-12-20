@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _AgoraPageState extends State<AgoraPage> {
     return Container(
         width: MediaQuery.of(context).size.width, //아고라페이지에서 보이는 확성기 칸이 어떤 기기에서도 너비가 자동으로 맞춰짐.
         height: 30,
-        color: Colors.deepPurple,
+        color: Colors.black,
         child: GestureDetector( //컨테이너를 버튼처럼 누를수있도록 GestureDetector을 사용함.
             onTap: (){
               _popupMike(context);
@@ -104,10 +105,23 @@ class _AgoraPageState extends State<AgoraPage> {
                       return e.data;
                     }).toList();
                     //snapshot에 저장된 데이터에 접근하기위해서는 위와같이 List형태로 바꿔서 접근하는게 표준적임.
-                    return Text(
+                    return Row(children: <Widget>[
+
+                      Bubble(
+
+                        color: Color(0xff9932cc),
+                          child: Text(mikeMessageList[0]()["sender"], style: TextStyle(color: Colors.white))),
+
+                      Bubble(
+                        nip: BubbleNip.leftTop,
+                          child:Text("te1231231231231231",style: TextStyle(color: Colors.black))),
+
+                    ]);
+
+                      /*Text(
                         "${mikeMessageList[0]()["sender"]}:${mikeMessageList[0]()["mikeMessage"]}",
                         style: TextStyle(
-                            fontSize: 13, color: Colors.white));
+                            fontSize: 13, color: Colors.white))*/;
                     //[0]으로 접근하면 가장 최근에 생성된데이터를 볼수있음.(descending을 false로 바꾸면 가장 과거데이터를 보게 됨.)
                   }
                 }
@@ -146,33 +160,57 @@ class _AgoraPageState extends State<AgoraPage> {
   //마이 버튼 눌렀을때 뜨는 창 ( 마피아 확성기 버튼 눌렀을때 뜨는 창과 같은 것)
   void _popupMike(BuildContext context) {
 
-    Widget sendButton = FlatButton(
-      minWidth: 80,
-      child: Text("Send"),
+    Widget sendButton = IconButton(
+      icon: Icon(
+        Icons.arrow_circle_up_rounded,
+        color: Colors.white,
+        size: 40,
+      ),
       onPressed:  () async {
 
         await DatabaseService(uid: _user.uid).addMikeMessage(_userName, mikeMessageInMikePopup);
           });
-    Widget closeButton = FlatButton(
-        minWidth: 80,
-        child: Text("Close"),
-        onPressed:  () async {
-          Navigator.of(context).pop();
-        });
-
 
     AlertDialog mike = AlertDialog(
-          title: Text("확성기"),
+
+          title: Row(
+              children: [
+                Icon(
+                  Icons.campaign_rounded,
+                  color: Colors.white,
+                  size: 50,
+                ),
+                SizedBox(width: 180),
+                IconButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(
+                      Icons.close_rounded,
+                      color: Colors.white,
+                      size:30
+                  ),
+                )
+              ]),
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Color(0xff9932cc)),
+            borderRadius: BorderRadius.all(
+                Radius.circular(20.0)
+            )
+          ),
           content: Container(
               width: 250,
               height: 250,
               child:ListView(children: [
                 Container(
-                  height:150,
+                  height:200,
                     decoration: BoxDecoration(
 
-                      border: Border.all(color: Colors.black,
-                      width:4),
+                      border: Border.all(color: Colors.white, width:2),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0)
+                      )
                     ),
                     child:StreamBuilder(
                     stream: DatabaseService(uid:_user.uid,userName: _userName).mikeMessageCollection.orderBy('createdTime').snapshots(),
@@ -209,30 +247,43 @@ class _AgoraPageState extends State<AgoraPage> {
           }
         })),
 
-                Container(
-                  width:50,
-                    child: TextField(
-              onChanged: (val) {
-                if (val.length<45) {
-                  mikeMessageInMikePopup = val;
-                }
-              },
-                        decoration: InputDecoration(labelText: "45자 이내로 작성해주세요"),
-              style: TextStyle(
-                  fontSize: 10.0,
-                  height: 3.0,
-                  color: Colors.black
-              )
-          )),
+                SizedBox(height:5),
+                Row(children: [
+                  Container(
+                      width:220,
+                      height:30,
+                      child: TextField(
+                          onChanged: (val) {
+                            if (val.length<45) {
+                              mikeMessageInMikePopup = val;
+                            }
+                          },
+                          decoration: InputDecoration(
+
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            labelText: "45자 내외로",
+                          ),
+                          style: TextStyle(
+                              fontSize: 10.0,
+                              height: 5.0,
+                              color: Colors.white
+
+                          )
+
+                      )
+                  ),
+                  SizedBox(width:10),
+                  sendButton
+
+
+
+                ])
 
           ]
           )) ,
 
-          actions: <Widget>[
-            closeButton,
-            sendButton
-
-          ]
     );
 
     showDialog(
@@ -249,42 +300,50 @@ class _AgoraPageState extends State<AgoraPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-                title: Text("Create a group"),
+                title: Text("Create a group",style: TextStyle(color: Colors.white)),
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Color(0xff9932cc)),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(20.0)
+                    )
+                ),
+                backgroundColor: Colors.black,
                 content: StatefulBuilder(
                     builder: (context,setState){
                       _setState = setState;
-
-                      return ListView(
-                          shrinkWrap: true,
+                      return Column(
+                        mainAxisSize: MainAxisSize.min, //Alertdialog 요소에 맞게 길이 조절해주는 특성
                           children:[
                             SizedBox(
-                              height:50,
+                              height:30,
                                 child:TextField(
-                              cursorHeight: 30,
+                              cursorHeight: 40,
                                 onChanged: (val) {
                                   _groupName = val;
                                 },
                                 style: TextStyle(
                                     fontSize: 15.0,
                                     height: 2.0,
-                                    color: Colors.black
+                                    color: Colors.white
                                 ),
                               decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
                                 border: OutlineInputBorder(),
                                 labelText: "RoomName"
                               )
                             )),
-                            SizedBox(height:20),
+                            SizedBox(height:30),
                             Row(
                                 children:[
                                   SizedBox(
                                       width:80,
-                                      child:Text("password")),
+                                      child:Text("password",style: TextStyle(color: Colors.white))),
                                   SizedBox(
                                       width: 100,
                                       height: 25,
                                       child: Switch(
-                                          activeColor: Colors.pinkAccent,
+                                          activeColor: Color(0xff9932cc),
                                           value: enablePassword,
                                           onChanged: (value) {
                                             _setState(() {
@@ -296,7 +355,8 @@ class _AgoraPageState extends State<AgoraPage> {
                                       )
                                   ),
 
-                                ]),
+                                ]
+                            ),
                             SizedBox(height:20),
                             SizedBox(
                                 width:250,height:30,
@@ -306,13 +366,15 @@ class _AgoraPageState extends State<AgoraPage> {
                                       roomPassword = val;
                                     },
                                     decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
                                       border: OutlineInputBorder(),
                                       labelText: "Password",
                                     ),
                                     style: TextStyle(
                                         fontSize: 15.0,
                                         height: 2.0,
-                                        color: Colors.black
+                                        color: Colors.white
                                     )
                                 )),
                             SizedBox(height:20),
@@ -365,8 +427,8 @@ class _AgoraPageState extends State<AgoraPage> {
               preferredSize: Size.fromHeight(40.0),
                 child: SafeArea(
                     child: AppBar(
-                        title: Text("Agora", style: TextStyle(color: Colors.black, fontSize: 30,fontFamily : "Satisfy" )),
-                        backgroundColor: Color(0xffe6e6fa),
+                        title: Text("Agora", style: TextStyle(color: Colors.white, fontSize: 30,fontFamily : "Satisfy" )),
+                        backgroundColor: Color(0xff9932cc),
 
                         //IconButton사이 간격을 조절하기위해서는 Icon을 포함하고있는 Container을 조절해야하는데, 그것을 조절하는방법이 SizedBox밖에 없음.
                         actions: <Widget>[
@@ -375,7 +437,7 @@ class _AgoraPageState extends State<AgoraPage> {
                               height: 20.0,
                               width: 35.0,
                               child: IconButton(
-                                icon: Icon(Icons.autorenew,color: Colors.black),
+                                icon: Icon(Icons.autorenew,color: Colors.white),
                                 padding: EdgeInsets.all(0.0),
                                 iconSize: 30,
                                 onPressed: () {
@@ -438,34 +500,27 @@ class _AgoraPageState extends State<AgoraPage> {
                           ),  */
 
                           //방만들기버튼
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: GestureDetector(
+
+                          GestureDetector(
                             onTap: () async{
 
                               _popupMakeRoom(context);
                             },
-                            child: Center(child: Text("방 만들기",style: TextStyle(fontFamily: "RobotoMono")))
+                                child:IconButton(
+                                icon: Icon(Icons.add,color: Colors.white),
+                                iconSize: 30,)
 
-                          ),
 
-                          width: 120,
-                          decoration: BoxDecoration(
-                            //borderRadius: BorderRadius.circular(0),
-                            gradient: LinearGradient(
-                              colors: <Color>[
-                                Colors.deepPurple,
-                                Colors.purple[300],
-                              ],
-                            ),
-                          ),
-                        ),
+
+                        )
                         ]
                     )
                 )
             ),
-        body: Column(
+        body:
+        Column(
             children:<Widget>[
+              SizedBox(height:30),
               mike(), //확성기를 ListView가 아닌 Column안에 넣음으로써 그룹채팅 방들을 스크롤해도 같이 위로 안올라가게 막을수있다.
           Expanded( //위젯에 expaned 위젯을 추가하면 레이아웃에서 overflow가 안보이게 할수있다.
               child:SingleChildScrollView(
@@ -498,13 +553,7 @@ class _AgoraPageState extends State<AgoraPage> {
                 ])), //Scaffold 클래스의 body 속성에는 하나의 클래스만 사용하는 것이 원칙이고 기본이다.
             */
 
-      backgroundColor: //body의 배경이 skin에 맞게 변하도록 하는 로직
-        changeSkin==0?Colors.white:null,  //***바꾼 부분***
-        /*
-        changeSkin==1?Colors.blue:
-        changeSkin==2?Colors.red:
-        changeSkin==3?Colors.green:null, */
-
+      backgroundColor: Colors.black
 
 
         );

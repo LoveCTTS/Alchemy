@@ -31,6 +31,7 @@ class GroupTileState extends State<GroupTile>{
   bool _hasNetworkImage=false;
   String _userName='';
 
+
   @override
   void initState(){
     // TODO: implement initState
@@ -77,9 +78,30 @@ class GroupTileState extends State<GroupTile>{
           context: context,
           builder: (BuildContext context) {
                 return AlertDialog(
-                    title: Text("암호") ,
-                    content:ListView(
-                      shrinkWrap: true,
+                    title: Row(children: [
+                      Icon(Icons.https_rounded, size: 40, color: Colors.white),
+                      SizedBox(width:150),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                          size: 40,
+                      ),
+                        onPressed: (){
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ]) ,
+
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Color(0xff9932cc)),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(20.0)
+                        )
+                    ),
+                    content:Column(
+                      mainAxisSize: MainAxisSize.min,
                         children:[
                           SizedBox(
                               height:50,
@@ -94,41 +116,34 @@ class GroupTileState extends State<GroupTile>{
                                       color: Colors.black
                                   ),
                                   decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.white,
                                       border: OutlineInputBorder(),
-                                      labelText: "Input Room Password"
+                                      labelText: "방 비밀번호를 입력해주세요."
                                   )
                               )),
+                          IconButton(
+
+                              icon: Icon(Icons.meeting_room_rounded, size: 40, color: Colors.white),
+                              onPressed:  () async {
+
+
+                                isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
+                                if(isSameRoomPassword){
+                                  await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
+                                      widget.groupId, widget.groupName, widget.userName);
+                                  //채팅방으로 가기
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                                      ChatPage(groupId: widget.groupId,
+                                        userName: widget.userName,
+                                        groupName: widget.groupName,)));
+                                }
+                                  // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
+
+                              }
+                          )
                         ]),
-                  actions: [
-                    FlatButton(
 
-                      child: Text("닫기",style:TextStyle(fontSize:20,color:Colors.red)),
-                      onPressed:  () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    FlatButton(
-
-                        child: Text("입장하기",style:TextStyle(fontSize:20,color:Colors.blue)),
-                        onPressed:  () async {
-
-                          isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
-                          if(isSameRoomPassword){
-                            await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
-                                widget.groupId, widget.groupName, widget.userName);
-                            //채팅방으로 가기
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                ChatPage(groupId: widget.groupId,
-                                  userName: widget.userName,
-                                  groupName: widget.groupName,)));
-                          }else{
-                            Navigator.of(context).pop();
-                            // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
-                          }
-                        }
-                    )
-
-                  ],
                 );
 
           },
@@ -147,7 +162,7 @@ class GroupTileState extends State<GroupTile>{
 
     },
             child:Container(
-                    color: Colors.white,
+                    color: Colors.black,
                     width: MediaQuery.of(context).size.width,
                     height: 70.0,
                     child: Row(
@@ -157,12 +172,16 @@ class GroupTileState extends State<GroupTile>{
                         height:50,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
+                          border: Border.all(
+                              color: Color(0xff9932cc),
+                              width: 1,
+                              ),
                           image: DecorationImage(
                             image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/main_image.png"),
                           ),
                         ),
                       ),
-                      Text(widget.groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.black/*Color(0xff483d8b)*/,
+                      Text(widget.groupName, style:TextStyle(fontWeight: FontWeight.bold,fontSize:15,color:Colors.white/*Color(0xff483d8b)*/,
                           fontFamily: "RobotoMono-italic")),
                           SizedBox(width:10),
                           StreamBuilder(
@@ -190,7 +209,7 @@ class GroupTileState extends State<GroupTile>{
                               }else{
 
                                 String memberCount = snapshot.data["members"].length.toString();
-                                return Text(memberCount);
+                                return Text(memberCount, style: TextStyle(color: Colors.white));
                               }
 
                             }
