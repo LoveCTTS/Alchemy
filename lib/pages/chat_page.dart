@@ -189,8 +189,8 @@ class _ChatPageState extends State<ChatPage> {
                         child: Text('Error: ${snapshot.error}'),
                       )
                     ];
-
                   }
+
                   if(!snapshot.hasData){
                     return CircularProgressIndicator();
                   }
@@ -235,6 +235,7 @@ class _ChatPageState extends State<ChatPage> {
                     iconSize: 30,
                     color: Colors.white,
                     onPressed: () async{
+
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GroupChatSettingsPage()));
                     }
                 ),

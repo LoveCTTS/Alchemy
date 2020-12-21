@@ -86,32 +86,31 @@ class MessageTileState extends State<MessageTile>{
                 crossAxisAlignment:widget.sentByMe? CrossAxisAlignment.end:CrossAxisAlignment.start,
                 children: [
                   Text(widget.sender,style:TextStyle(color: Colors.white)),SizedBox(height:5),
-                  Container(
-                    margin:widget.sentByMe ? EdgeInsets.only(left: 10) : EdgeInsets.only(right: 10),
-                    padding: EdgeInsets.only(top: 2, bottom: 5, left: 10, right: 10),
-                    decoration: BoxDecoration(
-                      borderRadius:widget.sentByMe ? BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10)
-                      )
-                          :
-                      BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                          bottomRight: Radius.circular(10)
+                  Wrap(children:[
+                    widget.sentByMe?Text("1",style: TextStyle(color : Colors.white)):SizedBox.shrink(),
+                    Container(
+                      margin:widget.sentByMe ? EdgeInsets.only(left: 10) : EdgeInsets.only(right: 10),
+                      padding: EdgeInsets.only(top: 2, bottom: 5, left: 10, right: 10),
+                      decoration: BoxDecoration(
+                        borderRadius:widget.sentByMe ? BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10)
+                        )
+                            :
+                        BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10)
+                        ),
+                        color:widget.sentByMe ? Colors.purple[200] : Colors.grey[400],
                       ),
-                      color:widget.sentByMe ? Colors.purple[200] : Colors.grey[400],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(height: 7.0),
-                        Text(widget.message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.black)),
-                      ],
-                    ),
-                  ),
-                  Text(widget.time, textAlign: TextAlign.start, style: TextStyle(fontSize: 10.0, color: Colors.white))
+                      child:
+                      Text(widget.message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.black)),
+                    ),widget.sentByMe? SizedBox.shrink():Text("1",style: TextStyle(color : Colors.white))
+                  ]),
+
+                Text(widget.time, textAlign: TextAlign.start, style: TextStyle(fontSize: 10.0, color: Colors.white))
                 ]),
           ])
     );
