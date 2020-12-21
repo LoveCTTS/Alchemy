@@ -268,7 +268,7 @@ class _AgoraPageState extends State<AgoraPage> {
                             labelText: "45자 내외로",
                           ),
                           style: TextStyle(
-                              fontSize: 10.0,
+                              fontSize: 5.0,
                               height: 5.0,
                               color: Colors.black
 

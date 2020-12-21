@@ -18,7 +18,6 @@ class ChatPage extends StatefulWidget {
   final String groupName;
 
 
-
   ChatPage({
     this.groupId,
     this.userName,
@@ -158,20 +157,22 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         title: Text(widget.groupName, style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Colors.black87,
+        backgroundColor: Color(0xff9932cc),
         elevation: 0.0,
 
       ),
+      backgroundColor: Color(0xff212121),
       endDrawer: Theme(
           data: Theme.of(context).copyWith(
-            canvasColor: Colors.white12,
+            canvasColor: Color(0xff212121),
           ),
           child:Container(
-          width:180,
+          width:250,
             child: Stack(
             children: <Widget>[
               Align(child: Text("참여자 목록",style: TextStyle(height:3, fontSize:30))),
               Drawer(
+
                 child: StreamBuilder (
                 stream: FirebaseFirestore.instance.collection("groups").doc(widget.groupId).snapshots(),
                 builder: (context,snapshot) {
@@ -213,7 +214,7 @@ class _ChatPageState extends State<ChatPage> {
               Align(
                 alignment: Alignment.bottomLeft,
                 child:IconButton(
-                    icon: Icon(Icons.input,size:40, color: Colors.white),
+                    icon: Icon(Icons.exit_to_app_rounded,size:40, color: Colors.white),
                     onPressed: () async{
 
 
@@ -231,13 +232,10 @@ class _ChatPageState extends State<ChatPage> {
                 alignment: Alignment.bottomRight,
                 child:IconButton(
                     icon: Icon(Icons.settings),
-                    iconSize: 40,
+                    iconSize: 30,
                     color: Colors.white,
                     onPressed: () async{
-
-
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GroupChatSettingsPage()));
-
                     }
                 ),
               )
@@ -252,7 +250,7 @@ class _ChatPageState extends State<ChatPage> {
             Container(
               width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                color: Colors.grey[700],
+                color: Color(0xffb23aee),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -285,13 +283,13 @@ class _ChatPageState extends State<ChatPage> {
 
                       },
                       child: Container(
-                        height: 30.0,
-                        width: 30.0,
+                        height: 35.0,
+                        width: 35.0,
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        child: Center(child: Icon(Icons.send, color: Colors.white)),
+                        child: Center(child: Icon(Icons.send, color: Color(0xff4f2f4f))),
                       ),
                     )
                   ],
@@ -304,14 +302,18 @@ class _ChatPageState extends State<ChatPage> {
             bottom: 25,
             right:10,
             left:30,
-          child: FloatingActionButton( //가장 위쪽에 위치하면 가장아래로가는 버튼 생
+          child: Container(
+            height:50,
+              width:50,
+              child:FloatingActionButton(//가장 위쪽에 위치하면 가장아래로가는 버튼 생성
+
             onPressed: () {
               _scrollController.jumpTo(_scrollController.position.maxScrollExtent+200.0);
               },
             child: Icon(Icons.arrow_downward_rounded, color: Colors.white, size: 30.0),
-            backgroundColor: Colors.grey[700],
+            backgroundColor: Color(0xff9932cc),
             elevation: 0.0,
-      )
+      ))
       )
       ])
           :null,

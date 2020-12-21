@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +26,13 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
   bool isChief=false;
   User _user;
+  FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  String _profileImageURL='';
+  bool hasProfileImage=false;
+  bool hasFriendRequest=false;
+  bool isMe=false;
+  bool hasFriend=false;
+
 
   @override
   void initState(){
@@ -35,7 +43,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
 
   }
 
-  void prepareService() {
+  void prepareService() async{
     _user = FirebaseAuth.instance.currentUser;
     DatabaseService().isChief(widget.participantName, widget.groupId).then((value){
       setState(() {
@@ -43,6 +51,35 @@ class _ParticipantTileState extends State<ParticipantTile> {
       });
 
     });
+    hasProfileImage= await _hasProfileImage();
+    DatabaseService(userName: widget.participantName).hasFriendRequest(widget.senderName).then((value){
+      setState(() {
+        hasFriendRequest=value;
+      });
+
+    });
+    DatabaseService(userName: widget.participantName).hasFriend(widget.senderName).then((value){
+
+      setState(() {
+        hasFriend = value;
+        print("test : $hasFriend");
+      });
+    });
+
+  }
+  _hasProfileImage() async{
+
+    Reference storageReference =
+    _firebaseStorage.ref('user_image/${widget.participantName}' + '[1]');
+    String downloadURL = await storageReference.getDownloadURL();
+    if(downloadURL == null){
+      return false;
+    }else if(downloadURL != null){
+      setState((){
+        _profileImageURL = downloadURL;
+      });
+      return true;
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -76,24 +113,54 @@ class _ParticipantTileState extends State<ParticipantTile> {
           );
           }
         },
-        child:SizedBox( //Card size 조절하기위한 SizedBox
-            height:65.0,
-            child: Card( //ListTile을 조금 더 쉽게 나은 디자인을하기 위한 Card
-                child: ListTile(
-                    title: Text(widget.participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold))
-                ),
-                color:  isChief ?Colors.blue:Colors.purple,
-                margin: EdgeInsets.symmetric(vertical:10.0, horizontal: 20.0),
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.white, width: 2),
-                    borderRadius: BorderRadius.circular(10)
+        child:
+        Padding(
+          padding: EdgeInsets.only(left:15),
+            child:SizedBox( //Card size 조절하기위한 SizedBox
+                height:50.0,
+                child: Row(children: [
+                      Container(
+                          width:50,
+                          height:50,
+                          child: isChief? Align(alignment: Alignment.bottomRight,child:Icon(Icons.military_tech_rounded, color: Colors.red)): null,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: hasProfileImage? NetworkImage(_profileImageURL):AssetImage("images/default.png")
+                              )
+                          )
+                      ),
+                        SizedBox(width:15),
+                        Text(widget.participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 70),
+                        widget.senderName!=widget.participantName?IconButton(
+                          onPressed: () async{
+                              await DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);
+                              DatabaseService(userName: widget.participantName).hasFriendRequest(widget.senderName).then((value){
+                                setState(() {
+                                  hasFriendRequest = value;
+                                });
+                              });
+                          },
+                            icon: hasFriendRequest?
+                            Container(width:150,child:Text("요청됨",style: TextStyle(color:Colors.purpleAccent,fontSize: 11)))
+                            :
+                            hasFriend? SizedBox.shrink():Icon(Icons.person_add_rounded, color: Colors.white, size: 30)
+
+                        )
+                            : SizedBox.shrink()
+
+
+                ],
+
+
+
+
                 )
 
-            )
-        )
+            ))
 
     );
-
 
 
 

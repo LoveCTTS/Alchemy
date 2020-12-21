@@ -142,7 +142,7 @@ class _SignInPageState extends State<SignInPage> {
       body: Form(
         key: _formKey, //GlobalKey로 만든 _formKey로 한 위젯을 또다른 위젯으로 대체할때??바꿀때?(replacement) 제어 용도로 사용
         child: Container(
-          color: Colors.black,
+          color: Color(0xff212121),
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0), //horizontal이 커질수록 양옆으로 폭 조절, vertical은 위아래로 폭 조절
             children: <Widget>[

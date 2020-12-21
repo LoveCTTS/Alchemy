@@ -309,6 +309,23 @@ class DatabaseService {
     }
   }
 
+  Future<bool> hasFriend(String name) async{
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    List<dynamic> friends = userDocSnapshot.data()["friends"];
+
+    for(int i=0; i< friends.length; i++) {
+      friends[i] = friends[i].substring(friends[i].indexOf('_') + 1);
+      print(friends[i]);
+    }
+    if(friends.contains(name)){
+      return true;
+    }else if(!friends.contains(name)){
+      return false;
+    }
+    return false;
+  }
 
   Future<bool> isSameRoomPassword(String groupId, String password) async {
     DocumentReference groupDocRef = groupCollection.doc(groupId);
@@ -325,11 +342,14 @@ class DatabaseService {
     DocumentReference userDocRef = userCollection.doc(userName);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
-    if (userDocSnapshot.data().containsValue(senderName)) {
+
+    List<dynamic> requests = await userDocSnapshot.data()['request'];
+    if (requests.contains(senderName)) {
       return true;
-    } else if (!userDocSnapshot.data().containsValue(senderName)) {
+    } else if (!requests.contains(senderName)) {
       return false;
     }
+    return false;
   }
 
   Future deleteGroupIfNoMembers(String groupId) async {
@@ -344,6 +364,7 @@ class DatabaseService {
     }
   }
 
+  //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
   // 특정 사용자의 데이터를 얻어오기
   Future getUserData(String email) async {
@@ -399,6 +420,7 @@ class DatabaseService {
   }
 
 
+  //-----------------------------------------------------------------------------------------------------------------------------------
   // 메세지 전송
   sendMessage(String groupId, chatMessageData) {
     DatabaseService().groupCollection.doc(groupId).collection(
