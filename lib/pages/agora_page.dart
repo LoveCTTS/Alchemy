@@ -253,8 +253,9 @@ class _AgoraPageState extends State<AgoraPage> {
                 Row(children: [
                   Container(
                       width:220,
-                      height:50,
-                      child: TextField(
+                      height:40,
+                      child: Expanded(
+                          child:TextField(
                           onChanged: (val) {
                             if (val.length<45) {
                               mikeMessageInMikePopup = val;
@@ -268,13 +269,11 @@ class _AgoraPageState extends State<AgoraPage> {
                             labelText: "45자 내외로",
                           ),
                           style: TextStyle(
-                              fontSize: 10.0,
-                              height: 10.0,
                               color: Colors.black
 
                           )
 
-                      )
+                      ))
                   ),
                   SizedBox(width:10),
                   sendButton
