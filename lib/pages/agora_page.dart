@@ -116,7 +116,7 @@ class _AgoraPageState extends State<AgoraPage> {
 
                       Bubble(
                         nip: BubbleNip.leftTop,
-                          child:Text("te1231231231231231",style: TextStyle(color: Colors.black))),
+                          child:Text(mikeMessageList[0]()["mikeMessage"],style: TextStyle(color: Colors.black))),
 
                     ]);
 
@@ -253,7 +253,7 @@ class _AgoraPageState extends State<AgoraPage> {
                 Row(children: [
                   Container(
                       width:220,
-                      height:30,
+                      height:50,
                       child: TextField(
                           onChanged: (val) {
                             if (val.length<45) {
@@ -268,8 +268,8 @@ class _AgoraPageState extends State<AgoraPage> {
                             labelText: "45자 내외로",
                           ),
                           style: TextStyle(
-                              fontSize: 5.0,
-                              height: 5.0,
+                              fontSize: 10.0,
+                              height: 10.0,
                               color: Colors.black
 
                           )
