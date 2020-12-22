@@ -131,16 +131,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-            title: Text("친구 목록", style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.black87,
+        backgroundColor: Color(0xff212121),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+            child:AppBar(
+            title: Text("친구", style: TextStyle(color: Colors.white)),
+            backgroundColor: Color(0xff9932cc),
             actions: <Widget>[
               SizedBox(
                   height: 20.0,
                   width: 35.0,
                   child: IconButton(
-                    icon: Icon(Icons.favorite, color: Colors.pinkAccent),
+                    icon: Icon(Icons.favorite, color: Color(0xfff64d54)),
                     padding: EdgeInsets.all(0.0),
                     iconSize: 30,
                     onPressed: () {},
@@ -151,7 +153,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                   height: 20.0,
                   width: 35.0,
                   child: IconButton(
-                    icon: Icon(Icons.person_add, color: Colors.purpleAccent),
+                    icon: Icon(Icons.person_add, color: Colors.white),
                     padding: EdgeInsets.all(0.0),
                     iconSize: 30,
                     onPressed: () {
@@ -161,7 +163,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
               ),
             ]
 
-        ),
+        )),
         body: StreamBuilder(
             stream: DatabaseService().userCollection.doc(_userName).snapshots(),
             builder: (context, snapshot) {
@@ -185,6 +187,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 var friendList = snapshot.data["friends"];
 
                         return ListView.builder(
+
                             itemCount: friendList.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {

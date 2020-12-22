@@ -52,8 +52,14 @@ class MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은 
 
       child: MaterialApp(
         home: AuthenticationWrapper(),
-        theme: ThemeData(fontFamily: 'Raleway-Regular'), //MaterialAPP에 속하는 위젯 모두를 기본적으로 Dark Theme로 설정
+
+        theme: ThemeData(
+            fontFamily: 'Raleway-Regular',
+            primaryColor: Color(0xff9932cc)
+
+        ), //MaterialAPP에 속하는 위젯 모두를 기본적으로 Dark Theme로 설정
         darkTheme: ThemeData.dark(),
+
       ),
 
     );

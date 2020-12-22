@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkproto/helper/helper_functions.dart';
@@ -31,26 +32,30 @@ class _ProfilePageState extends State<ProfilePage> {
   String _userName='';
   Reference _storageReference;
   bool distanceSwitched=false;
-  bool ageSwitched=false;
+  bool ageSwitched=true;
   String appealContents='';
   String local='';
   String hashTag='';
   final _picker = ImagePicker();
+  FToast fToast;
 
   //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
   TextEditingController appealController= TextEditingController();
-  TextEditingController hashTagController= TextEditingController();
-  TextEditingController localController= TextEditingController();
+  // TextEditingController hashTagController= TextEditingController();
+  //TextEditingController localController= TextEditingController();
   TextEditingController ageController = TextEditingController();
 
   @override
   initState() {
 
+    fToast = FToast();
+    fToast.init(context);
     _prepareService();
     appealController.addListener(() { });
-    hashTagController.addListener(() { });
-    localController.addListener(() { });
+    // hashTagController.addListener(() { });
+    //localController.addListener(() { });
     ageController.addListener(() { });
+
     super.initState();
 
   }
@@ -58,8 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void dispose(){
     super.dispose();
     ageController.dispose();
-    localController.dispose();
-    hashTagController.dispose();
+    //localController.dispose();
+    // hashTagController.dispose();
     appealController.dispose();
     _prepareService().dispose();
 
@@ -74,16 +79,21 @@ class _ProfilePageState extends State<ProfilePage> {
         appealController.text = value;
       });
     });
+    /*
     await DatabaseService(userName: _userName).getUserLocal().then((value){
       setState(() {
         localController.text = value;
       });
     });
+    */
+    /*
     await DatabaseService(userName: _userName).getUserHashTag().then((value){
       setState(() {
         hashTagController.text = value;
       });
     });
+
+     */
     await DatabaseService(userName: _userName).getUserAge().then((value){
       setState(() {
         ageController.text = value;
@@ -92,6 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
     for(int i=0;i<6;i++) {
       _hasNetworkImage[i] =await hasNetworkImage(i);
     }
+
+
 
   }
 
@@ -140,11 +152,62 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _profileImageURL[number] = downloadURL;
         _hasNetworkImage[number] = true;
+        _showToastAfterUpload();
 
       });
+
     }
+
     // 업로드된 사진의 URL을 페이지에 반영
 
+  }
+  _showToastAfterSave() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Color(0xdd48d1cc),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text("저장되었습니다"),
+        ],
+      ),
+    );
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 2),
+    );
+  }
+  _showToastAfterUpload() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Color(0xdd48d1cc),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text("정상적으로 업로드되었습니다"),
+        ],
+      ),
+    );
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 2),
+    );
   }
 
     Future<bool> hasNetworkImage(int number) async{
@@ -196,23 +259,31 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
     AlertDialog edit = AlertDialog(
+      backgroundColor: Color(0xdd212121),
       content: Container(
+
+
           width: 250,
           height: 150,
-          child:Column(children: [
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+              children: [
 
             TextButton(
                 onPressed: () {
                    _uploadImageToStorage(ImageSource.gallery, number);
+                   Navigator.of(context).pop();
 
                 },
-                child: Text("업로드")),
+                child: Text("업로드",style: TextStyle(color:Colors.white,fontSize:17))),
+            Expanded(child:Divider(color:Colors.white)),
             TextButton(
                 onPressed: () {
                   _deleteImageFromStorage(number);
+                  Navigator.of(context).pop();
                 },
 
-                child: Text("삭제하기")),
+                child: Text("삭제하기",style: TextStyle(color:Colors.red,fontSize:17))),
           ]
           )
       ) ,
@@ -228,12 +299,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff212121),
         body: GestureDetector(
+          onTap:(){
+          },
             child:ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0,horizontal: 0),
           children: <Widget>[
 
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                       onTap: (){
@@ -241,9 +315,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,0);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5, 1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -251,16 +325,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),
+                      )),SizedBox(width:15),
                   GestureDetector(
                       onTap: (){
 
                         _popupEdit(context,1);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -268,16 +342,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),
+                      )),SizedBox(width:15),
                   GestureDetector(
                       onTap: (){
 
                         _popupEdit(context,2);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -286,8 +360,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       )),
-                ]),
+                ]),SizedBox(height:15),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                       onTap: (){
@@ -295,9 +370,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         _popupEdit(context,3);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -305,16 +380,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),
+                      )),SizedBox(width:15),
                   GestureDetector(
                       onTap: (){
 
                         _popupEdit(context,4);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -322,16 +397,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),
+                      )),SizedBox(width:15),
                   GestureDetector(
                       onTap: (){
 
                         _popupEdit(context,5);
                       },
                       child: Container(
-                        height: 110,
-                        width: 110,
-                        child: Align(alignment: Alignment.center,child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Colors.red))),
+                        height: 120,
+                        width: 120,
+                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
@@ -343,16 +418,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]),
             SizedBox(height: 23.0),
             TextField(
+
                 maxLines: null,
                 controller: appealController,
+                style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
+                  filled: true,
+                    fillColor: Colors.white,
                     contentPadding: EdgeInsets.symmetric(vertical: 35.0, horizontal: 10.0),
                     border: OutlineInputBorder(),
                     labelText: "자기소개"
+
                 )
             ),
-            SizedBox(height:30),
-            TextField(
+            /*TextField(
 
                 controller: hashTagController,
                 maxLines: 2,
@@ -361,19 +440,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   border: OutlineInputBorder(),
                   labelText: '관심 해시태그 ',
                 )
-            ),
-            SizedBox(height:30),
+            ),*/
+            SizedBox(height:15),
             TextField(
 
                 controller: ageController,
                 maxLines: 1,
+                style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w400),
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   border: OutlineInputBorder(),
                   labelText: '나이',
                 )
             ),
             SizedBox(height:30),
+            /*
             TextField(
                 maxLines: 1,
                 controller: localController,
@@ -384,24 +467,27 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
             ),
 
+             */
+
             Row(children: [
-              Text("나이 표시"),
+              Text("나이 표시",style:TextStyle(color: Colors.white)),
               Switch(
-                  activeColor: Colors.pinkAccent,
+                  activeColor: Color(0xff9932cc),
                   value: ageSwitched,
                   onChanged: (value) {
                     setState(() {
                       ageSwitched = value;
-                      print(ageSwitched);
+
                     }
                     );
                   }
               )
             ]),
             Row(children: [
-              Text("거리 표시"),
+              Text("거리 표시", style: TextStyle(color: Colors.white)),
               Switch(
-                  activeColor: Colors.pinkAccent,
+
+                  activeColor: Color(0xff9932cc),
                   value: distanceSwitched,
                   onChanged: (switched){
                     setState(() {
@@ -424,14 +510,32 @@ class _ProfilePageState extends State<ProfilePage> {
               )
             ]),
 
-            TextButton(onPressed: (){
-              DatabaseService(userName: _userName).updateAppeal(appealController.text);
-              DatabaseService(userName: _userName).updateLocal(localController.text);
-              DatabaseService(userName: _userName).updateHashTag(hashTagController.text);
-              DatabaseService(userName: _userName).updateAge(ageController.text);
-            }, child: Text("저장하기")),
 
-            ListTile(
+            GestureDetector(
+                onTap: ()async{
+                  await _showToastAfterSave();
+              DatabaseService(userName: _userName).updateAppeal(appealController.text);
+              //DatabaseService(userName: _userName).updateLocal(localController.text);
+              //DatabaseService(userName: _userName).updateHashTag(hashTagController.text);
+              DatabaseService(userName: _userName).updateAge(ageController.text);
+
+            }, child: Container(
+
+                width: 150,
+                height : 40,
+                decoration: BoxDecoration(
+                  //border : Border.all(color: Colors.white, width:0),
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(5.0)
+                  ),
+                  color: Color(0xff9932cc),
+                ),
+                child: Center(child:Text("저장하기",style: TextStyle(color:Colors.white,fontWeight: FontWeight.w900)))
+            )
+            ),
+            SizedBox(height:10),
+
+            GestureDetector(
               onTap: () async {
 
                 SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -439,10 +543,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 await _auth.signOut();
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
               },
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.exit_to_app, color: Colors.red),
-              title: Text('Log Out', style: TextStyle(color: Colors.red)),
-            ),
+              child: Container(
+                    width: 150,
+                    height : 40,
+                    decoration: BoxDecoration(
+                    //border : Border.all(color: Colors.white, width:0),
+                    borderRadius: BorderRadius.all(
+                    Radius.circular(5.0)
+                    ),
+                    color: Colors.white),
+                    child:Center(child:Text('로그아웃', style: TextStyle(color: Color(0xff9932cc),fontWeight: FontWeight.w900))),
+
+              )
+            )
           ],
         )
         )

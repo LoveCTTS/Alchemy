@@ -34,6 +34,7 @@ class _FriendTileState extends State<FriendTile>{
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   double distance;
   GeoPoint myGeoPoint;
+  bool iHaveNoDistance=false;
 
   @override
   void initState() {
@@ -54,7 +55,11 @@ class _FriendTileState extends State<FriendTile>{
     _user = FirebaseAuth.instance.currentUser;
     _hasNetworkImage = await hasNetworkImage();
     await DatabaseService(userName:_userName).getLocationFromGPS().then((value){
-      myGeoPoint = value;
+      setState(() {
+        myGeoPoint=value;
+      });
+
+
     });
 
   }
@@ -102,9 +107,8 @@ class _FriendTileState extends State<FriendTile>{
         ),
         content: Builder(
           builder: (context){
-        return ListView(
+        return Wrap(
 
-            shrinkWrap: true,
             children: <Widget>[
               Container(
                 height: 250,
@@ -137,6 +141,7 @@ class _FriendTileState extends State<FriendTile>{
                         distance = Geolocator.distanceBetween(
                             myGeoPoint.latitude, myGeoPoint.longitude,
                             value.latitude, value.longitude);
+
                       });
                     });
                     return Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km"); // 그냥 / 나눗셈보다는 Dart의 연산자인 ~/을 이용하면 소수점 아래는 자동으로 제거되는 연산자
@@ -165,21 +170,65 @@ class _FriendTileState extends State<FriendTile>{
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height:20),
           GestureDetector(
             onTap: (){
               _popupChat(context);
 
             },
-              child:Container(
-                width: MediaQuery.of(context).size.width,
-                height:50, color: Colors.blue,
-                padding: EdgeInsets.all(0.5),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                    child:Text("${widget.friendName}", style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Colors.white,
-                    fontFamily: "RobotoMono-italic"))
-                )//Gradient Border size 조절
-          )),
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                Container(
+                    width: 120,
+                    height:180,
+                    padding: EdgeInsets.all(0.5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15.0)
+                      ),
+                      color: Color(0xff9932cc),
+                    ),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child:Text("${widget.friendName}", style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Colors.white,
+                            fontFamily: "RobotoMono-italic"))
+                    )//Gradient Border size 조절
+                ),SizedBox(width:20),
+                Container(
+                    width: 120,
+                    height:180,
+                    padding: EdgeInsets.all(0.5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(15.0)
+                        ),
+                      color: Color(0xff9932cc),
+                    ),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child:Text("${widget.friendName}", style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Colors.white,
+                            fontFamily: "RobotoMono-italic"))
+                    )//Gradient Border size 조절
+                ),SizedBox(width:20),
+                Container(
+                    width: 120,
+                    height:180,
+                    padding: EdgeInsets.all(0.5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(15.0)
+                        ),
+                      color: Color(0xff9932cc),
+                    ),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child:Text("${widget.friendName}", style:TextStyle(fontWeight: FontWeight.bold,fontSize:20,color: Colors.white,
+                            fontFamily: "RobotoMono-italic"))
+                    )//Gradient Border size 조절
+                )
+
+              ])),
           SizedBox(height:10)]
     );
   }
