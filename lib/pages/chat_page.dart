@@ -159,7 +159,6 @@ class _ChatPageState extends State<ChatPage> {
         centerTitle: true,
         backgroundColor: Color(0xff9932cc),
         elevation: 0.0,
-
       ),
       backgroundColor: Color(0xff212121),
       endDrawer: Theme(
