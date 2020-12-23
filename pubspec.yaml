@@ -40,6 +40,8 @@ dependencies:
   google_sign_in: ^4.5.6
   bubble: ^1.1.9+1
   fluttertoast: ^7.1.6
+  matrix2d: ^0.0.7
+
 
 
   # The following adds the Cupertino Icons font to your application.

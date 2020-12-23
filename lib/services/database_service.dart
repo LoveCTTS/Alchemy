@@ -382,6 +382,13 @@ class DatabaseService {
 
   }
 
+  Future<String> getFriendChatMessage(String friendChatGroupId) async{
+    DocumentReference friendChatDocRef =friendsChatCollection.doc(friendChatGroupId);
+    DocumentSnapshot friendChatDocSnapshot = await friendChatDocRef.get();
+
+    return await friendChatDocSnapshot.data()["recentMessage"];
+    
+  }
 
   Future<String> getUserAppeal() async {
     DocumentReference userDocRef = userCollection.doc(userName);

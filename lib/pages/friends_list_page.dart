@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
-import 'package:linkproto/widgets/friend_tile.dart';
+import 'package:linkproto/widgets/friend_tile1.dart';
+import 'package:linkproto/widgets/friend_tile2.dart';
 import 'package:linkproto/widgets/mikemessage_tile.dart';
+import 'package:provider/provider.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
 import '../widgets/friendrequest_tile.dart';
+import 'package:matrix2d/matrix2d.dart';
 
 class FriendsListPage extends StatefulWidget {
 
@@ -15,6 +20,7 @@ class FriendsListPage extends StatefulWidget {
 }
 
 class _FriendsListPageState extends State<FriendsListPage> {
+
 
   User _user;
   String _userName = '';
@@ -61,18 +67,25 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
   void _popupFriendRequest(BuildContext context) {
-    Widget closeButton = FlatButton(
-        minWidth: 80,
-        child: Text("Close"),
-        onPressed: () async {
-          Navigator.of(context).pop();
-        });
 
     AlertDialog alert = AlertDialog(
-        title: Text("친구 요청 목록 "),
+        title: Row(children: [ Text("친구 요청 목록",style: TextStyle(color:Colors.white)),
+          SizedBox(width:100),
+          IconButton(
+            icon:Icon(Icons.close_rounded,color: Colors.white,),
+            onPressed: (){
+              Navigator.of(context).pop();
+            },
+          )]),
+        backgroundColor: Color(0xff212121),
         content: Container(
-            width: 250,
-            height: 300,
+            width: 500,
+            height: 500,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
             child: ListView(children: [
               StreamBuilder(
                   stream: DatabaseService().userCollection.doc(_userName).snapshots(),
@@ -96,8 +109,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           style: TextStyle(fontSize: 30));
                     } else {
                       var friendRequestList = snapshot.data["request"]; //이부분 data가 data()로 패치됬다고 되있는데 data()라고 하면 실행이 DocumentSnapshot noSuchMethod Error 뜸 -_-;
-                      return ListView
-                          .builder(
+                      return ListView.builder(
                           itemCount: friendRequestList.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
@@ -114,9 +126,6 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ]
             )),
 
-        actions: <Widget>[
-          closeButton
-        ]
     );
     showDialog(
       context: context,
@@ -164,44 +173,103 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ]
 
         )),
-        body: StreamBuilder(
-            stream: DatabaseService().userCollection.doc(_userName).snapshots(),
-            builder: (context, snapshot) {
-              List<Widget> children;
-              if (snapshot.hasError) {
-                children = <Widget>[
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 60,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text('Error: ${snapshot.error}'),
-                  )
-                ];
+        body: Container(
+          margin: EdgeInsets.symmetric(horizontal: 15),
+            child: ListView(children:[
+          SizedBox(height:10),
+
+          Text("친구 목록",style: TextStyle(color:Colors.white,fontSize: 20)),
+
+          Container(
+            height: 180,
+              child:StreamBuilder(
+              stream: DatabaseService().userCollection.doc(_userName).snapshots(),
+              builder: (context, snapshot) {
+                List<Widget> children;
+                if (snapshot.hasError) {
+                  children = <Widget>[
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 60,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Text('Error: ${snapshot.error}'),
+                    )
+                  ];
+                }
+                if (!snapshot.hasData) {
+                  return CircularProgressIndicator();
+                } else {
+
+                  List friendList = snapshot.data["friends"];
+                  // friendList = friendList.reshape((snapshot.data["friends"].length/3), 3);
+
+                  return ListView.builder(
+
+                    scrollDirection: Axis.horizontal,
+                    itemCount: friendList.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      int reqIndex = friendList.length - index - 1;
+                      return FriendTile1(
+                        friendChatGroupId: _destructureId(friendList[reqIndex]),
+                        friendName: _destructureName(friendList[reqIndex]),
+                      );
+                    },
+                  );
+                }
               }
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              } else {
-                var friendList = snapshot.data["friends"];
 
-                        return ListView.builder(
+              )),
+              Divider(height:35,color: Colors.white),
+              Text("1대1 채팅",style: TextStyle(color:Colors.white,fontSize: 20)),
+              SizedBox(height:20),
+              Container(
+              height:500,
 
-                            itemCount: friendList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              int reqIndex = friendList.length - index - 1;
-                              return FriendTile(
-                                friendChatGroupId: _destructureId(friendList[reqIndex]),
-                                friendName: _destructureName(friendList[reqIndex]),
-                              );
-                            }
-                            );
-              }
-            }
-        ),
+              child:StreamBuilder(
+                  stream: DatabaseService().userCollection.doc(_userName).snapshots(),
+                  builder: (context, snapshot) {
+                    List<Widget> children;
+                    if (snapshot.hasError) {
+                      children = <Widget>[
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 60,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: Text('Error: ${snapshot.error}'),
+                        )
+                      ];
+                    }
+                    if (!snapshot.hasData) {
+                      return CircularProgressIndicator();
+                    } else {
 
+                      List friendList = snapshot.data["friends"];
+                      // friendList = friendList.reshape((snapshot.data["friends"].length/3), 3);
+
+                      return ListView.builder(
+                        itemCount: friendList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          int reqIndex = friendList.length - index - 1;
+                          return FriendTile2(
+                            friendChatGroupId: _destructureId(friendList[reqIndex]),
+                            friendName: _destructureName(friendList[reqIndex]),
+                          );
+                        },
+                      );
+                    }
+                  }
+              )
+
+          )
+        ]))
     );
   }
 }

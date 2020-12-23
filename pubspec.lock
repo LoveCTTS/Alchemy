@@ -317,6 +317,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.10-nullsafety.3"
+  matrix2d:
+    dependency: "direct main"
+    description:
+      name: matrix2d
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.7"
   meta:
     dependency: transitive
     description:
@@ -462,6 +469,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0-nullsafety.6"
+  statistical_dart:
+    dependency: transitive
+    description:
+      name: statistical_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   stream_channel:
     dependency: transitive
     description:
