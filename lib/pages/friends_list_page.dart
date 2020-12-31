@@ -15,6 +15,13 @@ import 'package:matrix2d/matrix2d.dart';
 
 class FriendsListPage extends StatefulWidget {
 
+
+  String userName;
+
+  FriendsListPage({
+    this.userName
+});
+
   @override
   _FriendsListPageState createState() => _FriendsListPageState();
 }
@@ -23,14 +30,15 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
 
   User _user;
-  String _userName = '';
+  //String _userName = '';
 
 
   //TextEditingController형의 인스턴스를 저장하는 변수 messageEditingController 생성
   @override
   void initState() {
-    getUserInfo();
+
     super.initState();
+    getUserInfo();
 
   }
 
@@ -38,19 +46,20 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void dispose(){
 
-    super.dispose();
+
     getUserInfo().dispose();
+    super.dispose();
   }
 
-  getUserInfo() async{
+  getUserInfo() async {
 
     _user = FirebaseAuth.instance.currentUser;
 
-    await HelperFunctions.getUserNameSharedPreference().then((value) {
+   /* HelperFunctions.getUserNameSharedPreference().then((value) {
       setState(() {
         _userName = value;
       });
-    });
+    });*/
   }
 
   String _destructureId(String res) {
@@ -88,7 +97,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
             ),
             child: ListView(children: [
               StreamBuilder(
-                  stream: DatabaseService().userCollection.doc(_userName).snapshots(),
+                  stream: DatabaseService().userCollection.doc(widget.userName).snapshots(),
                   builder: (context, snapshot) {
                     List<Widget> children;
                     if (snapshot.hasError) {
@@ -115,7 +124,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                           itemBuilder: (context, index) {
                             int reqIndex = friendRequestList.length - index - 1;
                             return FriendRequestTile(
-                              receiverName: _userName,
+                              receiverName: widget.userName,
                               senderName: friendRequestList[reqIndex].toString(),
                             );
                           }
@@ -183,7 +192,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
           Container(
             height: 180,
               child:StreamBuilder(
-              stream: DatabaseService().userCollection.doc(_userName).snapshots(),
+              stream: DatabaseService().userCollection.doc(widget.userName).snapshots(),
               builder: (context, snapshot) {
                 List<Widget> children;
                 if (snapshot.hasError) {
@@ -229,8 +238,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
               Container(
               height:500,
 
-              child:StreamBuilder(
-                  stream: DatabaseService().userCollection.doc(_userName).snapshots(),
+                  child:StreamBuilder(
+                  stream: DatabaseService().userCollection.doc(widget.userName).snapshots(),
                   builder: (context, snapshot) {
                     List<Widget> children;
                     if (snapshot.hasError) {
@@ -251,7 +260,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     } else {
 
                       List friendList = snapshot.data["friends"];
-                      // friendList = friendList.reshape((snapshot.data["friends"].length/3), 3);
+
 
                       return ListView.builder(
                         itemCount: friendList.length,

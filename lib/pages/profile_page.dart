@@ -307,6 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
 
                 Row(
+
                   mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
@@ -502,7 +503,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       });
                     }else if(distanceSwitched == false){
 
-                      DatabaseService(userName: _userName).deleteLocationFromGPS();
+                      //DatabaseService(userName: _userName).deleteLocationFromGPS();
 
 
                     }

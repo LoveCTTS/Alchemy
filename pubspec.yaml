@@ -41,6 +41,7 @@ dependencies:
   bubble: ^1.1.9+1
   fluttertoast: ^7.1.6
   matrix2d: ^0.0.7
+  firebase_admob: ^0.10.3
 
 
 
@@ -90,6 +91,7 @@ flutter:
   assets:
     - images/
     - images/default.png
+    - images/default2.png
     - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see

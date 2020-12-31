@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:linkproto/pages/admob.dart';
 import 'package:linkproto/services/database_service.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
 import '../widgets/group_tile.dart';
 import '../widgets/mikemessage_tile.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 class AgoraPage extends StatefulWidget {
   @override
@@ -29,14 +32,15 @@ class _AgoraPageState extends State<AgoraPage> {
   bool enableRoomImage=false;
   bool hasMembers=false;
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
+  AdMobManager adMob = AdMobManager();
+
 
   // initState
   @override
   void initState() {
+    adMob.init();
     super.initState();
     prepareSerivce();
-
-
 
   }
 
@@ -44,6 +48,8 @@ class _AgoraPageState extends State<AgoraPage> {
   void dispose(){
     prepareSerivce().dispose();
     super.dispose();
+    adMob.init().dispose();
+
   }
 
   prepareSerivce() async {
@@ -422,7 +428,7 @@ class _AgoraPageState extends State<AgoraPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return Platform.isIOS? SizedBox.shrink():Scaffold(
           //앱 상단바의 위아래 높낮이 조절을위해 PreferredSize 를 사용하여야하고, 이를 상단바에만 적용하기위해서 SafeZone(그냥 직접 만든 것)을 사용
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(50.0),
@@ -526,7 +532,8 @@ class _AgoraPageState extends State<AgoraPage> {
               mike(), //확성기를 ListView가 아닌 Column안에 넣음으로써 그룹채팅 방들을 스크롤해도 같이 위로 안올라가게 막을수있다.
           Expanded( //위젯에 expaned 위젯을 추가하면 레이아웃에서 overflow가 안보이게 할수있다.
               child:SingleChildScrollView(
-                  child: allGroupsList()))
+                  child: allGroupsList())),
+              Container(height:50, width:350, )
         ]
         ),
         /*Container(

@@ -1,3 +1,4 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +13,14 @@ import 'routes/routes.dart';
 import 'pages/login_page.dart';
 
 
+
 //메인에서 runApp을 통해 MyApp 클래스 실행
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
+
 }
 
 class MyApp extends StatefulWidget {
@@ -28,12 +31,13 @@ class MyApp extends StatefulWidget {
 }
 
 
-class MyAppState extends State<MyApp> { //State<MyApp>으로부터 상속받은 _MyAppState
+class MyAppState extends State<MyApp> {
+
+
   @override
   void initState() { // 상태 초기화 함수(State<MyApp>에 이미 작성되어 있기 때문에, 상속받은 _MyAppState도 initState()사용가능
+
     super.initState(); //Sate<MyApp> 조상님 인스턴스 안에서 initSate 실행하여 상태 초기화(Super 키워드 이해할것!)
-
-
 
   }
 
@@ -81,18 +85,3 @@ class AuthenticationWrapper extends StatelessWidget{
 }
 
 
-/*
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Login',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginPage(),
-    );
-  }
-}*/

@@ -147,7 +147,7 @@ class _FriendsChatPageState extends State<FriendsChatPage> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Text("test"),
+            title: Text(widget.groupId),
             centerTitle: true,
             backgroundColor: Colors.black87,
             elevation: 0.0,

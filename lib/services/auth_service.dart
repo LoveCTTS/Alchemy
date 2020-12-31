@@ -35,6 +35,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       //createUserWithEmailAndPassword를 통해 새로운 이메일과 비밀번호를 가진 인스턴스생성
+
       User user = result.user;
       //FirebaseUser에 새로운 user 초기화
       await DatabaseService(uid: user.uid,userName: fullName).updateUserData(fullName, email, password);

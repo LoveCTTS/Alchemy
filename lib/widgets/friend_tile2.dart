@@ -178,16 +178,37 @@ class _FriendTileState extends State<FriendTile2>{
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        _popupChat(context);
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+            FriendsChatPage(groupId: widget.friendChatGroupId,
+                userName: _userName)));
+
       }, child: Container(
         height:100,
         decoration: BoxDecoration(
           border: Border(bottom:BorderSide(width: 1.0, color: Colors.grey)),
         ),
         child: Row(children:[
-              Container(
-                width:70,
-                height:70,
+          GestureDetector(
+            onTap: () {
+
+              _popupChat(context);
+
+              },
+              child:Container(
+
+            width:70,
+              height:70,
+              decoration: BoxDecoration(
+                border: Border.all(width:1.5),
+                gradient: LinearGradient(
+                  colors: [Color(0xff212121), Color(0xff9932cc)]
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(1.5),
+                  child:Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -195,7 +216,8 @@ class _FriendTileState extends State<FriendTile2>{
                     image: _hasNetworkImage? NetworkImage(_profileImageURL):AssetImage("images/default.png"),
                   ),
                 ),
-              ), SizedBox(width:10),
+              ))
+          )), SizedBox(width:10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,

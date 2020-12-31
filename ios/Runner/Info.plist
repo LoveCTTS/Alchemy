@@ -69,5 +69,7 @@
 <string>Needed to access location</string>
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>Needed to access location</string>
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-4804939966855342~8291294074</string>
 </dict>
 </plist>
