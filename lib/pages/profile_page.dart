@@ -306,7 +306,9 @@ class _ProfilePageState extends State<ProfilePage> {
             child:ListView(
           children: <Widget>[
 
-                Row(
+                Container(
+                  padding : EdgeInsets.all(10),
+                    child:Row(
 
                   mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -317,7 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: 120,
+                        width: MediaQuery.of(context).size.width-260,
                         child: Align(alignment: Alignment(1.5, 1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -334,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: 120,
+                        width: MediaQuery.of(context).size.width-260,
                         child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -351,7 +353,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: 120,
+                        width: MediaQuery.of(context).size.width-260,
                         child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -361,62 +363,65 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       )),
-                ]),SizedBox(height:15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                      onTap: (){
+                ])),SizedBox(height:15),
+            Container(
+                padding : EdgeInsets.all(10),
+                child:Row(
 
-                        _popupEdit(context,3);
-                      },
-                      child: Container(
-                        height: 120,
-                        width: 120,
-                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: _hasNetworkImage[3]? NetworkImage(_profileImageURL[3]):AssetImage("images/default.png")
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                          onTap: (){
 
-                          ),
-                        ),
-                      )),SizedBox(width:15),
-                  GestureDetector(
-                      onTap: (){
+                            _popupEdit(context,0);
+                          },
+                          child: Container(
+                            height: 120,
+                            width: MediaQuery.of(context).size.width-260,
+                            child: Align(alignment: Alignment(1.5, 1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              image: DecorationImage(
+                                  image: _hasNetworkImage[3]? NetworkImage(_profileImageURL[3]):AssetImage("images/default.png")
 
-                        _popupEdit(context,4);
-                      },
-                      child: Container(
-                        height: 120,
-                        width: 120,
-                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: _hasNetworkImage[4]? NetworkImage(_profileImageURL[4]):AssetImage("images/default.png")
+                              ),
+                            ),
+                          )),SizedBox(width:15),
+                      GestureDetector(
+                          onTap: (){
 
-                          ),
-                        ),
-                      )),SizedBox(width:15),
-                  GestureDetector(
-                      onTap: (){
+                            _popupEdit(context,1);
+                          },
+                          child: Container(
+                            height: 120,
+                            width: MediaQuery.of(context).size.width-260,
+                            child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              image: DecorationImage(
+                                  image: _hasNetworkImage[4]? NetworkImage(_profileImageURL[4]):AssetImage("images/default.png")
 
-                        _popupEdit(context,5);
-                      },
-                      child: Container(
-                        height: 120,
-                        width: 120,
-                        child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: _hasNetworkImage[5]? NetworkImage(_profileImageURL[5]):AssetImage("images/default.png")
+                              ),
+                            ),
+                          )),SizedBox(width:15),
+                      GestureDetector(
+                          onTap: (){
 
-                          ),
-                        ),
-                      )),
-                ]),
+                            _popupEdit(context,2);
+                          },
+                          child: Container(
+                            height: 120,
+                            width: MediaQuery.of(context).size.width-260,
+                            child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              image: DecorationImage(
+                                  image: _hasNetworkImage[5]? NetworkImage(_profileImageURL[5]):AssetImage("images/default.png")
+
+                              ),
+                            ),
+                          )),
+                    ])),
             SizedBox(height: 23.0),
             TextField(
 

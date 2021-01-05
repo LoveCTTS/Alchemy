@@ -4,7 +4,7 @@ import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'file:///D:/flutter_pratice/Alchemy/lib/services/admob.dart';
+import '../services/admob.dart';
 import 'package:linkproto/services/database_service.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
@@ -126,12 +126,6 @@ class _AgoraPageState extends State<AgoraPage> {
                           child:Text(mikeMessageList[0]()["mikeMessage"],style: TextStyle(color: Colors.black))),
 
                     ]);
-
-                      /*Text(
-                        "${mikeMessageList[0]()["sender"]}:${mikeMessageList[0]()["mikeMessage"]}",
-                        style: TextStyle(
-                            fontSize: 13, color: Colors.white))*/;
-                    //[0]으로 접근하면 가장 최근에 생성된데이터를 볼수있음.(descending을 false로 바꾸면 가장 과거데이터를 보게 됨.)
                   }
                 }
             )
@@ -182,6 +176,7 @@ class _AgoraPageState extends State<AgoraPage> {
 
     AlertDialog mike = AlertDialog(
 
+      insetPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 120),
           title: Row(
               children: [
                 Icon(

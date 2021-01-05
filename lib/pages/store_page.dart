@@ -37,7 +37,7 @@ class _StorePageState extends State<StorePage> {
             onTap: (){},
               child:
               Container(
-                width:120,
+                width:MediaQuery.of(context).size.width-220,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(20)
@@ -47,6 +47,7 @@ class _StorePageState extends State<StorePage> {
 
                   child: Row(children: [
 
+                    SizedBox(width:5),
                     Container(
                   width:30,
                   height:30,
@@ -75,15 +76,14 @@ class _StorePageState extends State<StorePage> {
             children: [
 
               Container(
-
                   width: MediaQuery.of(context).size.width,
-                  height:100,
+                  height:MediaQuery.of(context).size.height-600,
                   color: Colors.orange,
                   child:
                   Row(
                     children: [
                       Padding(
-                          padding: EdgeInsets.only(left:30),
+                          padding: EdgeInsets.only(left:10),
                           child:Container(
                         width:80,
                         height:80,
@@ -99,10 +99,13 @@ class _StorePageState extends State<StorePage> {
                           ),
                         ),
                       )),
-                      SizedBox(width:10),
-                      Column(
+                      SizedBox(width:MediaQuery.of(context).size.width-360),
+                      Container(
+                        padding: EdgeInsets.only(top:15,bottom:15),
+                          child:Column(
                           children: [
                             whichSelected==0?SizedBox(height:20): Text(itemName,style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height:5),
                             Container(
                               width: 150,
                                 height:50,
@@ -139,9 +142,9 @@ class _StorePageState extends State<StorePage> {
                               ]
                             ))
 
-                      ]),SizedBox(width:20),
+                      ])),SizedBox(width:MediaQuery.of(context).size.width-360),
                       Container(
-                        padding: EdgeInsets.only(top:5),
+                        padding: EdgeInsets.only(top:15,bottom:15),
 
                           child:Column(children:[
 
@@ -246,6 +249,7 @@ class _StorePageState extends State<StorePage> {
                                 });
                               },
                                 child:Container(
+
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
                                     Radius.circular(10)
@@ -272,7 +276,6 @@ class _StorePageState extends State<StorePage> {
 
 
                                 ),
-                                SizedBox(height:5),
                                 Text("평범한 확성기",style: TextStyle(color:Colors.white))
                               ],)),
                             )),
@@ -316,7 +319,7 @@ class _StorePageState extends State<StorePage> {
 
                                         ),
                                         SizedBox(height:5),
-                                        Text("황금 확성기",style: TextStyle(color:Colors.white))
+                                        Container(child:Text("황금 확성기",style: TextStyle(color:Colors.white)))
                                       ],)),
                                 )),
                             GestureDetector(
