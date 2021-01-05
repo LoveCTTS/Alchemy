@@ -4,7 +4,7 @@ import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:linkproto/pages/admob.dart';
+import 'file:///D:/flutter_pratice/Alchemy/lib/services/admob.dart';
 import 'package:linkproto/services/database_service.dart';
 import '../helper/helper_functions.dart';
 import '../services/auth_service.dart';
@@ -32,23 +32,24 @@ class _AgoraPageState extends State<AgoraPage> {
   bool enableRoomImage=false;
   bool hasMembers=false;
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
-  AdMobManager adMob = AdMobManager();
-
 
   // initState
   @override
   void initState() {
-    adMob.init();
     super.initState();
     prepareSerivce();
+
 
   }
 
   @override
   void dispose(){
+
     prepareSerivce().dispose();
     super.dispose();
-    adMob.init().dispose();
+
+
+
 
   }
 

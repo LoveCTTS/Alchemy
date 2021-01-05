@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:linkproto/pages/signin_page.dart';
 import 'package:linkproto/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +42,10 @@ class MyAppState extends State<MyApp> {
 
     super.initState(); //Sate<MyApp> 조상님 인스턴스 안에서 initSate 실행하여 상태 초기화(Super 키워드 이해할것!)
 
+  }
+  @override
+  void dispose(){
+    super.dispose();
   }
 
   @override

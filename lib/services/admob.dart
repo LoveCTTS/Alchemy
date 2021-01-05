@@ -27,6 +27,17 @@ class AdMobManager {
       anchorType: AnchorType.bottom
     );
   }
+  initInStore() async {
+    FirebaseAdMob.instance.initialize(appId: appID);
+    _bannerAd = createBannerAd();
+    _interstitialAd = createInterstitialAd();
+    _bannerAd..load()..show(
+        anchorOffset: 100.0,
+        horizontalCenterOffset: 10.0,
+        anchorType: AnchorType.top
+    );
+  }
+
 
   BannerAd createBannerAd() {
     return BannerAd(
@@ -38,6 +49,10 @@ class AdMobManager {
         print("BannerAd event is $event");
       },
     );
+  }
+  removeBannerAd(){
+    _bannerAd?.dispose();
+    _bannerAd=null;
   }
 
   InterstitialAd createInterstitialAd() {
@@ -53,6 +68,8 @@ class AdMobManager {
   showInterstitialAd() {
     _interstitialAd..load()..show();
   }
+
+
 
 
 }
