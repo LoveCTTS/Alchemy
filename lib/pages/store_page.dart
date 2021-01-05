@@ -262,8 +262,8 @@ class _StorePageState extends State<StorePage> {
                                   child: Column(children: [
                                     Container(
 
-                                  width:70,
-                                  height:70,
+                                  width:MediaQuery.of(context).size.width-300,
+                                  height:MediaQuery.of(context).size.height-680,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.all(
@@ -304,8 +304,8 @@ class _StorePageState extends State<StorePage> {
                                       child: Column(children: [
                                         Container(
 
-                                          width:70,
-                                          height:70,
+                                          width:MediaQuery.of(context).size.width-300,
+                                          height:MediaQuery.of(context).size.height-680,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -346,8 +346,8 @@ class _StorePageState extends State<StorePage> {
                                       child: Column(children: [
                                         Container(
 
-                                          width:70,
-                                          height:70,
+                                          width:MediaQuery.of(context).size.width-300,
+                                          height:MediaQuery.of(context).size.height-680,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -388,8 +388,8 @@ class _StorePageState extends State<StorePage> {
                                       child: Column(children: [
                                         Container(
 
-                                          width:70,
-                                          height:70,
+                                          width:MediaQuery.of(context).size.width-300,
+                                          height:MediaQuery.of(context).size.height-680,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -411,7 +411,7 @@ class _StorePageState extends State<StorePage> {
 
                                   setState(() {
                                     whichSelected=5;
-                                    itemName="광고 제거 피스톨";
+                                    itemName="광고제거피스톨";
                                     itemImagePath="images/ad_block.png";
                                     itemDescription="하단 배너 광고 제거";
                                     itemPrice=999999;
@@ -430,8 +430,8 @@ class _StorePageState extends State<StorePage> {
                                       child: Column(children: [
                                         Container(
 
-                                          width:70,
-                                          height:70,
+                                          width:MediaQuery.of(context).size.width-300,
+                                          height:MediaQuery.of(context).size.width-300,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -445,7 +445,7 @@ class _StorePageState extends State<StorePage> {
 
                                         ),
                                         SizedBox(height:5),
-                                        Text("광고제거 피스톨",style: TextStyle(color:Colors.white))
+                                        Text("광고제거",style: TextStyle(color:Colors.white))
                                       ],)),
                                 )),
                             GestureDetector(
@@ -471,8 +471,8 @@ class _StorePageState extends State<StorePage> {
 
                                       child: Column(children: [
                                         Container(
-                                          width:70,
-                                          height:70,
+                                          width:MediaQuery.of(context).size.width-300,
+                                          height:MediaQuery.of(context).size.width-300,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
