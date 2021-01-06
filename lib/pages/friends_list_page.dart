@@ -78,8 +78,10 @@ class _FriendsListPageState extends State<FriendsListPage> {
   void _popupFriendRequest(BuildContext context) {
 
     AlertDialog alert = AlertDialog(
+
+      insetPadding: EdgeInsets.symmetric(horizontal: 40),
         title: Row(children: [ Text("친구 요청 목록",style: TextStyle(color:Colors.white)),
-          SizedBox(width:100),
+          SizedBox(width:65),
           IconButton(
             icon:Icon(Icons.close_rounded,color: Colors.white,),
             onPressed: (){

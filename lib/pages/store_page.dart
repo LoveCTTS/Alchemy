@@ -16,6 +16,7 @@ class _StorePageState extends State<StorePage> {
   int itemPrice=0;
   int purchaseItemCount=1;
   int purchasedMoney=20000;
+
   @override
   void initState() {
 
@@ -25,6 +26,7 @@ class _StorePageState extends State<StorePage> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
           title:Text("상점",style: TextStyle(color: Colors.white)),
@@ -37,7 +39,7 @@ class _StorePageState extends State<StorePage> {
             onTap: (){},
               child:
               Container(
-                width:MediaQuery.of(context).size.width-220,
+                width:screenSize.width/3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(20)
@@ -61,7 +63,7 @@ class _StorePageState extends State<StorePage> {
                   ),
                 ),SizedBox(width:10),
                     Text(purchasedMoney.toString()),
-                    SizedBox(width:15),
+                    SizedBox(width:screenSize.width/35),
                     Icon(Icons.add),
 
           ]))
@@ -69,18 +71,20 @@ class _StorePageState extends State<StorePage> {
         ],
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        width: screenSize.width,
+        height: screenSize.height,
         color: Color(0xff212121),
           child:Column(
             children: [
 
               Container(
-                  width: MediaQuery.of(context).size.width,
-                  height:MediaQuery.of(context).size.height-600,
+                  width: screenSize.width,
+                  height:screenSize.height/5,
                   color: Colors.orange,
+                  padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child:
                   Row(
+
                     children: [
                       Padding(
                           padding: EdgeInsets.only(left:10),
@@ -99,9 +103,8 @@ class _StorePageState extends State<StorePage> {
                           ),
                         ),
                       )),
-                      SizedBox(width:MediaQuery.of(context).size.width-360),
                       Container(
-                        padding: EdgeInsets.only(top:15,bottom:15),
+
                           child:Column(
                           children: [
                             whichSelected==0?SizedBox(height:20): Text(itemName,style: TextStyle(fontWeight: FontWeight.bold)),
@@ -127,8 +130,8 @@ class _StorePageState extends State<StorePage> {
                                       SizedBox(width:5),
 
                                       Container(
-                                  width:20,
-                                  height:20,
+                                  width:30,
+                                  height:30,
                                   decoration: BoxDecoration(
 
                                     image: DecorationImage(
@@ -138,14 +141,13 @@ class _StorePageState extends State<StorePage> {
                                 ),SizedBox(width:10),
                                       whichSelected==0?
                                       Text("0",style: TextStyle(color: Colors.white)):
-                                      Text((itemPrice* purchaseItemCount).toString(),style: TextStyle(color: Colors.white))
+                                      Text((itemPrice* purchaseItemCount).toString(),style: TextStyle(color: Colors.white,fontSize: 10))
                               ]
                             ))
 
-                      ])),SizedBox(width:MediaQuery.of(context).size.width-360),
+                      ])),
                       Container(
-                        padding: EdgeInsets.only(top:15,bottom:15),
-
+                        padding: EdgeInsets.only(top:15),
                           child:Column(children:[
 
                             Row(children:[
@@ -216,7 +218,7 @@ class _StorePageState extends State<StorePage> {
                                 ),
 
 
-                                    child: Center(child:Text("구매하기",style: TextStyle(color:Colors.white)))
+                                    child: Center(child:Text("구매하기",style: TextStyle(color:Colors.white,fontSize: 20)))
                         )
                             )
                       ]))
@@ -225,21 +227,20 @@ class _StorePageState extends State<StorePage> {
               ),
 
               Container(
-                width: MediaQuery.of(context).size.width,
-                height: 340,
+                width: screenSize.width,
+                height: screenSize.height/1.8,
                   child:CustomScrollView(
                     primary: false,
                     slivers: <Widget>[
                       SliverPadding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.fromLTRB(30, 20, 20, 20),
                         sliver: SliverGrid.count(
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 30,
+                          mainAxisSpacing: 40,
                           crossAxisCount: 3,
                           children: <Widget>[
                             GestureDetector(
                               onTap: (){
-
                                 setState(() {
                                   whichSelected=1;
                                   itemName="평범한 확성기";
@@ -247,23 +248,10 @@ class _StorePageState extends State<StorePage> {
                                   itemDescription="전 서버의 유저들에게 한마디할 수 있는 아이템";
                                   itemPrice=5000;
                                 });
-                              },
-                                child:Container(
-
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(10)
-                                ),
-
-                              ),
-                              padding: const EdgeInsets.all(8),
-                              child: Container(
-                                
-                                  child: Column(children: [
+                              }, child:Wrap(children: [
                                     Container(
-
-                                  width:MediaQuery.of(context).size.width-300,
-                                  height:MediaQuery.of(context).size.height-680,
+                                  width:screenSize.width/5,
+                                  height:screenSize.height/5,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.all(
@@ -273,12 +261,11 @@ class _StorePageState extends State<StorePage> {
                                       image: AssetImage("images/normal_megaphone.png"),
                                     ),
                                   ),
-
-
+                                      child: Align(alignment: Alignment.bottomCenter,child:Text("평범한 확성기",style: TextStyle(color:Colors.white)))
                                 ),
-                                Text("평범한 확성기",style: TextStyle(color:Colors.white))
-                              ],)),
-                            )),
+
+                              ],),
+                            ),
 
                             GestureDetector(
                                 onTap: (){
@@ -291,21 +278,10 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=6000;
                                   });
                                 },
-                                child:Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)
-                                    ),
-
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Container(
-
-                                      child: Column(children: [
+                                      child: Wrap(children: [
                                         Container(
-
-                                          width:MediaQuery.of(context).size.width-300,
-                                          height:MediaQuery.of(context).size.height-680,
+                                          width:screenSize.width/5,
+                                          height:screenSize.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -315,13 +291,12 @@ class _StorePageState extends State<StorePage> {
                                               image: AssetImage("images/gold_megaphone.png"),
                                             ),
                                           ),
-
+                                          child: Align(alignment: Alignment.bottomCenter,child:Text("황금 확성기",style: TextStyle(color:Colors.white)))
 
                                         ),
-                                        SizedBox(height:5),
-                                        Container(child:Text("황금 확성기",style: TextStyle(color:Colors.white)))
-                                      ],)),
-                                )),
+
+                                      ],),
+                                ),
                             GestureDetector(
                                 onTap: (){
 
@@ -333,21 +308,10 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=7000;
                                   });
                                 },
-                                child:Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)
-                                    ),
-
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Container(
-
-                                      child: Column(children: [
+                                      child: Wrap(children: [
                                         Container(
-
-                                          width:MediaQuery.of(context).size.width-300,
-                                          height:MediaQuery.of(context).size.height-680,
+                                          width:screenSize.width/5,
+                                          height:screenSize.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -357,13 +321,10 @@ class _StorePageState extends State<StorePage> {
                                               image: AssetImage("images/envelop.png"),
                                             ),
                                           ),
-
-
+                                          child: Align(alignment: Alignment.bottomCenter,child:Text("손편지",style: TextStyle(color:Colors.white)))
                                         ),
-                                        SizedBox(height:5),
-                                        Text("손편지",style: TextStyle(color:Colors.white))
-                                      ],)),
-                                )),
+                                      ],),
+                                ),
                             GestureDetector(
                                 onTap: (){
 
@@ -375,21 +336,11 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=8000;
                                   });
                                 },
-                                child:Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)
-                                    ),
-
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Container(
-
-                                      child: Column(children: [
+                                      child: Wrap(children: [
                                         Container(
 
-                                          width:MediaQuery.of(context).size.width-300,
-                                          height:MediaQuery.of(context).size.height-680,
+                                          width:screenSize.width/5,
+                                          height:screenSize.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -399,13 +350,9 @@ class _StorePageState extends State<StorePage> {
                                               image: AssetImage("images/love_potion.png"),
                                             ),
                                           ),
-
-
+                                            child:Align(alignment: Alignment.bottomCenter,child:Text("사랑의 묘약",style: TextStyle(color:Colors.white)))
                                         ),
-                                        SizedBox(height:5),
-                                        Text("사랑의 묘약",style: TextStyle(color:Colors.white))
                                       ],)),
-                                )),
                             GestureDetector(
                                 onTap: (){
 
@@ -417,21 +364,11 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=999999;
                                   });
                                 },
-                                child:Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)
-                                    ),
-
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Container(
-
-                                      child: Column(children: [
+                              child: Wrap(children: [
                                         Container(
 
-                                          width:MediaQuery.of(context).size.width-300,
-                                          height:MediaQuery.of(context).size.width-300,
+                                          width:screenSize.width/5,
+                                          height:screenSize.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -441,13 +378,13 @@ class _StorePageState extends State<StorePage> {
                                               image: AssetImage("images/ad_block.png"),
                                             ),
                                           ),
+                                          child: Align(alignment: Alignment.bottomCenter,child:Text("광고제거",style: TextStyle(color:Colors.white)))
 
 
                                         ),
-                                        SizedBox(height:5),
-                                        Text("광고제거",style: TextStyle(color:Colors.white))
-                                      ],)),
-                                )),
+
+                                      ],),
+                                ),
                             GestureDetector(
                                 onTap: (){
 
@@ -458,21 +395,10 @@ class _StorePageState extends State<StorePage> {
                                     itemDescription="닉네임의 색깔을 무작위로 바꿔주는 염색약";
                                     itemPrice=5000;
                                   });
-                                },
-                                child:Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)
-                                    ),
-
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  child: Container(
-
-                                      child: Column(children: [
+                                }, child: Wrap(children: [
                                         Container(
-                                          width:MediaQuery.of(context).size.width-300,
-                                          height:MediaQuery.of(context).size.width-300,
+                                          width:screenSize.width/5,
+                                          height:screenSize.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -482,11 +408,11 @@ class _StorePageState extends State<StorePage> {
                                               image: AssetImage("images/mysterious_nickname_color.png"),
                                             ),
                                           ),
+                                          child: Align(alignment: Alignment.bottomCenter,child:Text("신비로운 물약",style: TextStyle(color:Colors.white)))
                                         ),
-                                        SizedBox(height:5),
-                                        Text("신비로운 물약",style: TextStyle(color:Colors.white))
-                                      ],)),
-                                )),
+
+                                      ],),
+                                ),
 
 
                           ],
