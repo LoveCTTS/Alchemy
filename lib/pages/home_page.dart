@@ -41,6 +41,13 @@ class _HomePageState extends State<HomePage> {
     prepareService();
 
   }
+  @override
+  void dispose(){
+
+
+    super.dispose();
+  }
+
 
   void prepareService() async{
 
@@ -70,13 +77,12 @@ class _HomePageState extends State<HomePage> {
               });
 
 
-              if(_currentIndex==0 || _currentIndex==2 || _currentIndex==3){
 
-                adMob.removeBannerAd();
-                adMob.init();
-              }
-              else if(_currentIndex!=2 && _currentIndex!=3){
+              if(_currentIndex==2 || _currentIndex==3){
 
+                adMob.showBanner();
+
+              }else{
                 adMob.removeBannerAd();
               }
 

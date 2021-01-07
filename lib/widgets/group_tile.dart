@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/services/admob.dart';
 import '../pages/chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +31,7 @@ class GroupTileState extends State<GroupTile>{
   String _profileImageURL;
   bool _hasNetworkImage=false;
   String _userName='';
+  AdMobManager adMob= AdMobManager();
 
 
   @override
@@ -128,6 +130,8 @@ class GroupTileState extends State<GroupTile>{
                               onPressed:  () async {
 
 
+
+                                adMob.removeBannerAd();
                                 isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
                                 if(isSameRoomPassword){
                                   await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
@@ -138,7 +142,6 @@ class GroupTileState extends State<GroupTile>{
                                         userName: widget.userName,
                                         groupName: widget.groupName,)));
                                 }
-                                  // 여기안에서는 스낵바 기능이 안되는걸로 추측됨. Get.snackbar('Hi','i am modren');
 
                               }
                           )
@@ -151,6 +154,7 @@ class GroupTileState extends State<GroupTile>{
 
 
       }else{
+            adMob.removeBannerAd();
         await DatabaseService(uid: _user.uid,userName:widget.userName).JoiningGroupAtTouch(
             widget.groupId, widget.groupName, widget.userName);
         //채팅방으로 가기
@@ -188,7 +192,7 @@ class GroupTileState extends State<GroupTile>{
                           fontFamily: "RobotoMono-italic")),
                           SizedBox(width:5),
                           StreamBuilder(
-                            stream: DatabaseService().groupCollection.document(widget.groupId).snapshots(),
+                            stream: DatabaseService().groupCollection.doc(widget.groupId).snapshots(),
                             builder: (context,snapshot){
 
                               List<Widget> children;

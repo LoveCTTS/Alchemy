@@ -39,12 +39,16 @@ class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   User _user;
+  AdMobManager adMob= AdMobManager();
+
 
 
   @override
   void initState() {
     super.initState();
     getUserID();
+
+
     _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
     _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
 
@@ -59,6 +63,8 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
+  @override
+
   getUserID() async{
     _user = FirebaseAuth.instance.currentUser;
 
@@ -156,8 +162,10 @@ class _ChatPageState extends State<ChatPage> {
       },
     child: Scaffold(
       appBar: AppBar(
-        title: Text(widget.groupName, style: TextStyle(color: Colors.white)),
-        centerTitle: true,
+        title: Row(children:[IconButton(icon: Icon(Icons.arrow_back,color: Colors.white,),onPressed: (){
+          adMob.showBanner();
+          Navigator.of(context).pop();
+        },),Text(widget.groupName, style: TextStyle(color: Colors.white))]),
         backgroundColor: Color(0xff9932cc),
         elevation: 0.0,
       ),

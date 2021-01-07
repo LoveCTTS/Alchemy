@@ -33,21 +33,24 @@ class _AgoraPageState extends State<AgoraPage> {
   bool hasMembers=false;
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
 
+
+
   // initState
   @override
   void initState() {
+
     super.initState();
     prepareSerivce();
-
 
   }
 
   @override
   void dispose(){
 
+
+
     prepareSerivce().dispose();
     super.dispose();
-
 
 
 
@@ -529,7 +532,6 @@ class _AgoraPageState extends State<AgoraPage> {
           Expanded( //위젯에 expaned 위젯을 추가하면 레이아웃에서 overflow가 안보이게 할수있다.
               child:SingleChildScrollView(
                   child: allGroupsList())),
-              Container(height:50, width:350, )
         ]
         ),
         /*Container(

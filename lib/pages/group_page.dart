@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:linkproto/services/admob.dart';
 import '../helper/helper_functions.dart';
 import '../pages/search_page.dart';
 import '../services/auth_service.dart';
@@ -30,10 +31,12 @@ class _GroupPageState extends State<GroupPage> {
   void initState() {
     super.initState();
     _getUserAuthAndJoinedGroups();
+
   }
 
   @override
   void dispose(){
+
     _getUserAuthAndJoinedGroups().dispose();
     super.dispose();
   }

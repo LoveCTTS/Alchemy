@@ -20,13 +20,17 @@ class _StorePageState extends State<StorePage> {
   @override
   void initState() {
 
-
     super.initState();
+  }
+  @override
+  void dispose(){
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+    var screenData = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
           title:Text("상점",style: TextStyle(color: Colors.white)),
@@ -39,7 +43,7 @@ class _StorePageState extends State<StorePage> {
             onTap: (){},
               child:
               Container(
-                width:screenSize.width/3,
+                width:140,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                         Radius.circular(20)
@@ -61,34 +65,32 @@ class _StorePageState extends State<StorePage> {
                       image: AssetImage("images/diamond.png"),
                     ),
                   ),
-                ),SizedBox(width:10),
+                    ),SizedBox(width:10),
                     Text(purchasedMoney.toString()),
-                    SizedBox(width:screenSize.width/35),
-                    Icon(Icons.add),
+                    SizedBox(width:20),
+                    Icon(Icons.add)
 
           ]))
           ))
         ],
       ),
       body: Container(
-        width: screenSize.width,
-        height: screenSize.height,
+        width: screenData.width,
+        height: screenData.height,
         color: Color(0xff212121),
           child:Column(
             children: [
 
               Container(
-                  width: screenSize.width,
-                  height:screenSize.height/5,
+                  width: screenData.width,
+                  height:screenData.height/5,
                   color: Colors.orange,
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child:
                   Row(
-
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly, //행의 요소사이 간격 일정하게
+                    crossAxisAlignment: CrossAxisAlignment.center, // 열 기준으로 중간정렬
                     children: [
-                      Padding(
-                          padding: EdgeInsets.only(left:10),
-                          child:Container(
+                      Container(
                         width:80,
                         height:80,
                         decoration: BoxDecoration(
@@ -99,10 +101,9 @@ class _StorePageState extends State<StorePage> {
 
                           image: DecorationImage(
                             image: whichSelected==0?AssetImage("images/main_image.png"): AssetImage(itemImagePath)
-
                           ),
                         ),
-                      )),
+                      ),
                       Container(
 
                           child:Column(
@@ -111,7 +112,7 @@ class _StorePageState extends State<StorePage> {
                             SizedBox(height:5),
                             Container(
                               width: 150,
-                                height:50,
+                                height:70,
                                 child: whichSelected==0?Text("아이템을 선택해주세요.", style: TextStyle(fontSize:15,fontWeight: FontWeight.bold)):Text(itemDescription)
                             ),
                             Container(
@@ -147,7 +148,8 @@ class _StorePageState extends State<StorePage> {
 
                       ])),
                       Container(
-                        padding: EdgeInsets.only(top:15),
+                        width:120,
+                        padding: EdgeInsets.only(top:20),
                           child:Column(children:[
 
                             Row(children:[
@@ -218,17 +220,16 @@ class _StorePageState extends State<StorePage> {
                                 ),
 
 
-                                    child: Center(child:Text("구매하기",style: TextStyle(color:Colors.white,fontSize: 20)))
+                                    child: Center(child:Text("구매하기",style: TextStyle(color:Colors.white,fontSize: 13)))
                         )
                             )
                       ]))
 
                     ],)
               ),
-
               Container(
-                width: screenSize.width,
-                height: screenSize.height/1.8,
+                width: screenData.width,
+                height: screenData.height/1.8,
                   child:CustomScrollView(
                     primary: false,
                     slivers: <Widget>[
@@ -248,10 +249,12 @@ class _StorePageState extends State<StorePage> {
                                   itemDescription="전 서버의 유저들에게 한마디할 수 있는 아이템";
                                   itemPrice=5000;
                                 });
-                              }, child:Wrap(children: [
+                              },
+                              child:
+                              Wrap(children: [
                                     Container(
-                                  width:screenSize.width/5,
-                                  height:screenSize.height/5,
+                                  width:screenData.width/5,
+                                  height:screenData.height/5,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.rectangle,
                                     borderRadius: BorderRadius.all(
@@ -280,8 +283,8 @@ class _StorePageState extends State<StorePage> {
                                 },
                                       child: Wrap(children: [
                                         Container(
-                                          width:screenSize.width/5,
-                                          height:screenSize.height/5,
+                                          width:screenData.width/5,
+                                          height:screenData.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -292,9 +295,7 @@ class _StorePageState extends State<StorePage> {
                                             ),
                                           ),
                                           child: Align(alignment: Alignment.bottomCenter,child:Text("황금 확성기",style: TextStyle(color:Colors.white)))
-
                                         ),
-
                                       ],),
                                 ),
                             GestureDetector(
@@ -310,8 +311,8 @@ class _StorePageState extends State<StorePage> {
                                 },
                                       child: Wrap(children: [
                                         Container(
-                                          width:screenSize.width/5,
-                                          height:screenSize.height/5,
+                                          width:screenData.width/5,
+                                          height:screenData.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -339,8 +340,8 @@ class _StorePageState extends State<StorePage> {
                                       child: Wrap(children: [
                                         Container(
 
-                                          width:screenSize.width/5,
-                                          height:screenSize.height/5,
+                                          width:screenData.width/5,
+                                          height:screenData.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -367,8 +368,8 @@ class _StorePageState extends State<StorePage> {
                               child: Wrap(children: [
                                         Container(
 
-                                          width:screenSize.width/5,
-                                          height:screenSize.height/5,
+                                          width:screenData.width/5,
+                                          height:screenData.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(
@@ -397,8 +398,8 @@ class _StorePageState extends State<StorePage> {
                                   });
                                 }, child: Wrap(children: [
                                         Container(
-                                          width:screenSize.width/5,
-                                          height:screenSize.height/5,
+                                          width:screenData.width/5,
+                                          height:screenData.height/5,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.all(

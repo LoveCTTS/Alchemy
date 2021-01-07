@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/services/admob.dart';
 import 'package:linkproto/services/auth_service.dart';
 import 'package:linkproto/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final _picker = ImagePicker();
   FToast fToast;
 
+
   //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
   TextEditingController appealController= TextEditingController();
   // TextEditingController hashTagController= TextEditingController();
@@ -52,8 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
     fToast.init(context);
     _prepareService();
     appealController.addListener(() { });
-    // hashTagController.addListener(() { });
-    //localController.addListener(() { });
     ageController.addListener(() { });
 
     super.initState();
@@ -72,6 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _prepareService() async{
     _user= _firebaseAuth.currentUser;
+
     _userName=await HelperFunctions.getUserNameSharedPreference();
 
     await DatabaseService(userName: _userName).getUserAppeal().then((value){
@@ -304,13 +305,16 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap:(){
           },
             child:ListView(
+
           children: <Widget>[
 
                 Container(
-                  padding : EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
                     child:Row(
 
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+
                 children: [
                   GestureDetector(
                       onTap: (){
@@ -319,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: MediaQuery.of(context).size.width-260,
+                        width: 100,
                         child: Align(alignment: Alignment(1.5, 1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -328,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),SizedBox(width:15),
+                      )),
                   GestureDetector(
                       onTap: (){
 
@@ -336,7 +340,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: MediaQuery.of(context).size.width-260,
+                        width: 100,
                         child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -345,7 +349,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           ),
                         ),
-                      )),SizedBox(width:15),
+                      )),
                   GestureDetector(
                       onTap: (){
 
@@ -353,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: Container(
                         height: 120,
-                        width: MediaQuery.of(context).size.width-260,
+                        width: 100,
                         child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
@@ -363,12 +367,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       )),
-                ])),SizedBox(height:15),
+                ])),
             Container(
                 padding : EdgeInsets.all(10),
                 child:Row(
 
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       GestureDetector(
                           onTap: (){
@@ -377,7 +382,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                           child: Container(
                             height: 120,
-                            width: MediaQuery.of(context).size.width-260,
+                            width: 100,
                             child: Align(alignment: Alignment(1.5, 1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
@@ -386,7 +391,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                               ),
                             ),
-                          )),SizedBox(width:15),
+                          )),
                       GestureDetector(
                           onTap: (){
 
@@ -394,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                           child: Container(
                             height: 120,
-                            width: MediaQuery.of(context).size.width-260,
+                            width: 100,
                             child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
@@ -403,7 +408,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                               ),
                             ),
-                          )),SizedBox(width:15),
+                          )),
                       GestureDetector(
                           onTap: (){
 
@@ -411,7 +416,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                           child: Container(
                             height: 120,
-                            width: MediaQuery.of(context).size.width-260,
+                            width: 100,
                             child: Align(alignment: Alignment(1.5,1.5),child:IconButton(icon: Icon(Icons.arrow_circle_up_rounded, color: Color(0xff9932cc)))),
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
