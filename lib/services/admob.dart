@@ -46,6 +46,7 @@ class AdMobManager {
           horizontalCenterOffset: 10.0,
           anchorType: AnchorType.bottom
       );
+
   }
 
   BannerAd createBannerAd() {

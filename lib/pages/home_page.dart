@@ -76,17 +76,12 @@ class _HomePageState extends State<HomePage> {
 
               });
 
-
-
               if(_currentIndex==2 || _currentIndex==3){
-
                 adMob.showBanner();
 
               }else{
                 adMob.removeBannerAd();
               }
-
-
 
             },
 

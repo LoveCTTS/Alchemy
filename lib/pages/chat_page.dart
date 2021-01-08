@@ -152,6 +152,10 @@ class _ChatPageState extends State<ChatPage> {
     return adMob.showBanner();
 
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 036b7397d1efd3ff5a7fdfbec25f983d27d10421
   //채팅 페이지 디자인 관련 코드인데, 직접 실시간으로 조절하면서 디자인하면되니 설명은 생략함.
   @override
   Widget build(BuildContext context) {
