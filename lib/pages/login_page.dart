@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'file:///D:/flutter_pratice/Alchemy/lib/services/google_auth_service.dart';
-
+import '../services/google_auth_service.dart';
 import 'first_screen.dart';
 
 class LoginPage extends StatefulWidget {

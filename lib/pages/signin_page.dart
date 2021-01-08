@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:linkproto/pages/createNickNameG.dart';
-import 'file:///D:/flutter_pratice/Alchemy/lib/services/google_auth_service.dart';
+import '../services/google_auth_service.dart';
 import '../helper/helper_functions.dart';
 import 'home_page.dart';
 import '../services/auth_service.dart';
