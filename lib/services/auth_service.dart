@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:linkproto/services/google_auth_service.dart';
 import '../helper/helper_functions.dart';
 import '../models/customuser.dart';
 import '../services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance; //Firebase서비스를 이용하기위해 인증과 관련된 인스턴스 생성
-
 
 
   // //FirebaseUser로 접속하였을때 User객체 생성 함수
@@ -49,6 +49,8 @@ class AuthService {
   //로그아웃
   Future signOut() async {
     try {
+
+      signOutGoogle();
       await HelperFunctions.saveUserLoggedInSharedPreference(false); //로그인 되어있는지 안되어있는지 상태를 저장하는 변수를 false값으로 전환
       await HelperFunctions.saveUserEmailSharedPreference(''); //email정보도 null값으로 전환
       await HelperFunctions.saveUserNameSharedPreference(''); //이름도 null값으로 전환

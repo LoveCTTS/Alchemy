@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/services/database_service.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
-Future<String> signInWithGoogle() async {
+Future<User> signInWithGoogle() async {
 
   await Firebase.initializeApp();
 
@@ -29,7 +32,8 @@ Future<String> signInWithGoogle() async {
 
     print('signInWithGoogle succeeded: $user');
 
-    return '$user';
+    print(user);
+    return user;
   }
 
   return null;
@@ -38,6 +42,5 @@ Future<String> signInWithGoogle() async {
 void signOutGoogle() async{
 
   await googleSignIn.signOut();
-
   print("User Signed Out");
 }

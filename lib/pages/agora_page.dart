@@ -32,6 +32,7 @@ class _AgoraPageState extends State<AgoraPage> {
   bool enableRoomImage=false;
   bool hasMembers=false;
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
+  AdMobManager adMob = AdMobManager();
 
 
 
@@ -39,6 +40,7 @@ class _AgoraPageState extends State<AgoraPage> {
   @override
   void initState() {
 
+    adMob.showBanner();
     super.initState();
     prepareSerivce();
 

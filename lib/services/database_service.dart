@@ -43,6 +43,18 @@ class DatabaseService {
 
     });
   }
+  Future updateUserDataG(String fullName, String email) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(fullName).set({
+      'fullName': fullName,
+      'email': email,
+      'groups': [],
+      'profilePic': '',
+      'friends': [],
+      'request': [],
+
+    });
+  }
 
   Future updateFriend(String fullName) async {
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
@@ -368,9 +380,7 @@ class DatabaseService {
 
   // 특정 사용자의 데이터를 얻어오기
   Future getUserData(String email) async {
-    QuerySnapshot snapshot = await userCollection.where(
-        'email', isEqualTo: email)
-        .get(); //특정 이메일을 가지고있는 documents를 얻어옴
+    QuerySnapshot snapshot = await userCollection.where('email', isEqualTo: email).get(); //특정 이메일을 가지고있는 documents를 얻어옴
     print(snapshot.docs[0].data()); //documents의 첫번째 인덱스의 데이터를 출력
     return snapshot; //특정 이메일의 정보를 가지고있는 documents의 정보를 저장한 snapshot
   }

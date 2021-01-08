@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:linkproto/pages/sign_in_test.dart';
+import 'package:get/get.dart';
+import 'package:linkproto/pages/createNickNameG.dart';
+import 'file:///D:/flutter_pratice/Alchemy/lib/services/google_auth_service.dart';
 import '../helper/helper_functions.dart';
 import 'home_page.dart';
 import '../services/auth_service.dart';
@@ -22,10 +25,14 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>(); //현재 앱 전체에서 사용될수있는 독특한 키를 생성하기 위해 GlobalKey인스턴스 생성
   bool _isLoading = false;
 
+
+
   // text field state
   String email = '';
   String password = '';
   String error = '';
+  String fullName ='';
+
 
 
   _onSignIn() async {
@@ -33,11 +40,9 @@ class _SignInPageState extends State<SignInPage> {
       setState(() {
         _isLoading = true;
       });
-
       await _auth.signInWithEmailAndPassword(email, password).then((result) async { //이메일과 비밀번호를 입력받아서 인증하고, 결과를 result에 반환
         if (result != null) { //result에 값이 반환되었다면
           QuerySnapshot userInfoSnapshot = await DatabaseService().getUserData(email); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
-
           await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
           await HelperFunctions.saveUserEmailSharedPreference(email); //현재 사용자의 email을 저장
           await HelperFunctions.saveUserNameSharedPreference(
@@ -71,43 +76,38 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Widget _signInButton() {
-    return OutlineButton(
-      splashColor: Colors.grey,
-      onPressed: () {
-        signInWithGoogle().then((result) async{
-          if (result != null){
+  /*Widget _signInButton() {
+              return OutlineButton(
+                splashColor: Colors.grey,
+                onPressed: () async{
+                  signInWithGoogle().then((result)async{
+
+                    DatabaseService().updateUserDataG(result.displayName, result.email);
+                    QuerySnapshot userInfoSnapshot = await DatabaseService().getUserData(result.email); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
+                    await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
+                    await HelperFunctions.saveUserEmailSharedPreference(result.email); //현재 사용자의 email을 저장
+                    await HelperFunctions.saveUserNameSharedPreference(
+                        userInfoSnapshot.docs[0].data()["fullName"]);
+                    // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분
+                    print("Signed In");
+                    await HelperFunctions.getUserLoggedInSharedPreference().then((value) {
+                      print("Logged in: $value");
+                    });
+                    await HelperFunctions.getUserEmailSharedPreference().then((value) {
+                      print("Email: $value");
+                    });
+                    await HelperFunctions.getUserNameSharedPreference().then((value) {
+                      print("Full Name: $value");
+                    });
+
+                    //로그인후 첫 페이지 어디로 할지 선정(현재 HomePage()로 설정 됨)
+                    //context에는 현재 클래스에서 가장 가까운 인스턴스의 상태를 저장하고있다.(이해하기어렵다면, 그냥 로그인 할때 사용자 정보를 context에 저장하고있다고보면된다.)
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+
+                  });
 
 
-            /*QuerySnapshot userInfoSnapshot = await DatabaseService().getUserData(email); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
 
-            await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
-            await HelperFunctions.saveUserEmailSharedPreference(email); //현재 사용자의 email을 저장
-            await HelperFunctions.saveUserNameSharedPreference(
-                userInfoSnapshot.docs[0].data()["fullName"]
-            );// 현재 사용자의 풀네임을 저장
-
-
-            // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분
-            print("Signed In");
-            await HelperFunctions.getUserLoggedInSharedPreference().then((value) {
-              print("Logged in: $value");
-            });
-            await HelperFunctions.getUserEmailSharedPreference().then((value) {
-              print("Email: $value");
-            });
-            await HelperFunctions.getUserNameSharedPreference().then((value) {
-              print("Full Name: $value");
-            });*/
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) {
-                  return HomePage();
-                },
-              ),
-            );
-          }
-        });
 
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
@@ -134,8 +134,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ),
     );
-  }
-
+  }*/
   @override
   Widget build(BuildContext context) {
     return _isLoading ? Loading() : Scaffold( //로그인 성공시 Loading() / 실패시 Scaffold 실행(참고로 첫 로그인페이지화면과는 똑같이생겼지만, 여기 화면은 별개다.
@@ -212,7 +211,6 @@ class _SignInPageState extends State<SignInPage> {
                   SizedBox(height: 10.0),
                   //_signInButton(),
                   Text.rich( //Text의 생성자 Text.rich
-
                     TextSpan(
                       text: "계정이 아직 없으신가요? ",
                       style: TextStyle(color: Colors.white, fontSize: 12.0),
