@@ -1,14 +1,17 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:linkproto/pages/agora_page.dart';
 import 'package:linkproto/pages/groupChatSettings.dart';
 import 'package:linkproto/services/admob.dart';
 import 'package:linkproto/widgets/participant_tile.dart';
 import '../services/database_service.dart';
 import '../widgets/message_tile.dart';
-import '../routes/routes.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 
 class ChatPage extends StatefulWidget {
@@ -38,19 +41,43 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController messageEditingController = new TextEditingController();
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
+  FocusNode myFocusNode;
   User _user;
   AdMobManager adMob= AdMobManager();
+  final _picker = ImagePicker();
+  FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  File _image;
+  File _video;
+  bool isSwitchedPlus=false;
+  String _profileImageURL = '';
+  String _profileVideoURL = '';
+  int imageUploadCount=0;
+  int videoUploadCount=0;
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+
+
+
 
 
 
   @override
   void initState() {
     super.initState();
-    getUserID();
+    prepareService();
 
+  }
+  @override
+  void dispose(){
 
+    prepareService().dispose();
+    super.dispose();
+  }
+  prepareService() async{
+
+    _user = FirebaseAuth.instance.currentUser;
     _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
     _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
+    myFocusNode = FocusNode();
 
 
     //DB로 부터 groupID를 통해 특정 그룹의 채팅정보를 반환받아서 val 매개변수에저장한후 Stream<QuerySnapshot>형태의 _chat변수에 저장함으로써,
@@ -62,17 +89,53 @@ class _ChatPageState extends State<ChatPage> {
         _chats = val;
       });
     });
-  }
-  @override
+    DatabaseService().getImageUploadCount(widget.userName).then((_imageUploadCount){
+      setState(() {
+        imageUploadCount = _imageUploadCount;
+      });
+    });
+    DatabaseService().getVideoUploadCount(widget.userName).then((_videoUploadCount){
+      setState(() {
+        videoUploadCount = _videoUploadCount;
+      });
+    });
+    var androidInitialize = AndroidInitializationSettings('app_icon');
+    var iOSinitialize = IOSInitializationSettings();
+    var initializationsSettings = InitializationSettings(android: androidInitialize, iOS: iOSinitialize);
 
-  getUserID() async{
-    _user = FirebaseAuth.instance.currentUser;
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    _flutterLocalNotificationsPlugin.initialize(initializationsSettings,
+        onSelectNotification: notificationSelected);
+
 
   }
+
+
+  Future notificationSelected(String payload) async{
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Notification Payload"),
+        content: Text("Payload: $payload")
+      )
+      );
+  }
+
+  Future<void> _showNotification() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
 
   Widget _chatMessages(){
     return Container(
-
         height: MediaQuery.of(context).size.height-150,
         width: MediaQuery.of(context).size.width, //기기별 디스플레이에맞게 너비조절시 MediaQuery사용
         child: StreamBuilder(
@@ -153,17 +216,144 @@ class _ChatPageState extends State<ChatPage> {
 
   }
 
+
+
+
+  void _uploadImageToStorage(ImageSource source) async {
+
+    PickedFile pickedFile = await _picker.getImage(source: source);
+    File image = File(pickedFile.path);
+    if (image == null) return;
+
+    setState(() {
+      _image = image;
+    });
+
+    // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
+    Reference storageReference = _firebaseStorage.ref('group_chat_image/${widget.groupName}/${widget.userName}/${widget.userName}_$imageUploadCount');
+
+    try{
+      await storageReference.putFile(_image).then((_) async{
+        //위 함수가 실패해도 아래 명령어가 동작할까? 실패하면 아래 명령어로 가지않고 바로 FirebaseException으로 가서 Failed Upload가 실행될까? 확실히 모르겠으나,
+        //putFile의 코드를보면 예외발생시 바로 아래 예외코드로 가기때문에 콜백은 동작안할것으로 보이기때문에, 예외쪽에서 DB에 등록된 ImageUploadCount를 -1해주지않아도 될것으로보임.
+
+        await DatabaseService().updateImageUploadCount(widget.userName);
+        await DatabaseService().getImageUploadCount(widget.userName).then((_imageUploadCount){
+          setState(() {
+            imageUploadCount = _imageUploadCount;
+          });
+        });
+      });
+
+    }on FirebaseException catch (e){
+
+      print("Failed Upload");
+    }
+
+
+
+
+    String downloadURL = await storageReference.getDownloadURL();
+
+
+
+    if(downloadURL!=null){
+
+      setState(() {
+        _profileImageURL = downloadURL;
+
+      });
+
+    }
+    Map<String, dynamic> chatMessageMap = {
+      "message": _profileImageURL, //메세지 입력란에 입력한 메세지
+      "sender": widget.userName, //특정 사용자 이름
+      'time': DateTime.now().millisecondsSinceEpoch,//현재시간을 millisecond단위로 time에 저장
+    };
+    //
+
+    DatabaseService().sendMessage(widget.groupId, chatMessageMap); //특정 groupId에 위 Map<String,dynamic>형태의 데이터 전송
+
+
+  }
+
+   _uploadVideoToStorage(ImageSource source) async {
+
+    PickedFile pickedFile = await _picker.getVideo(source: source);
+    File video = File(pickedFile.path);
+    if (video == null) return;
+
+    setState(() {
+      _video = video;
+    });
+
+    // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
+    Reference storageReference = _firebaseStorage.ref('group_chat_video/${widget.groupName}/${widget.userName}/${widget.userName}_$videoUploadCount');
+
+    try{
+      await storageReference.putFile(_video).then((_) async{
+        await DatabaseService().updateVideoUploadCount(widget.userName);
+        await DatabaseService().getVideoUploadCount(widget.userName).then((_videoUploadCount){
+          setState(() {
+            videoUploadCount = _videoUploadCount;
+          });
+        });
+
+      });
+
+    }on FirebaseException catch (e){
+      print("Failed Upload");
+
+    }
+
+
+
+
+    String downloadURL = await storageReference.getDownloadURL();
+
+
+
+    if(downloadURL!=null){
+
+      setState(() {
+        _profileVideoURL = downloadURL;
+
+      });
+
+    }
+
+    Map<String, dynamic> chatMessageMap = {
+      "message": _profileVideoURL, //메세지 입력란에 입력한 메세지
+      "sender": widget.userName, //특정 사용자 이름
+      'time': DateTime.now().millisecondsSinceEpoch,//현재시간을 millisecond단위로 time에 저장
+    };
+    //
+
+    DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+    // 업로드된 사진의 URL을 페이지에 반영
+
+
+  }
+
+
+
+
   //채팅 페이지 디자인 관련 코드인데, 직접 실시간으로 조절하면서 디자인하면되니 설명은 생략함.
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     //그룹채팅창에서 아무데나 터치해도 될수있게 하기위해 GestureDetector로 Scaffold 전체를 감싸줌
     return WillPopScope(
       onWillPop: whenPushedMachineBack,
         child:GestureDetector(
       onTap:(){
+        setState(() {
+          isSwitchedPlus=false;
+        });
         //사용자들이 그룹채팅창에서 아무데나 터치해도 TextEditor이 내려갈수있게?사라질수있게??하기위해 Focus Out시키는 코드를 삽입
         FocusScopeNode currentFocus = FocusScope.of(context); //현재 앱의 focus를 어디에 두고있는지 정보를 저장하고있는 context를 가져와서 currentFocus에 저장
         //Focus가 현재 잡혀있다면(아래 코드는 포커스관련 오류방지를위해 반드시 작성해주어야함)
+
         if(!currentFocus.hasPrimaryFocus){
           currentFocus.unfocus();
         }
@@ -187,9 +377,7 @@ class _ChatPageState extends State<ChatPage> {
           width:250,
             child: Stack(
             children: <Widget>[
-              Align(child: Text("참여자 목록",style: TextStyle(height:3, fontSize:30))),
               Drawer(
-
                 child: StreamBuilder (
                 stream: FirebaseFirestore.instance.collection("groups").doc(widget.groupId).snapshots(),
                 builder: (context,snapshot) {
@@ -229,34 +417,41 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
               Align(
-                alignment: Alignment.bottomLeft,
-                child:IconButton(
-                    icon: Icon(Icons.exit_to_app_rounded,size:40, color: Colors.white),
-                    onPressed: () async{
+                alignment: Alignment.bottomCenter,
+                child:
+                Container(
+                  color: Colors.black54,
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                      IconButton(
+
+                          icon: Icon(Icons.exit_to_app_rounded,size:40, color: Colors.white),
+
+                          onPressed: () async{
 
 
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
 
-                      await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
-                      await DatabaseService().deleteGroupIfNoMembers(widget.groupId);// 맴버가 아무도없다면 그룹 폭파
+                            await DatabaseService(uid:_user.uid).deleteMembers(widget.groupId, widget.groupName, widget.userName); //그룹에서 맴버 삭제
+                            await DatabaseService().deleteGroupIfNoMembers(widget.groupId);// 맴버가 아무도없다면 그룹 폭파
 
-                    }
-                ),
+                          }
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.settings),
+                          iconSize: 30,
+                          color: Colors.white,
+                          onPressed: () async{
+
+                            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GroupChatSettingsPage()));
+                          }
+                      )
+                    ])),
               ),
-              Align(
 
-                alignment: Alignment.bottomRight,
-                child:IconButton(
-                    icon: Icon(Icons.settings),
-                    iconSize: 30,
-                    color: Colors.white,
-                    onPressed: () async{
-
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => GroupChatSettingsPage()));
-                    }
-                ),
-              )
             ]
     )
       )
@@ -271,8 +466,31 @@ class _ChatPageState extends State<ChatPage> {
                 color: Color(0xffb23aee),
                 child: Row(
                   children: <Widget>[
+                    isSwitchedPlus?IconButton(
+                        onPressed: (){
+
+                          // FocusScope.of(context).unfocus();
+                          setState(() {
+                            isSwitchedPlus=false;
+                          });
+
+                          FocusScope.of(context).requestFocus(myFocusNode);
+
+                        },
+                        icon: Icon(Icons.close_rounded,size: 40, color: Colors.white)) :
+                    IconButton(
+                        onPressed: () async{
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            isSwitchedPlus=true;
+                          });
+                          },
+                        icon: Icon(Icons.add_box_outlined,size: 40, color: Colors.white)
+                    ),
+                    SizedBox(width:10),
                     Expanded(
                       child: TextField(
+                        focusNode: myFocusNode,
                         controller: messageEditingController,
                         style: TextStyle(
                           color: Colors.white
@@ -287,7 +505,6 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ),
                     ),
-
                     SizedBox(width: 5.0),
 
                     GestureDetector(
@@ -312,7 +529,57 @@ class _ChatPageState extends State<ChatPage> {
                     )
                   ],
                 ),
+              ),
+            isSwitchedPlus?Container(
+                color: Colors.grey,
+                width: deviceWidth,
+                height: 150,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 100,
+                      height:100,
+                      color:Colors.blue,
+                      child:
+                IconButton(
+
+                    icon: Icon(Icons.photo_rounded,size: 50, color: Colors.white),
+
+                  onPressed: () {
+                     _uploadImageToStorage(ImageSource.gallery);
+
+                  },
+                )),
+                    Container(
+                        width:100,
+                        height:100,
+                        color:Colors.blue,
+                        child:
+                        IconButton(
+                            onPressed: () {
+                              _showNotification();
+
+                            },
+                            icon: Icon(Icons.check,size: 50, color: Colors.white))
+                    ),
+                Container(
+                  width:100,
+                    height:100,
+                    color:Colors.blue,
+                    child:
+                IconButton(
+                    onPressed: () {
+                      _uploadVideoToStorage(ImageSource.gallery);
+
+                    },
+                  icon: Icon(Icons.video_call_rounded,size: 50, color: Colors.white))
+                )]
+
               )
+            )
+                :SizedBox.shrink(),
           ],
         )),
       floatingActionButton: _currentScrollPosition==0?Stack(children:[ //버튼 위치 구체적지정을위해 Stack에 넣어줘야 함

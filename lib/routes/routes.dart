@@ -10,7 +10,7 @@ final routes = {
 
 
   '/home' : (BuildContext context) => HomePage(),
-  '/auth': (BuildContext context) => AuthenticatePage(),
+  //'/auth': (BuildContext context) => AuthenticatePage(),
   '/agora': (BuildContext context) => AgoraPage(),
   '/group': (BuildContext context) => GroupPage(),
 

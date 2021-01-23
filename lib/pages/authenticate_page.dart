@@ -1,3 +1,5 @@
+/*
+
 import 'package:flutter/material.dart';
 import '../pages/register_page.dart';
 import '../pages/signin_page.dart';
@@ -27,3 +29,4 @@ class _AuthenticatePageState extends State<AuthenticatePage> {
     }
   }
 }
+*/

@@ -115,7 +115,8 @@ class _ParticipantTileState extends State<ParticipantTile> {
         },
         child:
         Padding(
-          padding: EdgeInsets.only(left:15),
+
+          padding: EdgeInsets.only(left:15,bottom: 20),
             child:SizedBox( //Card size 조절하기위한 SizedBox
                 height:50.0,
                 child: Row(children: [
@@ -131,8 +132,8 @@ class _ParticipantTileState extends State<ParticipantTile> {
                           )
                       ),
                         SizedBox(width:15),
-                        Text(widget.participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 70),
+                        Container( width: 100,child:Text(widget.participantName,style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold))),
+                        SizedBox(width: 10),
                         widget.senderName!=widget.participantName?IconButton(
                           onPressed: () async{
                               await DatabaseService(uid:_user.uid).updateRequest(widget.participantName,widget.senderName);

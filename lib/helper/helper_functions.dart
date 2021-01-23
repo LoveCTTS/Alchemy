@@ -7,6 +7,7 @@ class HelperFunctions{
    static String sharedPreferenceUserLoggedInKey = "ISLOGGEDIN";
    static String sharedPreferenceUserNameKey = "USERNAMEKEY";
    static String sharedPreferenceUserEmailKey = "USEREMAILKEY";
+   static String sharedPreferenceUserPhoneNumberKey = "USERPHONENUMBERKEY";
 
   // SharedPreferences라는 클래스는 소,중량의 데이터를 저장하기위한 용도이며, 앱 종료후에도 데이터가 XML형태로 저장되어있기때문에,
   //재 실행 후에도 데이터를 그대로 가져와서 사용할 수 있음.
@@ -27,10 +28,14 @@ class HelperFunctions{
     return await preferences.setString(sharedPreferenceUserNameKey, userName);
   }
 
+   static Future<bool> saveUserPhoneNumberSharedPreference(String userPhoneNumber) async{
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     return await preferences.setString(sharedPreferenceUserPhoneNumberKey, userPhoneNumber);
+   }
   static Future<bool> saveUserEmailSharedPreference(String userEmail) async{
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.setString(sharedPreferenceUserEmailKey, userEmail);
-  }
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     return await preferences.setString(sharedPreferenceUserEmailKey, userEmail);
+   }
 
 
 
@@ -43,6 +48,11 @@ class HelperFunctions{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getString(sharedPreferenceUserNameKey);
   }
+
+   static Future<String> getUserPhoneNumberSharedPreference() async{
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     return preferences.getString(sharedPreferenceUserPhoneNumberKey);
+   }
 
   static Future<String> getUserEmailSharedPreference() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();

@@ -42,23 +42,18 @@ class _AgoraPageState extends State<AgoraPage> {
 
     adMob.showBanner();
     super.initState();
-    prepareSerivce();
+    prepareService();
 
   }
 
   @override
   void dispose(){
 
-
-
-    prepareSerivce().dispose();
     super.dispose();
-
-
 
   }
 
-  prepareSerivce() async {
+  prepareService() async {
     _user = FirebaseAuth.instance.currentUser; //현재 접속된 사용자에 대한 정보를 _user에 저장
 
     getGroupSnapshots= DatabaseService().getGroupSnapshots();
@@ -68,19 +63,7 @@ class _AgoraPageState extends State<AgoraPage> {
         _userName = value;
       });
     });
-    //특정 유저가 속한 그룹정보를 매개변수 snapshot에 복사하고 그 정보를 _groups에 저장
-    DatabaseService(uid: _user.uid).getUserSnapshots().then((snapshots) {
-      // print(snapshots);
-      setState(() {
-        _groups = snapshots;
-      });
-    });
-    //특정 유저의 이메일 정보를 SharedPreference로부터 반환받아서, 매개변수 value에 복사하여 현재 페이지의 _email에 저장
-    await HelperFunctions.getUserEmailSharedPreference().then((value) {
-      setState(() {
-        _email = value;
-      });
-    });
+
   }
 
   Widget mike(){

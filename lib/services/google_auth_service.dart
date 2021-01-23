@@ -5,12 +5,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/services/database_service.dart';
 
+class GoogleAuthService{
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
 Future<User> signInWithGoogle() async {
 
-  await Firebase.initializeApp();
+  //await Firebase.initializeApp();
 
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
   final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
@@ -22,6 +23,7 @@ Future<User> signInWithGoogle() async {
 
   final UserCredential authResult = await _auth.signInWithCredential(credential);
   final User user = authResult.user;
+
 
   if (user != null) {
     assert(!user.isAnonymous);
@@ -43,4 +45,6 @@ void signOutGoogle() async{
 
   await googleSignIn.signOut();
   print("User Signed Out");
+}
+
 }

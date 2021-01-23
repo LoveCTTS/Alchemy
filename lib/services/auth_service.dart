@@ -1,13 +1,21 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:linkproto/services/google_auth_service.dart';
 import '../helper/helper_functions.dart';
-import '../models/customuser.dart';
 import '../services/database_service.dart';
 
 class AuthService {
+
+  /*static final AuthService _AuthService = AuthService._internal();
+
+  factory AuthService(){
+    return _AuthService;
+  }
+  AuthService._internal();*/
   final FirebaseAuth _auth = FirebaseAuth.instance; //Firebase서비스를 이용하기위해 인증과 관련된 인스턴스 생성
+  GoogleAuthService _googleAuth = GoogleAuthService();
 
 
   // //FirebaseUser로 접속하였을때 User객체 생성 함수
@@ -19,6 +27,7 @@ class AuthService {
 
 
   Stream<User> get authStateChanges => _auth.authStateChanges();
+
   //로그인페이지에서 이메일과 비밀번호를 입력하였을때 인증처리 과정을 보여주는 함수
   Future signInWithEmailAndPassword(String email, String password) async {
     try { //에러가 있을수도있는 명령어들은 try{ }안에 전부다 기입
@@ -30,8 +39,10 @@ class AuthService {
   }
 
 
+
+
   // 풀네임/이메일/비밀번호로 회원 등록할 때 쓰이는 함수
-  Future registerWithEmailAndPassword(String fullName, String email, String password) async {
+  Future registerWithEmailAndPassword_1(String fullName, String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       //createUserWithEmailAndPassword를 통해 새로운 이메일과 비밀번호를 가진 인스턴스생성
@@ -40,9 +51,37 @@ class AuthService {
       //FirebaseUser에 새로운 user 초기화
       await DatabaseService(uid: user.uid,userName: fullName).updateUserData(fullName, email, password);
       //Firebase DB에 새로운 풀네임/이메일/비밀번호를 가진 user 갱신
-    } catch(e) {
-      print(e.toString());
-      return null;
+    } on FirebaseAuthException catch(e) {
+      if (e.code == 'weak-password') {
+        print('비밀번호가 보안에 너무 취약합니다.');
+      } else if (e.code == 'email-already-in-use') {
+        print('이메일이 이미 사용되고 있습니다.');
+      }
+    } catch (e){
+      print(e);
+    }
+  }
+  Future registerWithEmailAndPassword_2(String email, String password) async {
+
+    String message = '';
+    try {
+
+      await _auth.createUserWithEmailAndPassword(email: email, password: password).then((userData){
+
+        userData.user.sendEmailVerification();
+        message = "이메일에 전송된 링크를 눌러주세요.";
+        return message;
+      });
+    } on FirebaseAuthException catch(e) {
+      if (e.code == 'weak-password') {
+        message = '비밀번호가 보안에 너무 취약합니다.';
+        return message;
+      } else if (e.code == 'email-already-in-use') {
+        message = '이메일이 이미 사용되고 있습니다.';
+        return message;
+      }
+    } catch (e){
+      return e.toString();
     }
   }
 
@@ -50,7 +89,7 @@ class AuthService {
   Future signOut() async {
     try {
 
-      signOutGoogle();
+      _googleAuth.signOutGoogle();
       await HelperFunctions.saveUserLoggedInSharedPreference(false); //로그인 되어있는지 안되어있는지 상태를 저장하는 변수를 false값으로 전환
       await HelperFunctions.saveUserEmailSharedPreference(''); //email정보도 null값으로 전환
       await HelperFunctions.saveUserNameSharedPreference(''); //이름도 null값으로 전환
@@ -73,4 +112,7 @@ class AuthService {
       return null;
     }
   }
+
+
+
 }

@@ -44,6 +44,7 @@ class GroupTileState extends State<GroupTile>{
 
    _prepareService() async{
     _user= FirebaseAuth.instance.currentUser;
+
     _userName = await HelperFunctions.getUserNameSharedPreference();
     _hasNetworkImage = await groupNetworkImage();
 
@@ -54,7 +55,7 @@ class GroupTileState extends State<GroupTile>{
 
     Reference storageReference =
     _firebaseStorage.ref('group_image/$_userName' + '[0]');
-    String downloadURL = await storageReference.getDownloadURL();
+    String downloadURL = await  storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
     }else if(downloadURL != null){
@@ -131,7 +132,7 @@ class GroupTileState extends State<GroupTile>{
 
 
 
-                                adMob.removeBannerAd();
+                                await adMob.removeBannerAd();
                                 isSameRoomPassword = await DatabaseService().isSameRoomPassword(widget.groupId, roomPassword);
                                 if(isSameRoomPassword){
                                   await DatabaseService(uid: _user.uid).JoiningGroupAtTouch(
@@ -154,7 +155,7 @@ class GroupTileState extends State<GroupTile>{
 
 
       }else{
-            adMob.removeBannerAd();
+            await adMob.removeBannerAd();
         await DatabaseService(uid: _user.uid,userName:widget.userName).JoiningGroupAtTouch(
             widget.groupId, widget.groupName, widget.userName);
         //채팅방으로 가기

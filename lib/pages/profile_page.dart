@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/pages/signin_page.dart';
 import 'package:linkproto/services/admob.dart';
 import 'package:linkproto/services/auth_service.dart';
 import 'package:linkproto/services/database_service.dart';
@@ -39,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String hashTag='';
   final _picker = ImagePicker();
   FToast fToast;
+  AdMobManager adMob = AdMobManager();
 
 
   //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
@@ -63,10 +65,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void dispose(){
     super.dispose();
     ageController.dispose();
-    //localController.dispose();
-    // hashTagController.dispose();
     appealController.dispose();
-    _prepareService().dispose();
+
 
   }
 
@@ -442,16 +442,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 )
             ),
-            /*TextField(
-
-                controller: hashTagController,
-                maxLines: 2,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  border: OutlineInputBorder(),
-                  labelText: '관심 해시태그 ',
-                )
-            ),*/
             SizedBox(height:15),
             TextField(
 
@@ -467,18 +457,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
             ),
             SizedBox(height:30),
-            /*
-            TextField(
-                maxLines: 1,
-                controller: localController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  border: OutlineInputBorder(),
-                  labelText: '거주지 ',
-                )
-            ),
-
-             */
 
             Row(children: [
               Text("나이 표시",style:TextStyle(color: Colors.white)),
@@ -526,8 +504,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: ()async{
                   await _showToastAfterSave();
               DatabaseService(userName: _userName).updateAppeal(appealController.text);
-              //DatabaseService(userName: _userName).updateLocal(localController.text);
-              //DatabaseService(userName: _userName).updateHashTag(hashTagController.text);
               DatabaseService(userName: _userName).updateAge(ageController.text);
 
             }, child: Container(
@@ -552,7 +528,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 SharedPreferences preferences = await SharedPreferences.getInstance();
                 await preferences.clear();
                 await _auth.signOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
+
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => SignInPage()), (Route<dynamic> route) => false);
+
               },
               child: Container(
                     width: 150,

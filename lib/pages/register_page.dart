@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _isLoading = true;
       });
 
-      await _auth.registerWithEmailAndPassword(fullName, email, password).then((result) async {
+      await _auth.registerWithEmailAndPassword_1(fullName, email, password).then((result) async {
         if (result != null) {
           await HelperFunctions.saveUserLoggedInSharedPreference(true);
           await HelperFunctions.saveUserEmailSharedPreference(email);

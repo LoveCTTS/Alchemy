@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:linkproto/pages/messaging_widget.dart';
 import 'package:linkproto/pages/store_page.dart';
 import '../helper/helper_functions.dart';
 import '../pages/authenticate_page.dart';
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   String friendsListPageUserName='';
 
-  final List _children = [StorePage(),FriendsListPage(),AgoraPage(),GroupPage(),ProfilePage()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
+  final List _children = [StorePage(),FriendsListPage(),AgoraPage(),GroupPage(),ProfilePage(), MessagingWidget()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
   //변경이 되면 안되기때문에 final 키워드 사용(Constant랑 같은 의미)
 
   @override
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         //Center에 의해서 위젯이 중간에 배치된다.
 
         bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
+            type: BottomNavigationBarType.fixed, //하단바의 아이템 제한을 풀 수 있게해주는 특성
             currentIndex: _currentIndex,
             onTap: (int index){ //매개변수 index(터치된 아이콘의 인덱스값이 index에 복사됨
               setState((){ //상태 set
@@ -110,6 +111,11 @@ class _HomePageState extends State<HomePage> {
               new BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle, size:20.0),
                 title: Text('프로필'),
+
+              ),
+              new BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle, size:20.0),
+                title: Text('테스트'),
 
               )
             ]));

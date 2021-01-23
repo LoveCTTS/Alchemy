@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../services/google_auth_service.dart';
 import 'first_screen.dart';
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Text(
-                  'Sign in with Google',
+                  '구글로 로그인하기',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.grey,
@@ -71,3 +72,5 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
 }
+
+ */

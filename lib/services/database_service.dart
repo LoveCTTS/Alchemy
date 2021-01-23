@@ -2,14 +2,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService {
 
   final String uid; //문자열 형태의 상수형 uid 변수 선언
   final String userName;
 
-  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage
-      .instance;
+
+  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
 
   //인스턴스를 생성함과동시에 uid를 받아오기위한 생성자 선언
   DatabaseService({
@@ -31,6 +32,7 @@ class DatabaseService {
 
   // 사용자의 데이터를 업데이트
   Future updateUserData(String fullName, String email, String password) async {
+
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
     return await userCollection.doc(userName).set({
       'fullName': fullName,
@@ -43,20 +45,38 @@ class DatabaseService {
 
     });
   }
-  Future updateUserDataG(String fullName, String email) async {
+  Future setUserData(String nickName, String email) async {
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
-    return await userCollection.doc(fullName).set({
-      'fullName': fullName,
+    return await userCollection.doc(nickName).set({
+      'nickName': nickName,
       'email': email,
       'groups': [],
       'profilePic': '',
       'friends': [],
       'request': [],
+      'imageUploadCount': 0,
+      'videoUploadCount' : 0
+
+    });
+  }
+  Future setPhoneUserData(String nickName, String phoneNumber) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(nickName).set({
+      'nickName': nickName,
+      'email': '',
+      'phoneNumber': phoneNumber,
+      'groups': [],
+      'profilePic': '',
+      'friends': [],
+      'request': [],
+      'imageUploadCount': 0,
+      'videoUploadCount' : 0
 
     });
   }
 
   Future updateFriend(String fullName) async {
+
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
     return await userCollection.doc(userName).update({
       'friends': FieldValue.arrayUnion([fullName]),
@@ -68,6 +88,20 @@ class DatabaseService {
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
     return await userCollection.doc(receiverName).update({
       'request': FieldValue.arrayUnion([senderName]),
+
+    });
+  }
+  Future updateImageUploadCount(String userName) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'imageUploadCount': FieldValue.increment(1),
+
+    });
+  }
+  Future updateVideoUploadCount(String userName) async {
+    //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
+    return await userCollection.doc(userName).update({
+      'videoUploadCount': FieldValue.increment(1),
 
     });
   }
@@ -115,7 +149,7 @@ class DatabaseService {
     });
   }
 
-
+//-----------------------------Create Data-------------------------------------------------------------------
 
   // 그룹 생성
   Future createGroup(String userName, String groupName) async {
@@ -309,6 +343,49 @@ class DatabaseService {
       return false;
     }
   }
+  Future<bool> isGuserJoined(String email) async{
+
+    bool isJoined=false;
+    await userCollection.where("email",isEqualTo: email).get().then((value){
+      if(value.size != 0){
+        print("gmail is exist");
+
+        isJoined = true;
+      }else if(value.size == 0){
+        print("gmail is not exist");
+        isJoined = false;
+      }
+    });
+    return isJoined;
+
+  }
+  Future<bool> isPhoneUserJoinedbyNickName(String userName) async{
+
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    if(userDocSnapshot.exists){
+      return true;
+    }else if(!userDocSnapshot.exists){
+      return false;
+    }
+  }
+  Future<bool> isPhoneUserJoinedByNumber(String number) async{
+
+    await userCollection.where('phoneNumber',isEqualTo: number).get().then((snapshot){
+      if(snapshot.size!=0){
+        print("I'm already joined : ${snapshot.size}");
+        return true;
+      }else if(snapshot.size ==0){
+        print("I'm not joined : ${snapshot.size}");
+        return false;
+      }
+    });
+
+
+
+  }
+
 
   Future<bool> isSecretRoom(String groupId) async {
     DocumentReference groupDocRef = groupCollection.doc(groupId);
@@ -376,7 +453,7 @@ class DatabaseService {
     }
   }
 
-  //-----------------------------------------------------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------------Get Data----------------------------------------------------------------------------------------------------------
 
   // 특정 사용자의 데이터를 얻어오기
   Future getUserData(String email) async {
@@ -384,12 +461,30 @@ class DatabaseService {
     print(snapshot.docs[0].data()); //documents의 첫번째 인덱스의 데이터를 출력
     return snapshot; //특정 이메일의 정보를 가지고있는 documents의 정보를 저장한 snapshot
   }
+  Future getPhoneUserData(String phoneNumber) async{
+    QuerySnapshot snapshot = await userCollection.where('phoneNumber', isEqualTo: phoneNumber).get();
+    return snapshot;
+  }
 
   //특정 사용자의 정보를 얻어 오기(snapshots()함수를 사용하면 데이터를 수정되자마자 바로 적용되어야하기때문에, StreamBuilder를 사용해야만 함.)
 
   Future getUserSnapshots() async {
       return userCollection.doc(userName).snapshots();
 
+  }
+  Future<int> getImageUploadCount(String userName) async{
+
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return userDocSnapshot.data()["imageUploadCount"];
+  }
+  Future<int> getVideoUploadCount(String userName) async{
+
+    DocumentReference userDocRef = userCollection.doc(userName);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    return userDocSnapshot.data()["videoUploadCount"];
   }
 
   Future<String> getFriendChatMessage(String friendChatGroupId) async{
@@ -518,6 +613,7 @@ class DatabaseService {
   }
 
 
+  //---------------삭제--------------------------------------
   Future deleteMembers(String groupId, String groupName,
       String userName) async {
     DocumentReference userDocRef = userCollection.doc(

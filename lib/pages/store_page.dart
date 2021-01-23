@@ -251,7 +251,6 @@ class _StorePageState extends State<StorePage> {
                                 });
                               },
                               child:
-                              Wrap(children: [
                                     Container(
                                   width:screenData.width/5,
                                   height:screenData.height/5,
@@ -266,8 +265,6 @@ class _StorePageState extends State<StorePage> {
                                   ),
                                       child: Align(alignment: Alignment.bottomCenter,child:Text("평범한 확성기",style: TextStyle(color:Colors.white)))
                                 ),
-
-                              ],),
                             ),
 
                             GestureDetector(
@@ -281,7 +278,7 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=6000;
                                   });
                                 },
-                                      child: Wrap(children: [
+                                      child:
                                         Container(
                                           width:screenData.width/5,
                                           height:screenData.height/5,
@@ -296,8 +293,7 @@ class _StorePageState extends State<StorePage> {
                                           ),
                                           child: Align(alignment: Alignment.bottomCenter,child:Text("황금 확성기",style: TextStyle(color:Colors.white)))
                                         ),
-                                      ],),
-                                ),
+                                      ),
                             GestureDetector(
                                 onTap: (){
 
@@ -309,7 +305,7 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=7000;
                                   });
                                 },
-                                      child: Wrap(children: [
+                                      child:
                                         Container(
                                           width:screenData.width/5,
                                           height:screenData.height/5,
@@ -324,7 +320,6 @@ class _StorePageState extends State<StorePage> {
                                           ),
                                           child: Align(alignment: Alignment.bottomCenter,child:Text("손편지",style: TextStyle(color:Colors.white)))
                                         ),
-                                      ],),
                                 ),
                             GestureDetector(
                                 onTap: (){
@@ -337,7 +332,7 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=8000;
                                   });
                                 },
-                                      child: Wrap(children: [
+                                      child:
                                         Container(
 
                                           width:screenData.width/5,
@@ -352,8 +347,7 @@ class _StorePageState extends State<StorePage> {
                                             ),
                                           ),
                                             child:Align(alignment: Alignment.bottomCenter,child:Text("사랑의 묘약",style: TextStyle(color:Colors.white)))
-                                        ),
-                                      ],)),
+                                      )),
                             GestureDetector(
                                 onTap: (){
 
@@ -365,7 +359,7 @@ class _StorePageState extends State<StorePage> {
                                     itemPrice=999999;
                                   });
                                 },
-                              child: Wrap(children: [
+                              child:
                                         Container(
 
                                           width:screenData.width/5,
@@ -384,7 +378,6 @@ class _StorePageState extends State<StorePage> {
 
                                         ),
 
-                                      ],),
                                 ),
                             GestureDetector(
                                 onTap: (){
@@ -396,8 +389,7 @@ class _StorePageState extends State<StorePage> {
                                     itemDescription="닉네임의 색깔을 무작위로 바꿔주는 염색약";
                                     itemPrice=5000;
                                   });
-                                }, child: Wrap(children: [
-                                        Container(
+                                }, child: Container(
                                           width:screenData.width/5,
                                           height:screenData.height/5,
                                           decoration: BoxDecoration(
@@ -411,8 +403,6 @@ class _StorePageState extends State<StorePage> {
                                           ),
                                           child: Align(alignment: Alignment.bottomCenter,child:Text("신비로운 물약",style: TextStyle(color:Colors.white)))
                                         ),
-
-                                      ],),
                                 ),
 
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,7 @@ class _GroupPageState extends State<GroupPage> {
   @override
   void dispose(){
 
-    _getUserAuthAndJoinedGroups().dispose();
+
     super.dispose();
   }
 
@@ -224,7 +223,7 @@ class _GroupPageState extends State<GroupPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Group', style: TextStyle(color: Colors.white, fontSize: 27.0, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black87,
+        backgroundColor: Color(0xff212121),
         elevation: 0.0,
          //기존에 오른쪽위에 검색 페이지로가는 버튼이지만, 일단 사용안하기때문에 주석처리 해둠
         /*
@@ -239,6 +238,7 @@ class _GroupPageState extends State<GroupPage> {
         ],
          */
       ),
+      backgroundColor: Color(0xff212121),
 
       //소모임에서 앱바쪽 왼쪽 자기 프로필 보기 기능 필요없어서 일단은 주석처리하였지만, 하단바에 프로필에 활용할수있을수도있어서 안지우고 놔둠
       /*drawer: Drawer(
