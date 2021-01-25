@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,6 +54,8 @@ class _ChatPageState extends State<ChatPage> {
   int imageUploadCount=0;
   int videoUploadCount=0;
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  List<Message> _messages;
 
 
 
@@ -78,6 +80,7 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
     _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
     myFocusNode = FocusNode();
+    _messages = List<Message>();
 
 
     //DB로 부터 groupID를 통해 특정 그룹의 채팅정보를 반환받아서 val 매개변수에저장한후 Stream<QuerySnapshot>형태의 _chat변수에 저장함으로써,
@@ -106,11 +109,58 @@ class _ChatPageState extends State<ChatPage> {
     _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     _flutterLocalNotificationsPlugin.initialize(initializationsSettings,
         onSelectNotification: notificationSelected);
+    _getToken();
+    _configureFirebaseListeners();
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(sound: true, badge: true,alert: true)
+    );
 
 
   }
 
 
+  _configureFirebaseListeners() {
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> _message) async{
+          print("onMessage: $_message");
+          _setMessage(_message);
+        },
+        onLaunch: (Map<String, dynamic> _message) async {
+          print("onLaunch: $_message");
+
+          _setMessage(_message);
+        },
+        onResume: (Map<String, dynamic> _message) async{
+          print("onResume: $_message");
+          _setMessage(_message);
+        }
+    );
+  }
+  _setMessage(Map<String,dynamic> message){
+    final notification = message['notification'];
+    print(notification);
+    final data = message['data'];
+    print(data);
+    final String title = notification['title'];
+    print(title);
+    final String body = notification['body'];
+    print(body);
+    final String mMessage = data['message'];
+    print(mMessage);
+
+    setState(() {
+
+      Message m = Message(title,body,mMessage);
+      _messages.add(m);
+    });
+  }
+  _getToken(){
+    _firebaseMessaging.getToken().then((deviceToken){
+
+      print("deviceToken: $deviceToken");
+      DatabaseService().setDeviceToken(deviceToken, widget.groupId);
+    });
+  }
   Future notificationSelected(String payload) async{
     showDialog(
       context: context,
@@ -604,5 +654,16 @@ class _ChatPageState extends State<ChatPage> {
           :null,
     )
     ));
+  }
+}
+class Message {
+  String title;
+  String body;
+  String message;
+
+  Message(title, body, message) {
+    this.title = title;
+    this.body = body;
+    this.message = message;
   }
 }
