@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     // 프로필 사진을 업로드할 경로와 파일명을 정의. 사용자의 uid를 이용하여 파일명의 중복 가능성 제거
-    Reference storageReference = _firebaseStorage.ref('user_image/$_userName' + '[$number]');
+    Reference storageReference = _firebaseStorage.ref('user_image/$_userName/$_userName[$number]');
 
     try{
       await storageReference.putFile(_image);

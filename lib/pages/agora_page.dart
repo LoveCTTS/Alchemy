@@ -33,6 +33,7 @@ class _AgoraPageState extends State<AgoraPage> {
   bool hasMembers=false;
   Future<List<QueryDocumentSnapshot>> getGroupSnapshots ;
   AdMobManager adMob = AdMobManager();
+  FocusNode _myFocusNode;
 
 
 
@@ -63,6 +64,7 @@ class _AgoraPageState extends State<AgoraPage> {
         _userName = value;
       });
     });
+    _myFocusNode = FocusNode();
 
   }
 
@@ -160,11 +162,14 @@ class _AgoraPageState extends State<AgoraPage> {
       onPressed:  () async {
 
         await DatabaseService(uid: _user.uid).addMikeMessage(_userName, mikeMessageInMikePopup);
-          });
+          }
+          );
 
-    AlertDialog mike = AlertDialog(
-
-      insetPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 120),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 10),
           title: Row(
               children: [
                 Icon(
@@ -186,66 +191,66 @@ class _AgoraPageState extends State<AgoraPage> {
               ]),
           backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: Color(0xff9932cc)),
-            borderRadius: BorderRadius.all(
-                Radius.circular(20.0)
-            )
+              side: BorderSide(color: Color(0xff9932cc)),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(20.0)
+              )
           ),
           content: Container(
               width: 250,
               height: 250,
               child:ListView(children: [
                 Container(
-                  height:200,
+                    height:200,
                     decoration: BoxDecoration(
 
-                      border: Border.all(color: Colors.white, width:2),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0)
-                      )
+                        border: Border.all(color: Colors.white, width:2),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(20.0)
+                        )
                     ),
                     child:StreamBuilder(
-                    stream: DatabaseService(uid:_user.uid,userName: _userName).mikeMessageCollection.orderBy('createdTime').snapshots(),
-                    builder: (context, snapshot) {
-                      List<Widget> children;
-                      if(snapshot.hasError){
-                        children = <Widget>[
-                          Icon(
-                            Icons.error_outline,
-                            color: Colors.red,
-                            size: 60,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Text('Error: ${snapshot.error}'),
-                          )
-                        ];
-                      }
-                      if(!snapshot.hasData) { return Text("Currently Not Mike",style: TextStyle(fontSize:30));
-                      } else {
-                      List mikeMessageList = snapshot.data.docs.map((e){return e.data;}).toList();
-                      return ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
-                          itemCount: mikeMessageList.length, //일단 확성기에 4개만 보이도록 하였음.(입력칸 없어지는 문제때문에)
-                          shrinkWrap: true,
-                          itemBuilder: (context,index){
-                            int reqIndex=mikeMessageList.length-index-1;
-                            return MikeMessageTile(
-                              senderName: mikeMessageList[reqIndex]()["sender"].toString(),
-                              mikeMessage: mikeMessageList[reqIndex]()["mikeMessage"].toString(),
-                            );
+                        stream: DatabaseService(uid:_user.uid,userName: _userName).mikeMessageCollection.orderBy('createdTime').snapshots(),
+                        builder: (context, snapshot) {
+                          List<Widget> children;
+                          if(snapshot.hasError){
+                            children = <Widget>[
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 60,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16),
+                                child: Text('Error: ${snapshot.error}'),
+                              )
+                            ];
+                          }
+                          if(!snapshot.hasData) { return Text("Currently Not Mike",style: TextStyle(fontSize:30));
+                          } else {
+                            List mikeMessageList = snapshot.data.docs.map((e){return e.data;}).toList();
+                            return ListView.builder( //ListView.builder 생성자를 사용한 이유는 그룹이 정말 많이생성되어도 모두 다 리스팅될수도있도록 하기위함이다.(어몽어스처럼)
+                                itemCount: mikeMessageList.length, //일단 확성기에 4개만 보이도록 하였음.(입력칸 없어지는 문제때문에)
+                                shrinkWrap: true,
+                                itemBuilder: (context,index){
+                                  int reqIndex=mikeMessageList.length-index-1;
+                                  return MikeMessageTile(
+                                    senderName: mikeMessageList[reqIndex]()["sender"].toString(),
+                                    mikeMessage: mikeMessageList[reqIndex]()["mikeMessage"].toString(),
+                                  );
 
-                    }
-                );
-          }
-        })),
+                                }
+                            );
+                          }
+                        })),
 
                 SizedBox(height:5),
                 Row(children: [
                   Container(
                       width:220,
                       height:40,
-                      child: Expanded(
-                          child:TextField(
+                      child: TextField(
+                          focusNode: _myFocusNode,
                           onChanged: (val) {
                             if (val.length<45) {
                               mikeMessageInMikePopup = val;
@@ -263,7 +268,7 @@ class _AgoraPageState extends State<AgoraPage> {
 
                           )
 
-                      ))
+                      )
                   ),
                   SizedBox(width:10),
                   sendButton
@@ -272,15 +277,10 @@ class _AgoraPageState extends State<AgoraPage> {
 
                 ])
 
-          ]
-          )) ,
+              ]
+              )) ,
 
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return mike;
+        );
       },
     );
   }
@@ -509,6 +509,7 @@ class _AgoraPageState extends State<AgoraPage> {
                     )
                 )
             ),
+        resizeToAvoidBottomInset: false,
         body:
         Column(
             children:<Widget>[

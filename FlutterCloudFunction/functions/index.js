@@ -12,14 +12,21 @@ exports.TestMessageTrigger = functions.firestore.document('groups/{groupId}/mess
              return;
          }
 
+
          newData = snapshot.data();
+         //사용자의 프로필사진을 push Notification 하고싶은데.. 아래코드시도해보니 안되네.. 다른방법을 찾자.
+        /* const myFile = admin.storage().bucket().file('user_image/${newData.sender}/${newData.sender}[0]');
+         myFile.getSignedUrl({action: 'read', expires: someDateObj}).then(urls => {
+         const signedUrl = urls[0];
+         });*/
          const _deviceTokensInGroup = await admin.firestore().collection('groups').get();
 
          var payload = {
              notification: {
-                 title: 'Push Title',
-                 body: 'Push Body',
+                 title: newData.sender,
+                 body: newData.message,
                  sound: 'default',
+                 //icon: signedUrl
              },
              data: {
                  click_action: 'FLUTTER_NOTIFICATION_CLICK',
