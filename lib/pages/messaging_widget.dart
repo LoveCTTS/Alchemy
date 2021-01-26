@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:linkproto/pages/position_error_page.dart';
 
 
 class MessagingWidget extends StatefulWidget {
@@ -9,60 +11,41 @@ class MessagingWidget extends StatefulWidget {
 
 class MessagingWidgetState extends State<MessagingWidget> {
 
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-  List<Message> _messages;
 
   @override
   void initState() {
     super.initState();
-    _messages = List<Message>();
-    _getToken();
-    _configureFirebaseListeners();
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true,alert: true)
-    );
+
+    _determinePosition();
   }
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-  _configureFirebaseListeners() {
-    _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> _message) async{
-          print("onMessage: $_message");
-          _setMessage(_message);
-        },
-        onLaunch: (Map<String, dynamic> _message) async {
-          print("onLaunch: $_message");
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
 
-          _setMessage(_message);
-        },
-        onResume: (Map<String, dynamic> _message) async{
-          print("onResume: $_message");
-          _setMessage(_message);
-        }
-    );
-  }
-  _getToken(){
-    _firebaseMessaging.getToken().then((deviceToken){
-      print("deviceToken: $deviceToken");
-    });
-  }
-  _setMessage(Map<String,dynamic> message){
-    final notification = message['notification'];
-    print(notification);
-    final data = message['data'];
-    print(data);
-    final String title = notification['title'];
-    print(title);
-    final String body = notification['body'];
-    print(body);
-    final String mMessage = data['message'];
-    print(mMessage);
+      return Future.error('Location services are disabled.');
+    }
 
-    setState(() {
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permantly denied, we cannot request permissions.');
+    }
 
-      Message m = Message(title,body,mMessage);
-      _messages.add(m);
-    });
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => PositionErrorPage()));
+        return Future.error(
+            'Location permissions are denied (actual value: $permission).');
+      }
+    }
+
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
   }
   @override
   Widget build(BuildContext context) {
@@ -72,41 +55,14 @@ class MessagingWidgetState extends State<MessagingWidget> {
           "hello", style: TextStyle(color:Colors.white)
         ),
       ),
-      body: ListView.builder(
-        itemCount: null == _messages ? 0 : _messages.length,
-        itemBuilder: (context,index){
-          return Card(
-            child: Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Text(
-                _messages[index].message,
-                style:TextStyle(
-                  fontSize: 16.0,
-                  color : Colors.black
-                )
-              )
-            )
-          );
-        },
-      ),
+      body: Container(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          print("test");
+          _determinePosition();
         },
       ),
     );
   }
 
-}
-class Message {
-  String title;
-  String body;
-  String message;
-
-  Message(title, body, message) {
-    this.title = title;
-    this.body = body;
-    this.message = message;
-  }
 }
 

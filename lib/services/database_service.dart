@@ -148,7 +148,7 @@ class DatabaseService {
       'age': age
     });
   }
-  Future updateLocationFromGPS(double latitude,double longitude ) async {
+  Future setLocationFromGPS(double latitude,double longitude ) async {
     //특정 uid(uid는 DatabaseService가 인스턴스로 생성될때마다 생성자에의해 바뀌어서 저장되기때문에 계속 바뀌며, user마다 반드시 하나의 uid를 가짐) 데이터를 매개변수를 통해 들어온 값으로 변경
     return await userCollection.doc(userName).update({
       'locationFromGPS': GeoPoint(latitude, longitude),

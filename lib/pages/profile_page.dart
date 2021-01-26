@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<bool> _hasNetworkImage = List<bool>.generate(6, (index) => false); //6개의 false값을 가지고있는 배열생성
   String _userName='';
   Reference _storageReference;
-  bool distanceSwitched=false;
+  bool distanceSwitched=true;
   bool ageSwitched=true;
   String appealContents='';
   String local='';
@@ -41,6 +41,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final _picker = ImagePicker();
   FToast fToast;
   AdMobManager adMob = AdMobManager();
+
+
 
 
   //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
@@ -233,10 +235,10 @@ class _ProfilePageState extends State<ProfilePage> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    /*serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
-    }
+    }*/
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
@@ -486,7 +488,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                     if(distanceSwitched){
                       _determinePosition().then((value){
-                        DatabaseService(userName: _userName).updateLocationFromGPS(value.latitude, value.longitude);
+                        DatabaseService(userName: _userName).setLocationFromGPS(value.latitude, value.longitude);
 
                       });
                     }else if(distanceSwitched == false){

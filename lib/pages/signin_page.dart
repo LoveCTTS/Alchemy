@@ -2,10 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:linkproto/pages/create_nick_name_email.dart';
 import 'package:linkproto/pages/email_verify.dart';
+import 'package:linkproto/pages/check_position_page1.dart';
+import 'package:linkproto/pages/check_position_page2.dart';
 import 'package:linkproto/pages/phonenumber_verify.dart';
+import 'package:linkproto/pages/position_error_page.dart';
 import '../services/google_auth_service.dart';
 import '../helper/helper_functions.dart';
 import 'home_page.dart';
@@ -33,8 +37,10 @@ class _SignInPageState extends State<SignInPage> {
   String email = '';
   String password = '';
   String error = '';
-  String fullName ='';
+  String nickName ='';
   GoogleAuthService _googleAuth = GoogleAuthService();
+
+
 
 
 
@@ -190,33 +196,15 @@ class _SignInPageState extends State<SignInPage> {
                     await DatabaseService().isGuserJoined(result.email).then((isJoined) async{
                       if(isJoined==true){
 
-                        QuerySnapshot userInfoSnapshot = await DatabaseService().getUserData(result.email); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
-                        await HelperFunctions.saveUserLoggedInSharedPreference(true); //사용자가 잘 로그인되었기때문에 true로 변경
-                        await HelperFunctions.saveUserNameSharedPreference(userInfoSnapshot.docs[0].data()["nickName"]);
-                        // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분
-                        print("Signed In");
-                        await HelperFunctions
-                            .getUserLoggedInSharedPreference().then((value) {
-                          print("Logged in: $value");
-                        });
-                        await HelperFunctions
-                            .getUserEmailSharedPreference().then((
-                            value) {
-                          print("Email: $value");
-                        });
-                        await HelperFunctions.getUserNameSharedPreference()
-                            .then((value) {
-                          print("Nick Name: $value");
-                        });
-
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-
-
+                         //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CheckPositionPage1((result))));
 
                       }
                       else if(isJoined==false){
 
                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CreateNickNameEmailPage(result)));
+
+
 
 
                       }
