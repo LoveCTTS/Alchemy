@@ -30,13 +30,12 @@ class _FriendTileState extends State<FriendTile1>{
   String _userName='';
   String appeal='';
   String age='';
-  StateSetter _setState;
+  bool iHaveNoDistance=false;
   bool _hasNetworkImage=false;
   String _profileImageURL='';
   FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   double distance=0.0;
   GeoPoint myGeoPoint;
-  bool iHaveNoDistance=false;
   List<String> _profileImageURLInPopUp=List<String>(6);
   List<bool> _hasNetworkImageInPopUp = List<bool>.generate(6, (index) => false);
   int imageCount=0;

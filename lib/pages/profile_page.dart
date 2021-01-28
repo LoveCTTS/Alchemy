@@ -42,24 +42,14 @@ class _ProfilePageState extends State<ProfilePage> {
   FToast fToast;
   AdMobManager adMob = AdMobManager();
 
-
-
-
   //사용자가 프로필에서 편집하는 데이터를 제어하기위한 인스턴스
   TextEditingController appealController= TextEditingController();
-  // TextEditingController hashTagController= TextEditingController();
-  //TextEditingController localController= TextEditingController();
   TextEditingController ageController = TextEditingController();
 
   @override
   initState() {
 
-    fToast = FToast();
-    fToast.init(context);
     _prepareService();
-    appealController.addListener(() { });
-    ageController.addListener(() { });
-
     super.initState();
 
   }
@@ -73,38 +63,28 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _prepareService() async{
-    _user= _firebaseAuth.currentUser;
 
     _userName=await HelperFunctions.getUserNameSharedPreference();
-
+      for(int i=0;i<6;i++) {
+        _hasNetworkImage[i] =await hasNetworkImage(i);
+      }
+    _user= _firebaseAuth.currentUser;
     await DatabaseService(userName: _userName).getUserAppeal().then((value){
       setState(() {
         appealController.text = value;
       });
     });
-    /*
-    await DatabaseService(userName: _userName).getUserLocal().then((value){
-      setState(() {
-        localController.text = value;
-      });
-    });
-    */
-    /*
-    await DatabaseService(userName: _userName).getUserHashTag().then((value){
-      setState(() {
-        hashTagController.text = value;
-      });
-    });
 
-     */
     await DatabaseService(userName: _userName).getUserAge().then((value){
       setState(() {
         ageController.text = value;
       });
     });
-    for(int i=0;i<6;i++) {
-      _hasNetworkImage[i] =await hasNetworkImage(i);
-    }
+    appealController.addListener(() { });
+    ageController.addListener(() { });
+    fToast = FToast();
+    fToast.init(context);
+
 
 
 
@@ -215,8 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     Future<bool> hasNetworkImage(int number) async{
 
-    Reference storageReference =
-    _firebaseStorage.ref("user_image/$_userName"+ "[$number]");
+    Reference storageReference = _firebaseStorage.ref("user_image/$_userName/$_userName[$number]");
 
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
