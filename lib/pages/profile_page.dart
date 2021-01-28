@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _deleteImageFromStorage(int number) async{
 
-    Reference _storageReference = _firebaseStorage.ref('user_image/$_userName' + '[$number]');
+    Reference _storageReference = _firebaseStorage.ref('user_image/$_userName/$_userName[$number]');
     String downloadURL = await _storageReference.getDownloadURL();
     _storageReference = FirebaseStorage.instance.ref(downloadURL);
     _storageReference.delete();

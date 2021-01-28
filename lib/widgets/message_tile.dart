@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/pages/image_at_touch.dart';
 import 'package:linkproto/pages/video_play_at_touch.dart';
+import 'package:linkproto/services/database_service.dart';
 import 'package:video_player/video_player.dart';
 
 class MessageTile extends StatefulWidget {
@@ -33,16 +37,81 @@ class MessageTileState extends State<MessageTile>{
   FirebaseStorage _firebaseStorage=FirebaseStorage.instance;
   String _profileImageURL='';
   int whatDataType=1;
+  List<String> _profileImageURLInPopUp=List<String>(6);
+  List<bool> _hasNetworkImageInPopUp = List<bool>.generate(6, (index) => false);
+  int imageCount=0;
+  StateSetter _setState;
+  String appeal='';
+  double distance=0.0;
+  GeoPoint myGeoPoint;
+  String myName='';
+  String age='';
+  bool hasAge=false;
+  bool hasAppeal=false;
 
 
 
   @override
   void initState(){
-    prepareService();
+
     super.initState();
+    prepareService1();
+    prepareService2();
   }
 
-  prepareService() async{
+  @override
+  void dispose() {
+
+    prepareService1().dispose();
+    super.dispose();
+
+  }
+  prepareService1() async{
+
+    myName=await HelperFunctions.getUserNameSharedPreference();
+    await DatabaseService(userName:myName).getLocationFromGPS().then((value){
+      setState(() {
+        myGeoPoint=value;
+      });
+    });
+    await DatabaseService(userName: widget.sender).getLocationFromGPS().then((value){
+      print("상대방의 경도 : ${value.longitude}");
+      print("상대방의 위도: ${value.latitude}");
+      setState(() {
+        distance = Geolocator.distanceBetween(
+            myGeoPoint.latitude, myGeoPoint.longitude,
+            value.latitude, value.longitude);
+      });
+    });
+    await DatabaseService(userName: widget.sender).getUserAppeal().then((value){
+      setState(() {
+        appeal = value;
+        if(appeal!= null){
+          hasAppeal=true;
+        }else{
+          hasAppeal=false;
+        }
+      });
+    });
+    await DatabaseService(userName: widget.sender).getUserAge().then((value){
+      setState(() {
+        age = value;
+        if(age!= null){
+          hasAge=true;
+        }else{
+          hasAge=false;
+        }
+      });
+    });
+
+    for(int i=0;i<6;i++) {
+      _hasNetworkImageInPopUp[i] =await hasNetworkImageInPopUp(i);
+    }
+
+
+
+  }
+  prepareService2() async{
     whatIsDataType();
     setState(() async{
       hasProfileImage= await _hasProfileImage();
@@ -50,10 +119,10 @@ class MessageTileState extends State<MessageTile>{
   }
 
 
-  /*Future<bool> hasNetworkImageInPopUp(int number) async{
+  Future<bool> hasNetworkImageInPopUp(int number) async{
 
     Reference storageReference =
-    _firebaseStorage.ref("user_image/${widget.friendName}"+ "[$number]");
+    _firebaseStorage.ref("user_image/${widget.sender}/${widget.sender}[$number]");
 
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
@@ -66,9 +135,9 @@ class MessageTileState extends State<MessageTile>{
       return true;
     }
     return false;
-  }*/
+  }
 
-  /*void _popupProfileInGroup(BuildContext context) {
+  void _popupProfileInGroup(BuildContext context) {
 
       AlertDialog test = AlertDialog(
 
@@ -90,7 +159,6 @@ class MessageTileState extends State<MessageTile>{
                     itemCount: _hasNetworkImageInPopUp[0]?imageCount: 1,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-
                       return Container(
                         height: 300,
                         width: 350,
@@ -108,45 +176,13 @@ class MessageTileState extends State<MessageTile>{
                       );
                     },
                   )),
-              Positioned(left:10,bottom: 80,child:Text(widget.friendName,style: TextStyle(color: Colors.white))),
-              Positioned(left:10,bottom: 60,child:StatefulBuilder(
-                  builder: (context, setState){
-                    _setState = setState;
-                    DatabaseService(userName: widget.friendName).getUserAppeal().then((value){
-
-                      _setState(() {
-                        appeal = value;
-                        if(appeal!= null){
-                          hasAppeal=true;
-                        }else{
-                          hasAppeal=false;
-                        }
-                      });
-                    });
-                    return hasAppeal?Text(appeal, style:TextStyle(color: Colors.white)):SizedBox.shrink();
-                  }
-              )),
+              Positioned(left:10,bottom: 80,child:Row(children:[Text(widget.sender,style: TextStyle(color: Colors.white)),
+                hasAge? Text(" ($age)",style: TextStyle(color: Colors.white)) : SizedBox.shrink()])),
+              Positioned(left:10,bottom: 60,child: hasAppeal? Text(appeal,style: TextStyle(color: Colors.white)) : SizedBox.shrink()),
               Positioned(left:10, bottom:40,
-                  child: StatefulBuilder(
-                      builder: (context, setState) {
-                        _setState = setState;
-                        DatabaseService(userName: widget.friendName).getLocationFromGPS().then((value){
-                          _setState(() {
-                            distance = Geolocator.distanceBetween(
-                                myGeoPoint.latitude, myGeoPoint.longitude,
-                                value.latitude, value.longitude);
-                            *//*if(distance != null){
-                            hasGPS=true;
-                            }else if(distance == null){
-                            hasGPS=false;
-                            }*//*
-                          });
-                        });
-                        return Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km",style: TextStyle(color:Colors.white));
+                  child: Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km",style: TextStyle(color:Colors.white))
                         // 그냥 / 나눗셈보다는 Dart의 연산자인 ~/을 이용하면 소수점 아래는 자동으로 제거되는 연산자
-                        //GPS 로드 속도때문에 0km로 로드되는 버그있음.
-                      }
-                  )
+
 
               )
 
@@ -161,9 +197,9 @@ class MessageTileState extends State<MessageTile>{
         },
       );
 
-  }*/
+  }
 
-  whatIsDataType() {
+  whatIsDataType() async{
     if (widget.message.contains(new RegExp(r'group_chat_image'))==true) {
       setState(() {
         whatDataType=2; //Image
@@ -187,7 +223,7 @@ class MessageTileState extends State<MessageTile>{
   Future<bool> _hasProfileImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref('user_image/${widget.sender}' + '[0]');
+    _firebaseStorage.ref('user_image/${widget.sender}/${widget.sender}[0]');
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
@@ -218,10 +254,7 @@ class MessageTileState extends State<MessageTile>{
             widget.sentByMe?SizedBox.shrink():
             GestureDetector(
               onTap: () {
-
-
-
-
+                _popupProfileInGroup(context);
               },
                 child:Container(
                     height: 50,
@@ -238,12 +271,18 @@ class MessageTileState extends State<MessageTile>{
                 crossAxisAlignment:widget.sentByMe? CrossAxisAlignment.end:CrossAxisAlignment.start,
                 children: [
                   Text(widget.sender,style:TextStyle(color: Colors.white)),SizedBox(height:5),
-                  Wrap(children:[
-                    Container(
-                      margin:widget.sentByMe ? EdgeInsets.only(left: 10) : EdgeInsets.only(right: 10),
-                      padding: EdgeInsets.only(top: 2, bottom: 5, left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        borderRadius:widget.sentByMe ? BorderRadius.only(
+                  Wrap(
+                      children:[
+
+                        Container(
+
+                          margin:widget.sentByMe ? EdgeInsets.only(left: 10) : EdgeInsets.only(right: 10),
+
+                          padding: EdgeInsets.only(top: 2, bottom: 5, left: 10, right: 10),
+
+                          decoration: BoxDecoration(
+
+                            borderRadius:widget.sentByMe ? BorderRadius.only(
                             topLeft: Radius.circular(10),
                             topRight: Radius.circular(10),
                             bottomLeft: Radius.circular(10)
@@ -257,9 +296,10 @@ class MessageTileState extends State<MessageTile>{
                         color:widget.sentByMe ? Colors.purple[200] : Colors.grey[400],
                       ),
                       child:
-                      whatDataType==1?
-                      Text(widget.message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.black)):
-                      whatDataType==2?GestureDetector(
+
+                      whatDataType==1? Text(widget.message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.black)):
+                      whatDataType==2?
+                      GestureDetector(
                         onTap: () async{
                           await Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ImageAtTouch(widget.message)));
                         },

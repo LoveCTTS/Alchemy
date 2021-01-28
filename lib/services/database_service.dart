@@ -536,7 +536,7 @@ class DatabaseService {
     DocumentReference userDocRef = userCollection.doc(userName);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
-    return await userDocSnapshot.data()['age'];
+    return userDocSnapshot.data()['age'];
   }
   Future<GeoPoint> getLocationFromGPS() async {
     DocumentReference userDocRef = userCollection.doc(userName);

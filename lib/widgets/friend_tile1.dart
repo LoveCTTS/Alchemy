@@ -29,6 +29,7 @@ class _FriendTileState extends State<FriendTile1>{
   User _user;
   String _userName='';
   String appeal='';
+  String age='';
   StateSetter _setState;
   bool _hasNetworkImage=false;
   String _profileImageURL='';
@@ -41,6 +42,7 @@ class _FriendTileState extends State<FriendTile1>{
   int imageCount=0;
   bool hasAppeal=false;
   bool hasGPS=false;
+  bool hasAge=false;
 
 
   @override
@@ -59,6 +61,46 @@ class _FriendTileState extends State<FriendTile1>{
   _prepareService() async{
 
     _userName=await HelperFunctions.getUserNameSharedPreference();
+
+    await DatabaseService(userName:_userName).getLocationFromGPS().then((value){
+      //print("my geoPoint : ${value.latitude}/${value.longitude}");
+      setState(() {
+
+        myGeoPoint=value;
+      });
+    });
+    await DatabaseService(userName: widget.friendName).getLocationFromGPS().then((value){
+      //print("상대방의 경도 : ${value.longitude}");
+      //print("상대방의 위도: ${value.latitude}");
+      setState(() {
+        distance = Geolocator.distanceBetween(
+            myGeoPoint.latitude, myGeoPoint.longitude,
+            value.latitude, value.longitude);
+      });
+      });
+    DatabaseService(userName: widget.friendName).getUserAppeal().then((value){
+      setState(() {
+        appeal = value;
+        if(appeal!= null){
+          hasAppeal=true;
+        }else{
+          hasAppeal=false;
+        }
+      });
+    });
+    DatabaseService(userName: widget.friendName).getUserAge().then((value){
+      setState(() {
+        age = value;
+        if(age!= null){
+          hasAge=true;
+        }else{
+          hasAge=false;
+        }
+      });
+    });
+
+
+
     _user = FirebaseAuth.instance.currentUser;
     _hasNetworkImage = await hasNetworkImage();
 
@@ -66,17 +108,13 @@ class _FriendTileState extends State<FriendTile1>{
       _hasNetworkImageInPopUp[i] =await hasNetworkImageInPopUp(i);
     }
 
-    await DatabaseService(userName:_userName).getLocationFromGPS().then((value){
-      setState(() {
-        myGeoPoint=value;
-      });
-    });
+
 
   }
   Future<bool> hasNetworkImageInPopUp(int number) async{
 
     Reference storageReference =
-    _firebaseStorage.ref("user_image/${widget.friendName}"+ "[$number]");
+    _firebaseStorage.ref("user_image/${widget.friendName}/${widget.friendName}[$number]");
 
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
@@ -94,7 +132,7 @@ class _FriendTileState extends State<FriendTile1>{
   hasNetworkImage() async{
 
     Reference storageReference =
-    _firebaseStorage.ref('user_image/${widget.friendName}' + '[1]');
+    _firebaseStorage.ref('user_image/${widget.friendName}/${widget.friendName}[0]');
     String downloadURL = await storageReference.getDownloadURL();
     if(downloadURL == null){
       return false;
@@ -145,45 +183,33 @@ class _FriendTileState extends State<FriendTile1>{
                         );
                 },
               )),
-              Positioned(left:10,bottom: 80,child:Text(widget.friendName,style: TextStyle(color: Colors.white))),
-              Positioned(left:10,bottom: 60,child:StatefulBuilder(
-                  builder: (context, setState){
-                    _setState = setState;
-                    DatabaseService(userName: widget.friendName).getUserAppeal().then((value){
-
-                      _setState(() {
-                        appeal = value;
-                        if(appeal!= null){
-                          hasAppeal=true;
-                        }else{
-                          hasAppeal=false;
-                        }
-                      });
-                    });
-                    return hasAppeal?Text(appeal, style:TextStyle(color: Colors.white)):SizedBox.shrink();
-                  }
-              )),
+              Positioned(left:10,bottom: 80,child:Row(children:[Text(widget.friendName,style: TextStyle(color: Colors.white)),
+                hasAge? Text(" ($age)",style: TextStyle(color: Colors.white)) : SizedBox.shrink()])),
+              Positioned(left:10,bottom: 60,child: hasAppeal? Text(appeal,style: TextStyle(color: Colors.white)) : SizedBox.shrink()),
               Positioned(left:10, bottom:40,
-                  child: StatefulBuilder(
+                  child: Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km",style: TextStyle(color:Colors.white))
+                /*StatefulBuilder(
                       builder: (context, setState) {
                         _setState = setState;
                         DatabaseService(userName: widget.friendName).getLocationFromGPS().then((value){
+                          print("상대방의 경도 : ${value.longitude}");
+                          print("상대방의 위도: ${value.latitude}");
                           _setState(() {
                             distance = Geolocator.distanceBetween(
                                 myGeoPoint.latitude, myGeoPoint.longitude,
                                 value.latitude, value.longitude);
-                            /*if(distance != null){
+                            *//*if(distance != null){
                             hasGPS=true;
                             }else if(distance == null){
                             hasGPS=false;
-                            }*/
+                            }*//*
                           });
                         });
                         return Text("나와의 거리 : 약 " + (distance~/1000).toString() + "km",style: TextStyle(color:Colors.white));
                         // 그냥 / 나눗셈보다는 Dart의 연산자인 ~/을 이용하면 소수점 아래는 자동으로 제거되는 연산자
                         //GPS 로드 속도때문에 0km로 로드되는 버그있음.
                       }
-                  )
+                  )*/
 
               )
 
