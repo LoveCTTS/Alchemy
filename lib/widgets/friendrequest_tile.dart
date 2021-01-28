@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../pages/chat_page.dart';
+import '../pages/group_chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../pages/agora_page.dart';

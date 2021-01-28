@@ -205,8 +205,6 @@ class _SignInPageState extends State<SignInPage> {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => CreateNickNameEmailPage(result)));
 
 
-
-
                       }
                     });
                   });

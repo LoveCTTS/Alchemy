@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../pages/chat_page.dart';
+import '../pages/group_chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

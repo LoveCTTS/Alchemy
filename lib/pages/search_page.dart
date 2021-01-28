@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../helper/helper_functions.dart';
-import '../pages/chat_page.dart';
+import '../pages/group_chat_page.dart';
 import '../services/database_service.dart';
 
 /* 현재 필요없기때문에 일단 폐쇄

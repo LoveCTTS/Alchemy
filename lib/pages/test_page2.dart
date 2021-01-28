@@ -4,12 +4,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:linkproto/pages/position_error_page.dart';
 
 
-class MessagingWidget extends StatefulWidget {
+class TestPage2 extends StatefulWidget {
   @override
-  MessagingWidgetState createState() => MessagingWidgetState();
+  TestPageState createState() => TestPageState();
 }
 
-class MessagingWidgetState extends State<MessagingWidget> {
+class TestPageState extends State<TestPage2> {
 
 
 

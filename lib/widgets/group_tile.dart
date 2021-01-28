@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
 import 'package:linkproto/services/admob.dart';
-import '../pages/chat_page.dart';
+import '../pages/group_chat_page.dart';
 import '../services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -139,7 +139,7 @@ class GroupTileState extends State<GroupTile>{
                                       widget.groupId, widget.groupName, widget.userName);
                                   //채팅방으로 가기
                                   Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                      ChatPage(groupId: widget.groupId,
+                                      GroupChatPage(groupId: widget.groupId,
                                         userName: widget.userName,
                                         groupName: widget.groupName,)));
                                 }
@@ -160,7 +160,7 @@ class GroupTileState extends State<GroupTile>{
             widget.groupId, widget.groupName, widget.userName);
         //채팅방으로 가기
         Navigator.push(context, MaterialPageRoute(builder: (context) =>
-            ChatPage(groupId: widget.groupId,
+            GroupChatPage(groupId: widget.groupId,
               userName: widget.userName,
               groupName: widget.groupName,)));
       }

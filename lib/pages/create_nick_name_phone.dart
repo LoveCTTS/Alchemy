@@ -2,14 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/pages/check_position_phoneuser_page1.dart';
 import 'package:linkproto/services/database_service.dart';
 import 'home_page.dart';
 
 class CreateNickNamePhonePage extends StatefulWidget {
 
   final User result;
+  final isJoined;
 
-  CreateNickNamePhonePage(this.result);
+  CreateNickNamePhonePage(this.result, this.isJoined);
 
   @override
   CreateNickNamePhonePageState createState() => CreateNickNamePhonePageState();
@@ -54,31 +56,10 @@ class CreateNickNamePhonePageState extends State<CreateNickNamePhonePage> {
               ),SizedBox(height:50),
               GestureDetector(
                   onTap: () async{
-                    await DatabaseService().setPhoneUserData(nickNameController.text, widget.result.phoneNumber);
-                          QuerySnapshot userInfoSnapshot = await DatabaseService()
-                              .getPhoneUserData(widget.result
-                              .phoneNumber); //매개변수 email에 저장된 email과 동일한 사용자의 데이터정보 저장
-                          await HelperFunctions
-                              .saveUserLoggedInSharedPreference(
-                              true); //사용자가 잘 로그인되었기때문에 true로 변경
-                          await HelperFunctions.saveUserNameSharedPreference(
-                              userInfoSnapshot.docs[0].data()["nickName"]);
-                          // 로그인이 잘된상태이기때문에 그것에 대한 출력을 하는 부분
-                          print("Signed In");
-                          await HelperFunctions
-                              .getUserLoggedInSharedPreference().then((value) {
-                            print("Logged in: $value");
-                          });
-                          await HelperFunctions
-                              .getUserPhoneNumberSharedPreference().then((
-                              value) {
-                            print("Phone Number: $value");
-                          });
-                          await HelperFunctions.getUserNameSharedPreference()
-                              .then((value) {
-                            print("Nick Name: $value");
-                          });
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>HomePage()));
+
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                              CheckPositionPhoneUser1(isJoined : widget.isJoined, nickName:nickNameController.text,result:widget.result)));
+
 
                       },
                   child: Container(

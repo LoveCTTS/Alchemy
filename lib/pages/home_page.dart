@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:linkproto/pages/messaging_widget.dart';
+import 'package:linkproto/pages/test_page2.dart';
 import 'package:linkproto/pages/store_page.dart';
 import '../helper/helper_functions.dart';
 import '../pages/authenticate_page.dart';
-import '../pages/chat_page.dart';
+import '../pages/group_chat_page.dart';
 import '../pages/search_page.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   String friendsListPageUserName='';
 
-  final List _children = [StorePage(),FriendsListPage(),AgoraPage(),GroupPage(),ProfilePage(), MessagingWidget()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
+  final List _children = [StorePage(),FriendsListPage(),AgoraPage(),GroupPage(),ProfilePage(), TestPage2()];//터치시 각 위젯으로 가기 위한 클래스들을 저장한 리스트변수 생성
   //변경이 되면 안되기때문에 final 키워드 사용(Constant랑 같은 의미)
 
   @override

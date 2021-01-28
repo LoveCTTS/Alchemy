@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:linkproto/helper/helper_functions.dart';
+import 'package:linkproto/pages/check_position_phoneuser_page1.dart';
 import 'package:linkproto/pages/create_nick_name_phone.dart';
 import 'package:linkproto/pages/home_page.dart';
 import 'package:linkproto/services/auth_service.dart';
@@ -158,21 +159,24 @@ class PhoneNumberVerify2PageState extends State<PhoneNumberVerify2Page> {
                           .then((value) async {
                         if (value.user != null) {
 
-                          //print(value.user.phoneNumber);
 
-                          /*await DatabaseService().isPhoneUserJoinedByNumber(value.user.phoneNumber).then((isJoined){
-                            if(isJoined==false){
-                              print("I'm not joined!");
+                          DatabaseService().isPhoneUserJoinedByNumber(value.user.phoneNumber).then((_isJoined) async{
+
+                            print(_isJoined);
+                            if(_isJoined){
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CheckPositionPhoneUser1(isJoined: _isJoined ,result: value.user)));
+
+                            } else if(_isJoined==false){
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                                  CreateNickNamePhonePage(value.user, _isJoined)));
 
                             }
-
                           });
 
-                           */
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                              CreateNickNamePhonePage(value.user)));
 
 
                         }

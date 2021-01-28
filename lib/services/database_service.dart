@@ -379,15 +379,21 @@ class DatabaseService {
   }
   Future<bool> isPhoneUserJoinedByNumber(String number) async{
 
+
+    bool isJoined=false;
     await userCollection.where('phoneNumber',isEqualTo: number).get().then((snapshot){
       if(snapshot.size!=0){
         print("I'm already joined : ${snapshot.size}");
-        return true;
+        isJoined=true;
+        return isJoined;
       }else if(snapshot.size ==0){
         print("I'm not joined : ${snapshot.size}");
-        return false;
+        isJoined=false;
+        return isJoined;
       }
     });
+    print('return : $isJoined');
+    return isJoined;
 
 
 
