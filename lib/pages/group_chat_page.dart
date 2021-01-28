@@ -42,6 +42,7 @@ class GroupChatPageState extends State<GroupChatPage> {
   ScrollController _scrollController; // 스크롤을 컨트롤하기위한 변수선언
   int _currentScrollPosition=0; //현재 스크롤 위치에 따른 선택을 편리하게하기위한 변수선언
   FocusNode myFocusNode;
+  bool hasFocus=false;
   User _user;
   AdMobManager adMob= AdMobManager();
   final _picker = ImagePicker();
@@ -80,6 +81,13 @@ class GroupChatPageState extends State<GroupChatPage> {
     _scrollController= ScrollController(); //스크롤 컨트롤하기위한 인스턴스생성
     _scrollController.addListener(_scrollListener); //스크롤을 실시간으로 Listen하기위해 Listener 추가
     myFocusNode = FocusNode();
+    myFocusNode.addListener(() {
+
+      setState(() {
+        hasFocus = myFocusNode.hasFocus;
+      });
+      print("Has Focus: $hasFocus");
+    });
     _messages = List<Message>();
 
 
@@ -189,7 +197,7 @@ class GroupChatPageState extends State<GroupChatPage> {
 
   Widget _chatMessages(){
     return Container(
-        height: MediaQuery.of(context).size.height-150,
+        height: isSwitchedPlus?MediaQuery.of(context).size.height-300:MediaQuery.of(context).size.height-150,
         width: MediaQuery.of(context).size.width, //기기별 디스플레이에맞게 너비조절시 MediaQuery사용
         child: StreamBuilder(
       stream: _chats,
@@ -406,6 +414,7 @@ class GroupChatPageState extends State<GroupChatPage> {
         //사용자들이 그룹채팅창에서 아무데나 터치해도 TextEditor이 내려갈수있게?사라질수있게??하기위해 Focus Out시키는 코드를 삽입
         FocusScopeNode currentFocus = FocusScope.of(context); //현재 앱의 focus를 어디에 두고있는지 정보를 저장하고있는 context를 가져와서 currentFocus에 저장
 
+
         //Focus가 현재 잡혀있다면(아래 코드는 포커스관련 오류방지를위해 반드시 작성해주어야함)
         if(!currentFocus.hasPrimaryFocus){
           currentFocus.unfocus();
@@ -421,6 +430,8 @@ class GroupChatPageState extends State<GroupChatPage> {
         backgroundColor: Color(0xff9932cc),
         elevation: 0.0,
       ),
+
+
       backgroundColor: Color(0xff212121),
       endDrawer: Theme(
           data: Theme.of(context).copyWith(
@@ -509,8 +520,8 @@ class GroupChatPageState extends State<GroupChatPage> {
     )
       )
       ),
-        body: SingleChildScrollView(
-          child:Column(
+        body:SingleChildScrollView(child:
+          Column(
           children: <Widget>[
             _chatMessages(), //채팅 메세지 보여주는 위젯
             Container(
@@ -520,23 +531,25 @@ class GroupChatPageState extends State<GroupChatPage> {
                 child: Row(
                   children: <Widget>[
                     isSwitchedPlus?IconButton(
-                        onPressed: (){
+                        onPressed: () async{
 
+                          //FocusScope.of(context).requestFocus(myFocusNode);
                           // FocusScope.of(context).unfocus();
                           setState(() {
                             isSwitchedPlus=false;
                           });
 
-                          FocusScope.of(context).requestFocus(myFocusNode);
-
                         },
                         icon: Icon(Icons.close_rounded,size: 40, color: Colors.white)) :
                     IconButton(
                         onPressed: () async{
+
                           FocusScope.of(context).unfocus();
                           setState(() {
+
                             isSwitchedPlus=true;
                           });
+
                           },
                         icon: Icon(Icons.add_box_outlined,size: 40, color: Colors.white)
                     ),
