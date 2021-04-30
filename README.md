@@ -2,15 +2,44 @@
 
 특정 주제에 관심있는 사람들끼리 모여 소소하게 소통하는 어플리케이션이에요 ^_^
 
-## Getting Started
+## Agora(광장 컨셉)
 
-This project is a starting point for a Flutter application.
+메인 페이지는 로그인시 바로 나오는 페이지인 Agora 페이지에요.
 
-A few resources to get you started if this is your first Flutter project:
+여기서 현실의 광장처럼 무작위의 사람들과 서로 소통하고 교류하여, 마음에 드는 사람이 있다면 친구 추가하여 Agora가 아닌 둘 만의 공간에서 따로 대화할수도 있어요.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Friends(마음에 드는 사람들)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+친구 페이지는 Agora에서 마음에 들어서 친구로 받아들인 사람들만 모아서 볼 수 있는 페이지에요.
+
+친구 추가를 하면 원래 한장밖에 볼 수 없었던 친구의 프로필 사진을 총 6장까지 자세히 볼 수 있고, 친구의 자기소개 글,나이,나와의 거리 까지 볼 수 있어요.
+
+만약 자신이 나이와 상대방과 자신과의 거리를 상대방에게 보여주고 싶지않다면, 프로필 페이지에서 스위치만 끄면 되요!
+
+## Group(자신이 속한 그룹 채팅방)
+
+Group 페이지는 Agora에서 가입한 방만을 따로 보여주는 페이지에요.
+
+Agora에는 무작위의 방들이 보여지기때문에, 자신이 과거에 가입했던 페이지를 찾아가기가 힘들잖아요?
+
+그래서 Group페이지를 따로 구성하였고, 여기서 편리하게 자신이 소속된 그룹채팅방을 찾아갈수있게하였답니다.
+
+## Store
+
+상점 페이지는 앱을 사용하면서 조금 더 재밌고, 편리하게 앱을 사용할수있도록 하는 아이템들을 구매할 수 있도록 만든 페이지에요.
+
+단순히 소통만 하면 재미없으니 앱을 사용하고있는 모든 사용자들에게 자신이 말하고싶은 것을 외칠수있는 아이템이나 단순히 친구가 아닌 정말로 마음이 있는 이에게 마음을 표시할수있도록하는 아이템 등을 구성해보았습니다 ^_^ ㅎㅎ
+
+원래 프로젝트 마지막 쯤 결제기능을 구현하려고하였으나, 프로젝트가 중간에 중단되버리는 바람에, 간단히 이렇게 기능을 보여주고 싶었다? 정도만 보이도록 구현했어요!
+
+## Profile
+
+프로필 페이지는 자신이 상대방에게 보여주고싶은 사진들을 총 6개까지 보여줄수있도록 구성하였고, 모든 사진들을 임의의 사람들이 자세히 보면 좀 별로? 라고 느껴서 가장 첫 사진만 Agora에서 만나는사람들에게 보이도록 구현했어요.
+나머지 5개 사진은 친구가 된 사람들끼리만 볼 수있도록 하는게 더 낫다고 생각했어요.
+
+사진이외에는 자기소개,나이 를 표현하고싶으면 표현할수있도록 하였고, 만약에 나이랑 자신과 상대방사이의 거리를 상대방에게 표시하고싶지않다면 스위치를 꺼서 보이지않도록 만들었어요.
+
+
+
+
+
