@@ -1,6 +1,6 @@
-# linkproto
+# Alchemy(소소한 소통)
 
-A new Flutter application.
+특정 주제에 관심있는 사람들끼리 모여 소소하게 소통하는 어플리케이션이에요 ^_^
 
 ## Getting Started
 
